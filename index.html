@@ -324,7 +324,11 @@
     color:var(--red);
     font-weight:700;
     margin:4px 0 0;
+    animation:rise 400ms cubic-bezier(.16,1,.3,1) both;
   }
+  .follow__note.is-error{color:var(--ink-soft);font-weight:500;}
+  .follow__form.is-sending .btn{opacity:0.7;cursor:progress;}
+  .btn:disabled{transform:none;}
 
   /* ---------- Perks ---------- */
   .perks{
@@ -429,17 +433,18 @@
       <h2 class="follow__head">Welcome on board.</h2>
       <p class="follow__body">From first idea to first shirt, get the behind-the-scenes updates as we build Force of Nature from the ground up. No spam, ever.</p>
     </div>
-    <form class="follow__form" id="followForm">
+    <!-- Kit (ConvertKit) signup form 9926668 ("Pine form"). -->
+    <form class="follow__form" id="followForm" action="https://app.kit.com/forms/9926668/subscriptions" method="post" novalidate>
       <label class="follow__field">
         <span>Name</span>
-        <input type="text" name="name" placeholder="Your name" autocomplete="name" required>
+        <input type="text" name="fields[first_name]" placeholder="Your name" autocomplete="given-name" required>
       </label>
       <label class="follow__field">
         <span>Email</span>
-        <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        <input type="email" name="email_address" placeholder="you@example.com" autocomplete="email" required>
       </label>
-      <button type="submit" class="btn">Join the story</button>
-      <p class="follow__note" id="followNote" hidden>You're in. Watch your inbox.</p>
+      <button type="submit" class="btn" id="followBtn"><span class="btn__label">Join the story</span></button>
+      <p class="follow__note" id="followNote" role="status" aria-live="polite" hidden></p>
     </form>
   </div>
 </section>
@@ -479,10 +484,46 @@
   (function(){
     var form = document.getElementById('followForm');
     var note = document.getElementById('followNote');
+    var btn  = document.getElementById('followBtn');
+    var label = btn.querySelector('.btn__label');
+    var idle = label.textContent;
+
+    function say(msg, isError){
+      note.textContent = msg;
+      note.classList.toggle('is-error', !!isError);
+      note.hidden = false;
+    }
+    function busy(on){
+      btn.disabled = on;
+      form.classList.toggle('is-sending', on);
+      label.textContent = on ? 'Joining…' : idle;
+    }
+
     form.addEventListener('submit', function(e){
       e.preventDefault();
-      note.hidden = false;
-      form.reset();
+      if(!form.checkValidity()){
+        say('Add your name and a valid email to join.', true);
+        form.reportValidity();
+        return;
+      }
+      busy(true);
+      note.hidden = true;
+      fetch(form.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      }).then(function(res){
+        return res.json().catch(function(){ return {}; }).then(function(data){
+          if(res.ok && data.status !== 'failed'){
+            say('You’re in. Check your inbox to confirm.');
+            form.reset();
+          } else {
+            say((data.errors && data.errors.messages && data.errors.messages[0]) || 'That didn’t go through. Try again in a moment.', true);
+          }
+        });
+      }).catch(function(){
+        say('Couldn’t reach the signup service. Check your connection and try again.', true);
+      }).then(function(){ busy(false); });
     });
   })();
 
