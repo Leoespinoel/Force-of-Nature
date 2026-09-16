@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Force of Nature, Not Just a Tee</title>
+<meta name="description" content="A t-shirt with a second job. Where consuming creates positive change, 10% of every sale, not profit, funds reef, forest, and coastline conservation.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F7F2E7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#C11B15;
+    --max:1280px;
+    --gutter:clamp(24px, 5vw, 72px);
+
+    /* light (default) */
+    --bg:#F7F2E7;
+    --card:#FFFFFF;
+    --ink:#17110D;
+    --ink-soft:#6B5F52;
+    --line:#E3D9C4;
+    --grain-opacity:0.05;
+    --logo-shadow:0 24px 48px -24px rgba(23,17,13,0.28);
+  }
+
+  :root[data-theme="dark"]{
+    --bg:#17110D;
+    --card:#211A15;
+    --ink:#F3EDE1;
+    --ink-soft:#9B9184;
+    --line:#312921;
+    --grain-opacity:0.5;
+    --logo-shadow:0 24px 56px -20px rgba(0,0,0,0.6);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  .starfield{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:-1;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 600ms ease;
+  }
+  :root[data-theme="dark"] .starfield{opacity:1;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Archivo', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    transition:background 220ms ease, color 220ms ease;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  ::selection{background:var(--red);color:#fff;}
+
+  :focus-visible{
+    outline:2px solid var(--red);
+    outline-offset:3px;
+  }
+
+  .wrap{
+    max-width:var(--max);
+    margin:0 auto;
+    padding-left:var(--gutter);
+    padding-right:var(--gutter);
+  }
+  .mono{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  /* ---------- Nav ---------- */
+  .nav{
+    position:relative;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-top:16px;
+    padding-bottom:16px;
+  }
+  .nav__brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    animation:rise 700ms cubic-bezier(.16,1,.3,1) both;
+  }
+  .nav__brand img{width:auto;height:26px;}
+  .nav__brand span{
+    font-weight:700;
+    font-size:0.92rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink);
+    transform:translateY(-4px);
+  }
+  .nav__right{
+    display:flex;
+    align-items:center;
+    gap:clamp(16px, 3vw, 32px);
+  }
+  .theme-toggle{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    padding:0;
+    transition:border-color 160ms ease, transform 160ms ease;
+    animation:rise 700ms cubic-bezier(.16,1,.3,1) 60ms both;
+  }
+  .theme-toggle:hover{border-color:var(--red);transform:translateY(-1px);}
+  .theme-toggle:active{transform:scale(0.94);}
+  .theme-toggle svg{width:18px;height:18px;}
+  .theme-toggle .icon-sun{display:none;}
+  :root[data-theme="dark"] .theme-toggle .icon-moon{display:none;}
+  :root[data-theme="dark"] .theme-toggle .icon-sun{display:block;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding-top:32px;
+    padding-bottom:20px;
+    overflow:hidden;
+  }
+  .hero__grain{
+    position:absolute;
+    inset:0;
+    opacity:var(--grain-opacity);
+    pointer-events:none;
+    mix-blend-mode:multiply;
+  }
+  :root[data-theme="dark"] .hero__grain{mix-blend-mode:overlay;}
+  .hero__globe{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:clamp(220px, 40vh, 400px);
+    aspect-ratio:1 / 1;
+    border-radius:50%;
+    overflow:hidden;
+    opacity:0;
+    pointer-events:none;
+    z-index:0;
+    transition:opacity 600ms ease;
+  }
+  :root[data-theme="dark"] .hero__globe{opacity:0.24;}
+  .hero__globe video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .hero__globe::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 34% 30%, rgba(255,255,255,0.22), rgba(255,255,255,0) 42%),
+      radial-gradient(circle at 68% 72%, rgba(0,0,0,0.55), rgba(0,0,0,0) 62%);
+  }
+  .hero__tag{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:0.8rem;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin:0 0 12px;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 160ms both;
+  }
+  .hero__tag::before{
+    content:"";
+    width:22px;
+    height:1.5px;
+    background:var(--red);
+    display:inline-block;
+  }
+  .hero__stage{
+    position:relative;
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    align-items:center;
+    gap:clamp(16px, 4vw, 56px);
+  }
+  .hero__logo{
+    position:relative;
+    height:min(38vh, 320px);
+    width:auto;
+    justify-self:start;
+    filter:drop-shadow(var(--logo-shadow));
+    animation:reveal 1000ms cubic-bezier(.16,1,.3,1) 80ms both;
+  }
+  .hero__text{
+    position:relative;
+    z-index:2;
+  }
+  .hero__headline{
+    margin:0;
+    font-weight:900;
+    text-transform:uppercase;
+    font-size:clamp(2.1rem, 5vw, 3.5rem);
+    line-height:0.98;
+    letter-spacing:-0.03em;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 220ms both;
+  }
+  .hero__headline em{
+    color:var(--red);
+    font-style:normal;
+  }
+  .hero__body{
+    margin:14px 0 0;
+    max-width:42ch;
+    font-size:1.0625rem;
+    line-height:1.5;
+    color:var(--ink-soft);
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 300ms both;
+  }
+  .hero__body strong{color:var(--ink);font-weight:700;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:inherit;
+    font-size:0.95rem;
+    font-weight:700;
+    text-decoration:none;
+    padding:12px 24px;
+    border:1.5px solid var(--red);
+    border-radius:10px;
+    background:var(--red);
+    color:#fff;
+    cursor:pointer;
+    transition:transform 160ms cubic-bezier(.2,.8,.2,1), background 160ms ease, border-color 160ms ease;
+  }
+  .btn:hover{background:#8F130F;border-color:#8F130F;}
+  .btn:active{transform:scale(0.97);}
+
+  /* ---------- Follow ---------- */
+  .follow{
+    padding:clamp(24px, 3.4vw, 40px) 0;
+    border-top:1px solid var(--line);
+  }
+  .follow__inner{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:clamp(24px, 4vw, 48px);
+    align-items:center;
+  }
+  .follow__tag{
+    animation-delay:380ms;
+  }
+  .follow__head{
+    font-weight:900;
+    text-transform:uppercase;
+    font-size:clamp(1.5rem, 2.6vw, 2.125rem);
+    letter-spacing:-0.02em;
+    margin:0 0 10px;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 440ms both;
+  }
+  .follow__body{
+    max-width:40ch;
+    font-size:1.0625rem;
+    line-height:1.6;
+    color:var(--ink-soft);
+    margin:0;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 500ms both;
+  }
+  .follow__form{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 560ms both;
+  }
+  .follow__field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .follow__field span{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:0.75rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+  }
+  .follow__field input{
+    font-family:inherit;
+    font-size:0.95rem;
+    padding:10px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--ink);
+    transition:border-color 160ms ease;
+  }
+  .follow__field input:focus-visible{
+    border-color:var(--red);
+  }
+  .follow__form .btn{align-self:flex-start;margin-top:6px;}
+  .follow__note{
+    font-size:0.9rem;
+    color:var(--red);
+    font-weight:700;
+    margin:4px 0 0;
+  }
+
+  /* ---------- Perks ---------- */
+  .perks{
+    padding:clamp(48px, 6vw, 80px) 0;
+    border-top:1px solid var(--line);
+  }
+  .perks__grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:clamp(28px, 4vw, 48px);
+  }
+  .perk__num{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:0.85rem;
+    font-weight:700;
+    color:var(--red);
+    letter-spacing:0.04em;
+    margin:0 0 14px;
+  }
+  .perk__title{
+    font-weight:900;
+    text-transform:uppercase;
+    font-size:1.125rem;
+    letter-spacing:-0.01em;
+    margin:0 0 10px;
+  }
+  .perk__body{
+    font-size:0.95rem;
+    line-height:1.6;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  @keyframes rise{
+    from{opacity:0; transform:translateY(16px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @keyframes reveal{
+    from{opacity:0; transform:translateY(14px) scale(0.94);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .nav__brand,.theme-toggle,.hero__logo,.hero__tag,.hero__headline,.hero__body,
+    .follow__head,.follow__body,.follow__form{animation:none;}
+  }
+
+  @media (max-width: 780px){
+    .nav{padding-top:12px;padding-bottom:12px;}
+    .hero{padding-top:4px;padding-bottom:12px;}
+    .hero__stage{grid-template-columns:1fr;gap:10px;}
+    .hero__logo{height:18vh;width:auto;margin:0 auto;justify-self:center;}
+    .hero__text{text-align:left;}
+    .hero__tag{margin-bottom:8px;}
+    .hero__body{margin-top:10px;}
+    .follow{padding:16px 0;}
+    .follow__inner{grid-template-columns:1fr;gap:16px;}
+    .follow__head{margin-bottom:6px;}
+    .perks__grid{grid-template-columns:1fr;gap:32px;}
+    .hero__globe{width:clamp(160px, 26vh, 260px);}
+  }
+</style>
+</head>
+<body>
+
+<canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+
+<div class="wrap nav">
+  <a class="nav__brand" href="#top">
+    <img src="assets/logo.png" alt="">
+    <span>Force of Nature</span>
+  </a>
+  <div class="nav__right">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+  </div>
+</div>
+
+<header class="hero" id="top">
+  <svg class="hero__grain" width="100%" height="100%">
+    <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.03 0"/></filter>
+    <rect width="100%" height="100%" filter="url(#n)"/>
+  </svg>
+  <div class="hero__globe" aria-hidden="true">
+    <video id="globeVideo" src="assets/earth-globe.mp4" muted loop playsinline preload="auto"></video>
+  </div>
+  <div class="wrap hero__stage">
+    <img class="hero__logo" src="assets/logo.png" alt="Force of Nature heart logo, illustrated in red with black drips">
+    <div class="hero__text">
+      <p class="hero__tag mono">Where mission and lifestyle collide</p>
+      <h1 class="hero__headline">Wear it<br>like you<br><em>mean it.</em></h1>
+      <p class="hero__body">Force of Nature is a movement built around a simple idea, <strong>10% of every sale, not profit,</strong> goes toward reef, forest, and coastline conservation. No pledges, no opt-ins, the impact happens automatically the moment you wear it.</p>
+    </div>
+  </div>
+</header>
+
+<section class="follow" id="follow">
+  <div class="wrap follow__inner">
+    <div>
+      <p class="hero__tag follow__tag mono">Follow the journey</p>
+      <h2 class="follow__head">Welcome on board.</h2>
+      <p class="follow__body">From first idea to first shirt, get the behind-the-scenes updates as we build Force of Nature from the ground up. No spam, ever.</p>
+    </div>
+    <form class="follow__form" id="followForm">
+      <label class="follow__field">
+        <span>Name</span>
+        <input type="text" name="name" placeholder="Your name" autocomplete="name" required>
+      </label>
+      <label class="follow__field">
+        <span>Email</span>
+        <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+      </label>
+      <button type="submit" class="btn">Join the story</button>
+      <p class="follow__note" id="followNote" hidden>You're in. Watch your inbox.</p>
+    </form>
+  </div>
+</section>
+
+<section class="perks">
+  <div class="wrap perks__grid">
+    <div class="perk">
+      <p class="perk__num mono">01</p>
+      <h3 class="perk__title">First access</h3>
+      <p class="perk__body">New drops and limited colourways before they hit the shop, plus early access to restocks.</p>
+    </div>
+    <div class="perk">
+      <p class="perk__num mono">02</p>
+      <h3 class="perk__title">Impact reports</h3>
+      <p class="perk__body">Where the 10% actually goes, which reef, which forest, which coastline, and what changed because of it.</p>
+    </div>
+    <div class="perk">
+      <p class="perk__num mono">03</p>
+      <h3 class="perk__title">The story behind it</h3>
+      <p class="perk__body">Founder notes from Mauritius, the people and places behind every shirt, not just marketing copy.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function(){
+    var btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', function(){
+      var root = document.documentElement;
+      var current = root.getAttribute('data-theme') || 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      syncGlobe(next);
+    });
+  })();
+
+  (function(){
+    var form = document.getElementById('followForm');
+    var note = document.getElementById('followNote');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      note.hidden = false;
+      form.reset();
+    });
+  })();
+
+  var syncGlobe = (function(){
+    var video = document.getElementById('globeVideo');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return function(theme){
+      if(theme === 'dark' && !reduceMotion){
+        video.play();
+      } else {
+        video.pause();
+      }
+    };
+  })();
+  syncGlobe(document.documentElement.getAttribute('data-theme'));
+
+  (function(){
+    var canvas = document.getElementById('starfield');
+    var ctx = canvas.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var stars = [];
+    var resizeTimer;
+
+    function seedStars(){
+      var count = Math.round((window.innerWidth * canvas._cssHeight) / 9000);
+      count = Math.max(60, Math.min(count, 500));
+      stars = [];
+      for(var i = 0; i < count; i++){
+        var glow = Math.random() < 0.05;
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: (glow ? (1.6 + Math.random() * 1.4) : (0.5 + Math.random() * 1.1)) * dpr,
+          base: 0.25 + Math.random() * 0.5,
+          amp: 0.25 + Math.random() * 0.35,
+          speed: 0.4 + Math.random() * 0.8,
+          phase: Math.random() * Math.PI * 2,
+          glow: glow
+        });
+      }
+    }
+
+    function resize(){
+      var docHeight = document.documentElement.scrollHeight;
+      canvas._cssHeight = docHeight;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = docHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = docHeight + 'px';
+      seedStars();
+    }
+
+    function loop(t){
+      requestAnimationFrame(loop);
+      if(document.hidden) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if(document.documentElement.getAttribute('data-theme') !== 'dark') return;
+      for(var i = 0; i < stars.length; i++){
+        var s = stars[i];
+        var o = reduceMotion ? s.base : s.base + s.amp * Math.sin(t * 0.001 * s.speed + s.phase);
+        o = Math.max(0, Math.min(1, o));
+        if(s.glow){
+          var grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 6);
+          grad.addColorStop(0, 'rgba(193,27,21,' + (o * 0.35) + ')');
+          grad.addColorStop(1, 'rgba(193,27,21,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r * 6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = 'rgba(243,237,225,' + o + ')';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    window.addEventListener('resize', function(){
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(resize, 150);
+    });
+    window.addEventListener('load', resize);
+    resize();
+    requestAnimationFrame(loop);
+  })();
+</script>
+
+</body>
+</html>
