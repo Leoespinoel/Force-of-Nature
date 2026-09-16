@@ -1,949 +1,571 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Force of Nature — Wear It Like You Mean It</title>
-<meta name="description" content="A t-shirt with a second job. 10% of every sale, not profit, funds reef, forest, and coastline conservation in Mauritius. Shop, listen, join the community, partner with us.">
-<meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#050810">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%230060D0'/%3E%3Cpath d='M6 12c3-3 8-3 11 0 2 2 3 5 1 8-3 1-7 0-9-2-2-2-4-4-3-6Z' fill='%232C9C4B'/%3E%3Cpath d='M23 6.5c2.6 0 4.7 2 4.7 4.6 0 3-4.7 7-4.7 7s-4.7-4-4.7-7c0-2.6 2.1-4.6 4.7-4.6Z' fill='%23C0281F'/%3E%3C/svg%3E">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Force of Nature, Not Just a Tee</title>
+<meta name="description" content="A t-shirt with a second job. Where consuming creates positive change, 10% of every sale, not profit, funds reef, forest, and coastline conservation.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F7F2E7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* Core brand system — read from the live theforceofnature.myshopify.com theme. Do not invent new colors. */
-    --paper:#F7F4EC;
-    --paper-card:#EDEAE1;
-    --ink:#050810;
-    --ink-soft:#5E5C54;
-    --hairline-light: rgba(5,8,16,.10);
+    --red:#C11B15;
+    --max:1280px;
+    --gutter:clamp(24px, 5vw, 72px);
 
-    --deep-space:#050810;
-    --deep-space-card:#0D1220;
-    --cream-ink:#F7F4EC;
-    --ivory:#EDEAE1;
-    --ivory-soft: rgba(237,234,225,.62);
-    --hairline-dark: rgba(237,234,225,.14);
-
-    --mint:#8FD8B4;
-    --mint-deep:#2F7A57;
-    --ink-on-mint:#06170F;
-
-    --ember:#C0281F;
-    --cobalt:#0060D0;
-    --canopy:#2C9C4B;
-    --solar:#F0D050;
-    --orchid:#C070A0;
-
-    --font-display:'Fugaz One', Impact, 'Arial Black', sans-serif;
-    --font-body:'Instrument Sans', Helvetica, Arial, sans-serif;
-    --font-mono:'JetBrains Mono', 'SF Mono', Consolas, monospace;
-
-    --content:min(1180px, 100%);
-    --gutter:clamp(20px, 5vw, 48px);
-    --header-h:78px;
+    /* light (default) */
+    --bg:#F7F2E7;
+    --card:#FFFFFF;
+    --ink:#17110D;
+    --ink-soft:#6B5F52;
+    --line:#E3D9C4;
+    --grain-opacity:0.05;
+    --logo-shadow:0 24px 48px -24px rgba(23,17,13,0.28);
   }
 
-  *,*::before,*::after{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; scroll-padding-top:calc(var(--header-h) + 16px); -webkit-text-size-adjust:100%; }
-  @media (prefers-reduced-motion: reduce){
-    html{ scroll-behavior:auto; }
-    *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  :root[data-theme="dark"]{
+    --bg:#17110D;
+    --card:#211A15;
+    --ink:#F3EDE1;
+    --ink-soft:#9B9184;
+    --line:#312921;
+    --grain-opacity:0.5;
+    --logo-shadow:0 24px 56px -20px rgba(0,0,0,0.6);
   }
 
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  .starfield{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 600ms ease;
+  }
+  :root[data-theme="dark"] .starfield{opacity:1;}
   body{
-    margin:0; background:var(--paper); color:var(--ink);
-    font-family:var(--font-body); font-size:16.5px; line-height:1.6;
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Archivo', sans-serif;
     -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    text-rendering:optimizeLegibility;
+    transition:background 220ms ease, color 220ms ease;
   }
-  img,svg,video{ max-width:100%; display:block; }
-  a{ color:inherit; }
-  p{ margin:0; }
-  ::selection{ background:var(--mint); color:var(--ink-on-mint); }
-  :focus-visible{ outline:2.5px solid var(--mint-deep); outline-offset:3px; border-radius:2px; }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  ::selection{background:var(--red);color:#fff;}
 
-  h1,h2,h3{ font-family:var(--font-display); text-transform:uppercase; font-weight:400; line-height:.94; text-wrap:balance; margin:0; letter-spacing:-.02em; }
-
-  .wrap{ max-width:var(--content); margin-inline:auto; padding-inline:var(--gutter); }
-  .section{ padding-block:clamp(64px,9vw,112px); position:relative; overflow:hidden; }
-  .section + .section{ border-top:1px solid var(--hairline-light); }
-  .on-dark{
-    background:var(--deep-space); color:var(--ivory);
-    --fg-accent:var(--mint);
+  :focus-visible{
+    outline:2px solid var(--red);
+    outline-offset:3px;
   }
-  .on-dark + .on-dark{ border-top:1px solid var(--hairline-dark); }
-  .on-dark2{ background:var(--deep-space-card); color:var(--ivory); }
-  .on-card{ background:var(--paper-card); }
 
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:.6em;
-    font:600 .78rem/1 var(--font-body); text-transform:uppercase; letter-spacing:.18em;
-    color:var(--mint-deep); margin-bottom:1.1em;
+  .wrap{
+    max-width:var(--max);
+    margin:0 auto;
+    padding-left:var(--gutter);
+    padding-right:var(--gutter);
   }
-  .on-dark .eyebrow, .on-dark2 .eyebrow{ color:var(--mint); }
-  .eyebrow::before{ content:""; width:16px; height:1.5px; background:currentColor; display:block; flex:none; }
-
-  .section-head{ max-width:680px; margin-bottom:clamp(32px,5vw,56px); }
-  .section-head h2{ font-size:clamp(2rem,4.6vw,3.1rem); }
-  .section-head .dek{ color:var(--ink-soft); font-size:1.06rem; max-width:56ch; margin-top:.8em; font-family:var(--font-body); text-transform:none; line-height:1.65; }
-  .on-dark .section-head .dek, .on-dark2 .section-head .dek{ color:var(--ivory-soft); }
-
-  .btn{
-    font:700 .82rem/1 var(--font-body); text-transform:uppercase; letter-spacing:.14em;
-    padding:1.05em 1.8em; border-radius:999px; border:1.5px solid transparent;
-    cursor:pointer; display:inline-flex; align-items:center; gap:.6em; white-space:nowrap;
-    text-decoration:none; transition:transform .15s cubic-bezier(.2,.8,.2,1), opacity .15s ease, border-color .15s ease, background .15s ease, color .15s ease;
+  .mono{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
   }
-  .btn:active{ transform:scale(.96); }
-  .btn-mint-solid{ background:var(--mint); color:var(--ink-on-mint); }
-  .btn-mint-solid:hover{ transform:translateY(-2px); opacity:.92; }
-  .btn-mint-outline{ background:transparent; border-color:var(--mint); color:var(--mint); }
-  .btn-mint-outline:hover{ transform:translateY(-2px); background:rgba(143,216,180,.1); }
-  .btn-deep-solid{ background:var(--mint-deep); color:var(--cream-ink); }
-  .btn-deep-solid:hover{ transform:translateY(-2px); opacity:.9; }
-  .btn-ghost-dark{ background:transparent; border-color:var(--hairline-dark); color:var(--ivory); }
-  .btn-ghost-dark:hover{ border-color:var(--mint); color:var(--mint); transform:translateY(-2px); }
-  .btn-ghost-light{ background:transparent; border-color:var(--hairline-light); color:var(--ink); }
-  .btn-ghost-light:hover{ border-color:var(--mint-deep); color:var(--mint-deep); transform:translateY(-2px); }
-  .btn-ember-outline{ background:transparent; border-color:var(--ember); color:var(--ember); }
-  .btn-ember-outline:hover{ transform:translateY(-2px); background:rgba(192,40,31,.1); }
-  .btn-nav{ padding:.75em 1.4em; font-size:.75rem; }
-  .btn-row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
 
-  .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-
-  /* ---------- header ---------- */
-  .site-header{
-    position:sticky; top:0; z-index:40; background:var(--deep-space);
-    border-bottom:1px solid var(--hairline-dark);
+  /* ---------- Nav ---------- */
+  .nav{
+    position:relative;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-top:16px;
+    padding-bottom:16px;
   }
-  .site-header .wrap{ display:flex; align-items:center; justify-content:space-between; padding-block:14px; min-height:var(--header-h); gap:16px; }
-  .brand{ display:flex; align-items:center; gap:.65em; text-decoration:none; flex:none; }
-  .brand img{ width:30px; height:30px; flex:none; }
-  .brand span{ font-family:var(--font-display); text-transform:uppercase; font-size:1.02rem; letter-spacing:.01em; color:var(--cream-ink); }
-
-  .site-nav{ display:flex; align-items:center; gap:clamp(16px,2.6vw,30px); }
-  .site-nav a:not(.btn){ font:600 .76rem/1 var(--font-body); letter-spacing:.1em; text-transform:uppercase; text-decoration:none; color:var(--ivory-soft); transition:color .15s ease; }
-  .site-nav a:not(.btn):hover{ color:var(--mint); }
-  @media (max-width:900px){ .site-nav{ display:none; } }
-
-  .nav-toggle{
-    display:none; align-items:center; justify-content:center; width:42px; height:42px;
-    border-radius:50%; border:1.5px solid var(--hairline-dark); background:transparent; color:var(--ivory);
-    cursor:pointer; flex:none; transition:border-color .15s ease;
+  .nav__brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    animation:rise 700ms cubic-bezier(.16,1,.3,1) both;
   }
-  .nav-toggle:hover{ border-color:var(--mint); }
-  .nav-toggle svg{ width:18px; height:18px; }
-  .nav-toggle .icon-close{ display:none; }
-  .nav-toggle[aria-expanded="true"] .icon-open{ display:none; }
-  .nav-toggle[aria-expanded="true"] .icon-close{ display:block; }
-  @media (max-width:900px){ .nav-toggle{ display:inline-flex; } }
-
-  .mobile-nav{
-    max-height:0; overflow:hidden; background:var(--deep-space); border-bottom:1px solid transparent;
-    transition:max-height .32s cubic-bezier(.16,1,.3,1), border-color .2s ease;
+  .nav__brand img{width:auto;height:26px;}
+  .nav__brand span{
+    font-weight:700;
+    font-size:0.92rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink);
+    transform:translateY(-4px);
   }
-  .mobile-nav.is-open{ max-height:480px; border-bottom-color:var(--hairline-dark); }
-  .mobile-nav__inner{ display:flex; flex-direction:column; padding:6px var(--gutter) 26px; gap:4px; }
-  .mobile-nav a:not(.btn){ padding:13px 2px; font:600 .82rem/1 var(--font-body); letter-spacing:.1em; text-transform:uppercase; text-decoration:none; color:var(--ivory); border-bottom:1px solid var(--hairline-dark); }
-  .mobile-nav a:not(.btn):last-of-type{ border-bottom:none; }
-  .mobile-nav .btn{ margin-top:16px; justify-content:center; }
-  @media (min-width:901px){ .mobile-nav{ display:none; } }
+  .nav__right{
+    display:flex;
+    align-items:center;
+    gap:clamp(16px, 3vw, 32px);
+  }
+  .theme-toggle{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    padding:0;
+    transition:border-color 160ms ease, transform 160ms ease;
+    animation:rise 700ms cubic-bezier(.16,1,.3,1) 60ms both;
+  }
+  .theme-toggle:hover{border-color:var(--red);transform:translateY(-1px);}
+  .theme-toggle:active{transform:scale(0.94);}
+  .theme-toggle svg{width:18px;height:18px;}
+  .theme-toggle .icon-sun{display:none;}
+  :root[data-theme="dark"] .theme-toggle .icon-moon{display:none;}
+  :root[data-theme="dark"] .theme-toggle .icon-sun{display:block;}
 
-  /* ---------- hero ---------- */
-  .hero{ padding-block:clamp(48px,9vw,96px) clamp(56px,8vw,96px); }
-  .hero__bg{ position:absolute; inset:0; z-index:0; pointer-events:none; }
-  .hero__bg canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding-top:32px;
+    padding-bottom:20px;
+    overflow:hidden;
+  }
+  .hero__grain{
+    position:absolute;
+    inset:0;
+    opacity:var(--grain-opacity);
+    pointer-events:none;
+    mix-blend-mode:multiply;
+  }
+  :root[data-theme="dark"] .hero__grain{mix-blend-mode:overlay;}
   .hero__globe{
-    position:absolute; top:50%; right:-6%; transform:translateY(-50%);
-    width:clamp(260px,34vw,460px); aspect-ratio:1/1; border-radius:50%; overflow:hidden;
-    opacity:.32; will-change:transform;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:clamp(220px, 40vh, 400px);
+    aspect-ratio:1 / 1;
+    border-radius:50%;
+    overflow:hidden;
+    opacity:0;
+    pointer-events:none;
+    z-index:0;
+    transition:opacity 600ms ease;
   }
-  .hero__globe video{ width:100%; height:100%; object-fit:cover; }
+  :root[data-theme="dark"] .hero__globe{opacity:0.24;}
+  .hero__globe video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
   .hero__globe::after{
-    content:""; position:absolute; inset:0; border-radius:50%;
-    background:radial-gradient(circle at 32% 28%, rgba(255,255,255,.16), rgba(255,255,255,0) 42%),
-               radial-gradient(circle at 100% 100%, var(--deep-space) 0%, rgba(5,8,16,.2) 55%, rgba(5,8,16,0) 75%);
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 34% 30%, rgba(255,255,255,0.22), rgba(255,255,255,0) 42%),
+      radial-gradient(circle at 68% 72%, rgba(0,0,0,0.55), rgba(0,0,0,0) 62%);
   }
-  .hero__inner{ position:relative; z-index:2; }
-  .hero h1{ font-size:clamp(3.2rem,9vw,7.4rem); color:var(--cream-ink); max-width:13ch; letter-spacing:-.03em; }
-  .hero h1 .split-word{ display:inline-block; overflow:hidden; vertical-align:top; }
-  .hero h1 .split-char{ display:inline-block; will-change:transform,opacity; }
-  .hero__subhead{
-    font-family:var(--font-display); text-transform:uppercase; color:var(--mint);
-    font-size:clamp(1rem,2.1vw,1.35rem); margin-top:.55em; text-wrap:balance; letter-spacing:-.005em;
+  .hero__tag{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:0.8rem;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin:0 0 12px;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 160ms both;
   }
-  .hero__lede{ color:var(--ivory-soft); font-size:1.08rem; max-width:52ch; margin-top:1.3em; line-height:1.65; }
-  .hero__lede strong{ color:var(--ivory); font-weight:600; }
-  .hero .btn-row{ margin-top:2em; }
-  .hero__below{ margin-top:2.6em; padding-top:2em; border-top:1px solid var(--hairline-dark); font-size:.92rem; color:var(--ivory-soft); max-width:44ch; line-height:1.6; }
-  .hero__below b{ color:var(--ivory); font-weight:600; }
-
-  .hero__meta{
-    position:absolute; z-index:2; font-family:var(--font-mono); font-size:.72rem; letter-spacing:.12em;
-    text-transform:uppercase; color:var(--ivory-soft); white-space:nowrap;
+  .hero__tag::before{
+    content:"";
+    width:22px;
+    height:1.5px;
+    background:var(--red);
+    display:inline-block;
   }
-  .hero__meta--tl{ top:0; left:var(--gutter); }
-  .hero__meta--br{ bottom:0; right:var(--gutter); text-align:right; }
-  @media (max-width:640px){ .hero__meta{ display:none; } }
-
-  .fade-up{ animation:fadeUp .7s ease both; }
-  .fade-up.d1{ animation-delay:.08s; } .fade-up.d2{ animation-delay:.16s; } .fade-up.d3{ animation-delay:.24s; } .fade-up.d4{ animation-delay:.32s; }
-  @keyframes fadeUp{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
-
-  /* ---------- ticker ---------- */
-  .ticker{ background:var(--deep-space-card); border-top:1px solid var(--hairline-dark); border-bottom:1px solid var(--hairline-dark); overflow:hidden; padding-block:16px; }
-  .ticker__track{ display:flex; width:max-content; gap:0; animation:tickerScroll 26s linear infinite; }
-  .ticker__seg{ display:flex; align-items:center; gap:28px; padding-inline:28px; flex:none; }
-  .ticker__seg span{ font-family:var(--font-mono); font-size:.82rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ivory-soft); white-space:nowrap; }
-  .ticker__seg span.hot{ color:var(--mint); }
-  .ticker__seg .dot{ width:5px; height:5px; border-radius:50%; background:var(--mint-deep); flex:none; }
-  @keyframes tickerScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-  .ticker:hover .ticker__track{ animation-play-state:paused; }
-
-  /* ---------- impact stat ---------- */
-  .impact-stat{ text-align:center; }
-  .impact-stat .wrap{ display:flex; flex-direction:column; align-items:center; }
-  .impact-num{
-    font-family:var(--font-display); font-size:clamp(6rem,22vw,13.5rem); line-height:.82;
-    color:var(--mint); font-variant-numeric:tabular-nums; letter-spacing:-.03em;
+  .hero__stage{
+    position:relative;
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    align-items:center;
+    gap:clamp(16px, 4vw, 56px);
   }
-  .impact-num sup{ font-size:.28em; vertical-align:.5em; }
-  .impact-foot{ font:600 .82rem/1.6 var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ivory-soft); margin-top:.6em; max-width:44ch; }
-
-  /* ---------- manifesto ---------- */
-  .manifesto{ text-align:center; }
-  .manifesto .wrap{ display:flex; flex-direction:column; align-items:center; }
-  .manifesto blockquote{ margin:0; font-family:var(--font-display); text-transform:uppercase; color:var(--cream-ink); font-size:clamp(1.7rem,4.6vw,3.1rem); line-height:1.08; max-width:22ch; text-wrap:balance; }
-  .manifesto .mark{ width:34px; height:34px; margin-bottom:28px; opacity:.9; }
-
-  /* ---------- store ---------- */
-  .store-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(20px,3vw,28px); }
-  @media (max-width:900px){ .store-grid{ grid-template-columns:1fr 1fr; } }
-  @media (max-width:620px){ .store-grid{ grid-template-columns:1fr; } }
-  .product-card{ background:var(--paper-card); border:1px solid var(--hairline-light); overflow:hidden; display:flex; flex-direction:column; transition:border-color .2s ease; }
-  .product-card:hover{ border-color:var(--mint-deep); }
-  .product-card__photo{ aspect-ratio:4/3; background:#0D1220; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .product-card__photo img{ width:100%; height:100%; object-fit:cover; }
-  .product-card__body{ padding:22px clamp(18px,2.4vw,26px) 26px; display:flex; flex-direction:column; gap:8px; flex:1; }
-  .product-card h3{ font-family:var(--font-body); font-weight:700; text-transform:none; font-size:1.12rem; font-style:italic; letter-spacing:-.005em; }
-  .product-card__price{ font-family:var(--font-mono); font-weight:500; color:var(--mint-deep); font-size:.92rem; }
-  .product-card p.story{ font-size:.9rem; color:var(--ink-soft); line-height:1.6; margin-top:2px; flex:1; }
-  .product-card .btn{ align-self:flex-start; margin-top:14px; }
-  .product-card.soon{ align-items:center; justify-content:center; text-align:center; }
-  .product-card.soon .product-card__body{ align-items:center; justify-content:center; }
-  .product-card.soon h3{ font-style:normal; text-transform:uppercase; font-family:var(--font-display); font-weight:400; font-size:1.3rem; color:var(--ink); }
-
-  /* ---------- partnerships ---------- */
-  .partners-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
-  @media (max-width:820px){ .partners-grid{ grid-template-columns:repeat(3,1fr); } }
-  @media (max-width:520px){ .partners-grid{ grid-template-columns:repeat(2,1fr); } }
-  .partner-tile{
-    background:var(--paper); border:1px solid var(--hairline-light);
-    aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; padding:18px;
-    transition:border-color .2s ease;
+  .hero__logo{
+    position:relative;
+    height:min(38vh, 320px);
+    width:auto;
+    justify-self:start;
+    filter:drop-shadow(var(--logo-shadow));
+    animation:reveal 1000ms cubic-bezier(.16,1,.3,1) 80ms both;
   }
-  .partner-tile:hover{ border-color:var(--mint-deep); }
-  .partner-tile img{ max-width:100%; max-height:100%; object-fit:contain; filter:grayscale(1); opacity:.72; transition:filter .25s ease, opacity .25s ease; }
-  .partner-tile:hover img{ filter:grayscale(0); opacity:1; }
-  .partners-foot{ margin-top:clamp(28px,4vw,40px); display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
-  .partners-foot p{ max-width:52ch; color:var(--ink-soft); font-size:.98rem; line-height:1.6; }
-
-  /* ---------- podcast ---------- */
-  .podcast-inner{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(36px,5vw,64px); align-items:center; }
-  @media (max-width:860px){ .podcast-inner{ grid-template-columns:1fr; } }
-  .podcast-visual{
-    position:relative; background:var(--deep-space-card); border:1.5px solid var(--hairline-dark);
-    aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:hidden;
+  .hero__text{
+    position:relative;
+    z-index:2;
   }
-  .podcast-visual .rings{ position:absolute; inset:0; }
-  .podcast-visual .play{
-    position:relative; width:88px; height:88px; border-radius:50%; border:1.5px solid var(--mint);
-    display:flex; align-items:center; justify-content:center; color:var(--mint); flex:none;
+  .hero__headline{
+    margin:0;
+    font-weight:900;
+    text-transform:uppercase;
+    font-size:clamp(2.1rem, 5vw, 3.5rem);
+    line-height:0.98;
+    letter-spacing:-0.03em;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 220ms both;
   }
-  .podcast-visual .play svg{ width:26px; height:26px; margin-left:4px; }
-  .podcast-visual .ring{ position:absolute; top:50%; left:50%; border:1px solid var(--hairline-dark); border-radius:50%; transform:translate(-50%,-50%); }
-  .platforms{ display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:1.6em; }
-  .platforms span{ font-family:var(--font-mono); font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ivory-soft); }
-  .platforms span b{ color:var(--ivory); font-weight:600; }
-
-  /* ---------- community ---------- */
-  .community-inner{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,6vw,72px); align-items:start; }
-  @media (max-width:900px){ .community-inner{ grid-template-columns:1fr; } }
-
-  .email-form{ display:flex; flex-direction:column; gap:12px; max-width:440px; }
-  .form-field{ display:flex; flex-direction:column; gap:5px; }
-  .form-field span{ font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ivory-soft); }
-  .on-card .form-field span, .section:not(.on-dark):not(.on-dark2) .form-field span{ color:var(--ink-soft); }
-  .form-field input, .form-field textarea{
-    flex:1 1 auto; min-width:0; background:var(--deep-space-card); border:1.5px solid var(--hairline-dark);
-    color:var(--ivory); font-family:var(--font-body); font-size:1rem;
-    padding:.85em 1.05em; border-radius:10px; resize:vertical;
+  .hero__headline em{
+    color:var(--red);
+    font-style:normal;
   }
-  .form-field input::placeholder, .form-field textarea::placeholder{ color:var(--ivory-soft); }
-  .form-field input:focus, .form-field textarea:focus{ border-color:var(--mint); outline:none; }
-  .on-card .form-field input, .on-card .form-field textarea,
-  .section:not(.on-dark):not(.on-dark2) .form-field input, .section:not(.on-dark):not(.on-dark2) .form-field textarea{
-    background:var(--paper); border-color:var(--hairline-light); color:var(--ink);
+  .hero__body{
+    margin:14px 0 0;
+    max-width:42ch;
+    font-size:1.0625rem;
+    line-height:1.5;
+    color:var(--ink-soft);
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 300ms both;
   }
-  .on-card .form-field input:focus, .on-card .form-field textarea:focus,
-  .section:not(.on-dark):not(.on-dark2) .form-field input:focus, .section:not(.on-dark):not(.on-dark2) .form-field textarea:focus{ border-color:var(--mint-deep); }
-  .email-form .btn{ align-self:flex-start; margin-top:4px; }
-  .form-note{ font-size:.85rem; color:var(--ivory-soft); margin-top:2px; max-width:38ch; }
-  .form-success{
-    font-size:.98rem; max-width:440px; padding:1em 1.2em; margin-top:2px;
-    background:var(--deep-space-card); border:1px solid var(--hairline-dark); border-left:3px solid var(--mint);
+  .hero__body strong{color:var(--ink);font-weight:700;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:inherit;
+    font-size:0.95rem;
+    font-weight:700;
+    text-decoration:none;
+    padding:12px 24px;
+    border:1.5px solid var(--red);
+    border-radius:10px;
+    background:var(--red);
+    color:#fff;
+    cursor:pointer;
+    transition:transform 160ms cubic-bezier(.2,.8,.2,1), background 160ms ease, border-color 160ms ease;
   }
-  .form-success b{ color:var(--mint); }
-  .form-status{ font-size:.85rem; margin-top:.7em; font-weight:600; min-height:1.2em; color:var(--ember); }
+  .btn:hover{background:#8F130F;border-color:#8F130F;}
+  .btn:active{transform:scale(0.97);}
 
-  .social-row{ display:flex; gap:12px; margin-top:1.8em; }
-  .social-btn{
-    width:44px; height:44px; border-radius:50%; border:1.5px solid var(--hairline-dark); color:var(--ivory);
-    display:flex; align-items:center; justify-content:center; transition:border-color .15s ease, color .15s ease, transform .15s ease;
+  /* ---------- Follow ---------- */
+  .follow{
+    padding:clamp(24px, 3.4vw, 40px) 0;
+    border-top:1px solid var(--line);
   }
-  .social-btn:hover{ border-color:var(--mint); color:var(--mint); transform:translateY(-2px); }
-  .social-btn svg{ width:19px; height:19px; }
-
-  .perks-grid{ display:grid; grid-template-columns:1fr; gap:28px; margin-top:8px; }
-  .perk{ display:flex; gap:16px; }
-  .perk__num{ font-family:var(--font-mono); font-size:.85rem; font-weight:700; color:var(--mint); flex:none; width:2.4em; }
-  .perk h4{ font-family:var(--font-body); font-weight:700; text-transform:uppercase; letter-spacing:.03em; font-size:.98rem; margin:0 0 6px; color:var(--ivory); }
-  .perk p{ font-size:.92rem; line-height:1.6; color:var(--ivory-soft); max-width:38ch; }
-
-  /* ---------- contact ---------- */
-  .contact-inner{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(40px,6vw,72px); }
-  @media (max-width:900px){ .contact-inner{ grid-template-columns:1fr; } }
-  .contact-info{ display:flex; flex-direction:column; gap:26px; }
-  .contact-info .row{ display:flex; flex-direction:column; gap:4px; }
-  .contact-info .row span.label{ font-family:var(--font-mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); }
-  .contact-info .row a, .contact-info .row p{ font-size:1.05rem; font-weight:600; }
-  .contact-info .row a{ text-decoration:none; }
-  .contact-info .row a:hover{ color:var(--mint-deep); }
-
-  /* ---------- footer ---------- */
-  .site-footer .wrap{ padding-block:44px; }
-  .footer-top{ display:flex; flex-wrap:wrap; gap:24px 32px; align-items:flex-start; justify-content:space-between; }
-  .footer-brand{ display:flex; align-items:center; gap:.65em; text-decoration:none; }
-  .footer-brand img{ width:26px; height:26px; }
-  .footer-brand span{ font-family:var(--font-display); text-transform:uppercase; font-size:.95rem; color:var(--cream-ink); }
-  .footer-links{ display:flex; gap:24px; flex-wrap:wrap; }
-  .footer-links a{ font:600 .74rem/1 var(--font-body); letter-spacing:.1em; text-transform:uppercase; text-decoration:none; color:var(--ivory-soft); }
-  .footer-links a:hover{ color:var(--mint); }
-  .footer-copy{ width:100%; color:var(--ivory-soft); font-size:.78rem; line-height:1.7; padding-top:22px; border-top:1px solid var(--hairline-dark); margin-top:28px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
-
-  @media (max-width:600px){
-    .section{ padding-block:48px; }
+  .follow__inner{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:clamp(24px, 4vw, 48px);
+    align-items:center;
+  }
+  .follow__tag{
+    animation-delay:380ms;
+  }
+  .follow__head{
+    font-weight:900;
+    text-transform:uppercase;
+    font-size:clamp(1.5rem, 2.6vw, 2.125rem);
+    letter-spacing:-0.02em;
+    margin:0 0 10px;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 440ms both;
+  }
+  .follow__body{
+    max-width:40ch;
+    font-size:1.0625rem;
+    line-height:1.6;
+    color:var(--ink-soft);
+    margin:0;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 500ms both;
+  }
+  .follow__form{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    animation:rise 800ms cubic-bezier(.16,1,.3,1) 560ms both;
+  }
+  .follow__field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .follow__field span{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:0.75rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+  }
+  .follow__field input{
+    font-family:inherit;
+    font-size:0.95rem;
+    padding:10px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    color:var(--ink);
+    transition:border-color 160ms ease;
+  }
+  .follow__field input:focus-visible{
+    border-color:var(--red);
+  }
+  .follow__form .btn{align-self:flex-start;margin-top:6px;}
+  .follow__note{
+    font-size:0.9rem;
+    color:var(--red);
+    font-weight:700;
+    margin:4px 0 0;
   }
 
-  /* ---------- bon voyage heart flood ---------- */
-  .heart-flood{
-    position:fixed; inset:0; z-index:999; overflow:hidden; pointer-events:none;
+  /* ---------- Perks ---------- */
+  .perks{
+    padding:clamp(48px, 6vw, 80px) 0;
+    border-top:1px solid var(--line);
   }
-  .heart-flood__heart{
-    position:absolute; opacity:0; color:var(--ember);
-    transform-box:fill-box; transform-origin:center;
-    transform:scale(0) rotate(var(--rot,0deg));
-    animation-name:heartFlood; animation-timing-function:cubic-bezier(.34,1.56,.64,1); animation-fill-mode:forwards;
-    filter:drop-shadow(0 3px 6px rgba(5,8,16,.35));
+  .perks__grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:clamp(28px, 4vw, 48px);
   }
-  @keyframes heartFlood{
-    0%{ opacity:0; transform:scale(0) rotate(var(--rot,0deg)); }
-    18%{ opacity:1; transform:scale(1.15) rotate(var(--rot,0deg)); }
-    30%{ opacity:1; transform:scale(1) rotate(var(--rot,0deg)); }
-    78%{ opacity:1; transform:scale(1) rotate(var(--rot,0deg)); }
-    100%{ opacity:0; transform:scale(.7) rotate(var(--rot,0deg)) translateY(-14px); }
+  .perk__num{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:0.85rem;
+    font-weight:700;
+    color:var(--red);
+    letter-spacing:0.04em;
+    margin:0 0 14px;
+  }
+  .perk__title{
+    font-weight:900;
+    text-transform:uppercase;
+    font-size:1.125rem;
+    letter-spacing:-0.01em;
+    margin:0 0 10px;
+  }
+  .perk__body{
+    font-size:0.95rem;
+    line-height:1.6;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  @keyframes rise{
+    from{opacity:0; transform:translateY(16px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @keyframes reveal{
+    from{opacity:0; transform:translateY(14px) scale(0.94);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .nav__brand,.theme-toggle,.hero__logo,.hero__tag,.hero__headline,.hero__body,
+    .follow__head,.follow__body,.follow__form{animation:none;}
+  }
+
+  @media (max-width: 780px){
+    .nav{padding-top:12px;padding-bottom:12px;}
+    .hero{padding-top:4px;padding-bottom:12px;}
+    .hero__stage{grid-template-columns:1fr;gap:10px;}
+    .hero__logo{height:18vh;width:auto;margin:0 auto;justify-self:center;}
+    .hero__text{text-align:left;}
+    .hero__tag{margin-bottom:8px;}
+    .hero__body{margin-top:10px;}
+    .follow{padding:16px 0;}
+    .follow__inner{grid-template-columns:1fr;gap:16px;}
+    .follow__head{margin-bottom:6px;}
+    .perks__grid{grid-template-columns:1fr;gap:32px;}
+    .hero__globe{width:clamp(160px, 26vh, 260px);}
   }
 </style>
 </head>
 <body>
 
-<header class="site-header" id="siteHeader">
-  <div class="wrap">
-    <a href="#top" class="brand">
-      <img src="assets/logo.png" alt="">
-      <span>Force of Nature</span>
-    </a>
-    <nav class="site-nav" aria-label="Primary">
-      <a href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener">Store</a>
-      <a href="#podcast">Podcast</a>
-      <a href="#community">Community</a>
-      <a href="#partnerships">Partnerships</a>
-      <a href="#contact">Contact</a>
-      <a href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener" class="btn btn-mint-solid btn-nav">Shop the Tees</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileNav">
-      <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+<canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+
+<div class="wrap nav">
+  <a class="nav__brand" href="#top">
+    <img src="assets/logo.png" alt="">
+    <span>Force of Nature</span>
+  </a>
+  <div class="nav__right">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
     </button>
   </div>
-  <div class="mobile-nav" id="mobileNav">
-    <div class="mobile-nav__inner">
-      <a href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener">Store</a>
-      <a href="#podcast">Podcast</a>
-      <a href="#community">Community</a>
-      <a href="#partnerships">Partnerships</a>
-      <a href="#contact">Contact</a>
-      <a href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener" class="btn btn-mint-solid">Shop the Tees</a>
+</div>
+
+<header class="hero" id="top">
+  <svg class="hero__grain" width="100%" height="100%">
+    <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.03 0"/></filter>
+    <rect width="100%" height="100%" filter="url(#n)"/>
+  </svg>
+  <div class="hero__globe" aria-hidden="true">
+    <video id="globeVideo" src="assets/earth-globe.mp4" muted loop playsinline preload="auto"></video>
+  </div>
+  <div class="wrap hero__stage">
+    <img class="hero__logo" src="assets/logo.png" alt="Force of Nature heart logo, illustrated in red with black drips">
+    <div class="hero__text">
+      <p class="hero__tag mono">Where mission and lifestyle collide</p>
+      <h1 class="hero__headline">Wear it<br>like you<br><em>mean it.</em></h1>
+      <p class="hero__body">Force of Nature is a movement built around a simple idea, <strong>10% of every sale, not profit,</strong> goes toward reef, forest, and coastline conservation. No pledges, no opt-ins, the impact happens automatically the moment you wear it.</p>
     </div>
   </div>
 </header>
 
-<main id="top">
+<section class="follow" id="follow">
+  <div class="wrap follow__inner">
+    <div>
+      <p class="hero__tag follow__tag mono">Follow the journey</p>
+      <h2 class="follow__head">Welcome on board.</h2>
+      <p class="follow__body">From first idea to first shirt, get the behind-the-scenes updates as we build Force of Nature from the ground up. No spam, ever.</p>
+    </div>
+    <form class="follow__form" id="followForm">
+      <label class="follow__field">
+        <span>Name</span>
+        <input type="text" name="name" placeholder="Your name" autocomplete="name" required>
+      </label>
+      <label class="follow__field">
+        <span>Email</span>
+        <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+      </label>
+      <button type="submit" class="btn">Join the story</button>
+      <p class="follow__note" id="followNote" hidden>You're in. Watch your inbox.</p>
+    </form>
+  </div>
+</section>
 
-  <!-- HERO -->
-  <section class="section on-dark hero" id="hero">
-    <div class="hero__bg" aria-hidden="true">
-      <canvas id="heroStars"></canvas>
+<section class="perks">
+  <div class="wrap perks__grid">
+    <div class="perk">
+      <p class="perk__num mono">01</p>
+      <h3 class="perk__title">First access</h3>
+      <p class="perk__body">New drops and limited colourways before they hit the shop, plus early access to restocks.</p>
     </div>
-    <div class="hero__globe" id="heroGlobe" aria-hidden="true">
-      <video src="assets/earth-globe.mp4" muted loop playsinline autoplay preload="auto"></video>
+    <div class="perk">
+      <p class="perk__num mono">02</p>
+      <h3 class="perk__title">Impact reports</h3>
+      <p class="perk__body">Where the 10% actually goes, which reef, which forest, which coastline, and what changed because of it.</p>
     </div>
-    <p class="hero__meta hero__meta--tl fade-up">Force of Nature / 2026</p>
-    <p class="hero__meta hero__meta--br fade-up">Mauritius<br>Indian Ocean</p>
-    <div class="wrap hero__inner">
-      <p class="eyebrow fade-up">From Mauritius, with purpose</p>
-      <h1 id="heroHeadline">Wear it like you mean it.</h1>
-      <p class="hero__subhead fade-up d1">A tee with a second job.</p>
-      <p class="hero__lede fade-up d2"><strong>10% of every sale</strong> — not profit, the price on the tag — funds reef, forest, and coastline conservation across Mauritius. No pledges, no opt-ins. The impact happens the moment you wear it.</p>
-      <div class="btn-row fade-up d3">
-        <a href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener" class="btn btn-mint-outline">Shop the Tees</a>
-        <a href="#community" class="btn btn-ghost-dark">Join the Dispatch</a>
-        <button type="button" class="btn btn-ember-outline" id="bonVoyageBtn">Bon Voyage</button>
-      </div>
-      <p class="hero__below fade-up d4"><b>5 conservation partners</b> on the ground in Mauritius — reef, forest, and coastline work, funded automatically by every order.</p>
-    </div>
-  </section>
-
-  <!-- TICKER -->
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker__track" id="tickerTrack">
-      <div class="ticker__seg">
-        <span class="hot">10% of every sale</span><span class="dot"></span>
-        <span>Reef</span><span class="dot"></span>
-        <span>Forest</span><span class="dot"></span>
-        <span>Coastline</span><span class="dot"></span>
-        <span>Mauritius</span><span class="dot"></span>
-        <span class="hot">Not profit — the price on the tag</span><span class="dot"></span>
-      </div>
-      <div class="ticker__seg">
-        <span class="hot">10% of every sale</span><span class="dot"></span>
-        <span>Reef</span><span class="dot"></span>
-        <span>Forest</span><span class="dot"></span>
-        <span>Coastline</span><span class="dot"></span>
-        <span>Mauritius</span><span class="dot"></span>
-        <span class="hot">Not profit — the price on the tag</span><span class="dot"></span>
-      </div>
+    <div class="perk">
+      <p class="perk__num mono">03</p>
+      <h3 class="perk__title">The story behind it</h3>
+      <p class="perk__body">Founder notes from Mauritius, the people and places behind every shirt, not just marketing copy.</p>
     </div>
   </div>
+</section>
 
-  <!-- IMPACT STAT -->
-  <section class="section on-dark2 impact-stat reveal">
-    <div class="wrap">
-      <p class="eyebrow">Every sale, every time</p>
-      <p class="impact-num" id="statNum">0<sup>%</sup></p>
-      <p class="impact-foot">Goes to conservation, not margin — not of profit, the price on the tag.</p>
-    </div>
-  </section>
-
-  <!-- STORE -->
-  <section class="section" id="store">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow">01 — The Store</p>
-        <h2>Gear with a second job.</h2>
-        <p class="dek">Every piece is made to be worn loud — and to quietly fund the reef, forest, and coastline it was inspired by. 100% cotton, relaxed fit, shipped plastic-free from Mauritius.</p>
-      </div>
-      <div class="store-grid reveal">
-        <div class="product-card">
-          <div class="product-card__photo">
-            <img src="https://placehold.co/640x480/0D1220/EDEAE1?text=Deep+Space+Tee" alt="Deep Space Tee product photo placeholder — swap for real photography">
-          </div>
-          <div class="product-card__body">
-            <h3>Deep Space Tee</h3>
-            <div class="product-card__price">Rs 2,000.00</div>
-            <p class="story">The heart on the front is the spark that gets us moving. Flip it over for the planet — and "SA MÈRE," our quiet nod to Mother Nature.</p>
-            <a href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener" class="btn btn-deep-solid">Shop Deep Space</a>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="product-card__photo">
-            <img src="https://placehold.co/640x480/0D1220/EDEAE1?text=Warm+Cream+Tee" alt="Warm Cream Tee product photo placeholder — swap for real photography">
-          </div>
-          <div class="product-card__body">
-            <h3>Warm Cream Tee</h3>
-            <div class="product-card__price">Rs 2,000.00</div>
-            <p class="story">Same heart, same mission, lighter canvas. The colourway for anyone who runs hot in more ways than one.</p>
-            <a href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener" class="btn btn-deep-solid">Shop Warm Cream</a>
-          </div>
-        </div>
-        <div class="product-card soon">
-          <div class="product-card__body">
-            <h3>More drops<br>coming</h3>
-            <p class="story">New colourways and limited runs land first for people on the Dispatch.</p>
-            <a href="#community" class="btn btn-ghost-light">Get first access</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MANIFESTO -->
-  <section class="section on-dark manifesto reveal">
-    <div class="wrap">
-      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
-        <circle cx="16" cy="16" r="13" fill="#0060D0"/>
-        <path d="M6 12c3-3 8-3 11 0 2 2 3 5 1 8-3 1-7 0-9-2-2-2-4-4-3-6Z" fill="#2C9C4B"/>
-      </svg>
-      <blockquote>Not just a tee — a reminder of the power we have to transform ourselves and the world around us.</blockquote>
-    </div>
-  </section>
-
-  <!-- PARTNERSHIPS -->
-  <section class="section on-card" id="partnerships">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow">02 — Partnerships</p>
-        <h2>Credibility we didn't buy.</h2>
-        <p class="dek">10% of every sale goes directly to the organisations doing the real work — reef, forest, and coastline conservation on the ground in Mauritius. We show the receipts.</p>
-      </div>
-      <div class="partners-grid reveal">
-        <div class="partner-tile"><img src="assets/partners/MWF.png" alt="Mauritian Wildlife Foundation"></div>
-        <div class="partner-tile"><img src="assets/partners/RC.png" alt="Reef Conservation"></div>
-        <div class="partner-tile"><img src="assets/partners/ECO SUD.png" alt="Eco-Sud"></div>
-        <div class="partner-tile"><img src="assets/partners/JK.png" alt="Jungle Keepers"></div>
-        <div class="partner-tile"><img src="assets/partners/Force of nature foundation.png" alt="Force of Nature Foundation"></div>
-      </div>
-      <div class="partners-foot reveal">
-        <p>Run a conservation project, a brand, or an event that fits our mission? We're always open to partnerships that put more of every sale to work.</p>
-        <a href="#contact" class="btn btn-ghost-light">Become a partner</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- PODCAST -->
-  <section class="section on-dark" id="podcast">
-    <div class="wrap podcast-inner">
-      <div class="reveal">
-        <p class="eyebrow">03 — The Podcast</p>
-        <h2>Stories from the ground.<br>Coming soon.</h2>
-        <p class="dek">Founder notes, partner interviews, and the unfiltered version of how 10% actually turns into reef, forest, and coastline impact. First episode drops soon.</p>
-        <div class="platforms">
-          <span>Launching on <b>Spotify</b></span>
-          <span><b>Apple Podcasts</b></span>
-          <span><b>YouTube</b></span>
-        </div>
-        <div class="btn-row" style="margin-top:1.8em">
-          <a href="#community" class="btn btn-mint-outline">Get notified at launch</a>
-        </div>
-      </div>
-      <div class="reveal">
-        <div class="podcast-visual" aria-hidden="true">
-          <div class="rings">
-            <div class="ring" style="width:60%;height:60%"></div>
-            <div class="ring" style="width:80%;height:80%"></div>
-            <div class="ring" style="width:100%;height:100%"></div>
-          </div>
-          <div class="play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- COMMUNITY -->
-  <section class="section" id="community">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow">04 — Community</p>
-        <h2>Welcome on board.</h2>
-        <p class="dek">From first idea to first shirt — get behind-the-scenes updates, impact reports, and first access as we build Force of Nature from the ground up. No spam, ever.</p>
-      </div>
-    </div>
-    <div class="wrap community-inner">
-      <div class="reveal">
-        <!-- TODO: replace FORM_ID below with your ConvertKit form's ID (Grow > Landing Pages & Forms > your form > Embed > copy the numeric ID from the action URL). -->
-        <form class="email-form" id="community-form" action="https://app.kit.com/forms/FORM_ID/subscriptions" method="post" novalidate>
-          <label class="form-field">
-            <span>Name</span>
-            <input type="text" name="first_name" placeholder="Your name" autocomplete="given-name">
-          </label>
-          <label class="form-field">
-            <span>Email</span>
-            <input type="email" id="community-email" name="email_address" placeholder="you@example.com" required autocomplete="email" inputmode="email">
-          </label>
-          <button type="submit" class="btn btn-mint-solid">Join the Dispatch</button>
-        </form>
-        <p class="form-status" id="community-status" role="status" aria-live="polite"></p>
-        <p class="form-success" id="community-success" hidden>You're on the list. Check <b class="success-email">your inbox</b> for a note from Mauritius.</p>
-
-        <div class="social-row" aria-label="Follow Force of Nature">
-          <!-- TODO: point these at your real social profiles. -->
-          <a class="social-btn" href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg></a>
-          <a class="social-btn" href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 3c.5 2.3 2 3.8 4.3 4v3c-1.5 0-2.9-.4-4.3-1.2v6.6c0 3.6-2.9 6.6-6.6 6.6S3 19 3 15.4s2.9-6.6 6.6-6.6c.4 0 .8 0 1.2.1v3.1a3.4 3.4 0 1 0 2.4 3.3V3H16Z"/></svg></a>
-          <a class="social-btn" href="mailto:hello@theforceofnature.com" aria-label="Email us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></a>
-        </div>
-      </div>
-
-      <div class="perks-grid reveal">
-        <div class="perk">
-          <span class="perk__num">01</span>
-          <div><h4>First access</h4><p>New drops and limited colourways before they hit the shop, plus early access to restocks.</p></div>
-        </div>
-        <div class="perk">
-          <span class="perk__num">02</span>
-          <div><h4>Impact reports</h4><p>Where the 10% actually goes — which reef, which forest, and what changed because of it.</p></div>
-        </div>
-        <div class="perk">
-          <span class="perk__num">03</span>
-          <div><h4>The story behind it</h4><p>Founder notes from Mauritius — the people and places behind every shirt, not just marketing copy.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="section on-dark" id="contact">
-    <div class="wrap contact-inner">
-      <div class="reveal">
-        <p class="eyebrow">05 — Get In Touch</p>
-        <h2>Say hello.</h2>
-        <p class="dek">Press, partnerships, wholesale, or just want to talk conservation — we read everything.</p>
-
-        <!-- TODO: this form opens the visitor's email client via mailto. Replace with a real form backend (e.g. Formspree) when ready, and confirm the contact address. -->
-        <form class="email-form" id="contact-form" style="margin-top:2em">
-          <label class="form-field">
-            <span>Name</span>
-            <input type="text" id="contact-name" placeholder="Your name" required autocomplete="name">
-          </label>
-          <label class="form-field">
-            <span>Email</span>
-            <input type="email" id="contact-email" placeholder="you@example.com" required autocomplete="email" inputmode="email">
-          </label>
-          <label class="form-field">
-            <span>Message</span>
-            <textarea id="contact-message" rows="4" placeholder="What's on your mind?" required></textarea>
-          </label>
-          <button type="submit" class="btn btn-mint-solid">Send message</button>
-        </form>
-      </div>
-
-      <div class="contact-info reveal">
-        <div class="row">
-          <span class="label">Email</span>
-          <a href="mailto:hello@theforceofnature.com">hello@theforceofnature.com</a>
-        </div>
-        <div class="row">
-          <span class="label">Based in</span>
-          <p>Mauritius</p>
-        </div>
-        <div class="row">
-          <span class="label">Wholesale &amp; press</span>
-          <a href="mailto:hello@theforceofnature.com?subject=Wholesale%20%2F%20Press%20inquiry">Start a conversation</a>
-        </div>
-        <div class="social-row" aria-label="Follow Force of Nature">
-          <a class="social-btn" href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg></a>
-          <a class="social-btn" href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 3c.5 2.3 2 3.8 4.3 4v3c-1.5 0-2.9-.4-4.3-1.2v6.6c0 3.6-2.9 6.6-6.6 6.6S3 19 3 15.4s2.9-6.6 6.6-6.6c.4 0 .8 0 1.2.1v3.1a3.4 3.4 0 1 0 2.4 3.3V3H16Z"/></svg></a>
-          <a class="social-btn" href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener" aria-label="Visit the store"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9V6a3 3 0 0 1 6 0v3M4 9h10l1 11H3z"/></svg></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer class="site-footer on-dark">
-  <div class="wrap">
-    <div class="footer-top">
-      <a href="#top" class="footer-brand">
-        <img src="assets/logo.png" alt="">
-        <span>Force of Nature</span>
-      </a>
-      <div class="footer-links">
-        <a href="https://theforceofnature.myshopify.com/" target="_blank" rel="noopener">Store</a>
-        <a href="#podcast">Podcast</a>
-        <a href="#community">Community</a>
-        <a href="#partnerships">Partnerships</a>
-        <a href="#contact">Contact</a>
-      </div>
-    </div>
-    <div class="footer-copy">
-      <span>© 2026 Force of Nature. Shipped plastic-free from Mauritius.</span>
-      <span>You're getting this because you asked to hear from us. Unsubscribe anytime.</span>
-    </div>
-  </div>
-</footer>
-
-<div class="heart-flood" id="heartFlood" aria-hidden="true"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-(function(){
-  "use strict";
-  var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---------- mobile nav ---------- */
-  var toggle = document.getElementById('navToggle');
-  var mobileNav = document.getElementById('mobileNav');
-  toggle.addEventListener('click', function(){
-    var open = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!open));
-    mobileNav.classList.toggle('is-open', !open);
-  });
-  mobileNav.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click', function(){
-      toggle.setAttribute('aria-expanded', 'false');
-      mobileNav.classList.remove('is-open');
-    });
-  });
-
-  /* ---------- hero split-text reveal ---------- */
   (function(){
-    var el = document.getElementById('heroHeadline');
-    var text = el.textContent;
-    var words = text.split(' ');
-    el.textContent = '';
-    words.forEach(function(word, wi){
-      var wrap = document.createElement('span');
-      wrap.className = 'split-word';
-      word.split('').forEach(function(ch, ci){
-        var s = document.createElement('span');
-        s.className = 'split-char';
-        s.textContent = ch;
-        s.style.opacity = reduceMotion ? '1' : '0';
-        s.style.transform = reduceMotion ? 'none' : 'translateY(120%)';
-        wrap.appendChild(s);
-      });
-      el.appendChild(wrap);
-      if(wi < words.length - 1) el.appendChild(document.createTextNode(' '));
+    var btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', function(){
+      var root = document.documentElement;
+      var current = root.getAttribute('data-theme') || 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      syncGlobe(next);
     });
-
-    if(!reduceMotion && window.gsap){
-      gsap.to(el.querySelectorAll('.split-char'), {
-        y:0, opacity:1, duration:.8, ease:'expo.out', stagger:.018, delay:.15
-      });
-    } else if(!window.gsap){
-      el.querySelectorAll('.split-char').forEach(function(s){ s.style.opacity = '1'; s.style.transform = 'none'; });
-    }
   })();
 
-  /* ---------- stat counter ---------- */
   (function(){
-    var numeral = document.getElementById('statNum');
-    if(!numeral) return;
-    if(reduceMotion){ numeral.firstChild.nodeValue = '10'; return; }
-    var target = 10, startTime = null, duration = 900;
-    function tick(ts){
-      if(startTime === null) startTime = ts;
-      var progress = Math.min((ts - startTime) / duration, 1);
-      numeral.firstChild.nodeValue = Math.round(progress * target);
-      if(progress < 1){ requestAnimationFrame(tick); }
-    }
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){ requestAnimationFrame(tick); io.disconnect(); }
-      });
-    }, { threshold:.6 });
-    io.observe(numeral);
+    var form = document.getElementById('followForm');
+    var note = document.getElementById('followNote');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      note.hidden = false;
+      form.reset();
+    });
   })();
 
-  /* ---------- scroll-triggered reveals + parallax (GSAP) ---------- */
-  if(window.gsap && window.ScrollTrigger && !reduceMotion){
-    gsap.registerPlugin(ScrollTrigger);
+  var syncGlobe = (function(){
+    var video = document.getElementById('globeVideo');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return function(theme){
+      if(theme === 'dark' && !reduceMotion){
+        video.play();
+      } else {
+        video.pause();
+      }
+    };
+  })();
+  syncGlobe(document.documentElement.getAttribute('data-theme'));
 
-    document.querySelectorAll('.reveal').forEach(function(el){
-      var kids = el.children.length ? Array.prototype.slice.call(el.children) : [el];
-      gsap.from(kids, {
-        opacity:0, y:26, duration:.6, stagger:.09, ease:'power2.out',
-        scrollTrigger:{ trigger:el, start:'top 85%' }
-      });
-    });
-
-    gsap.to('#heroGlobe', {
-      yPercent:14, ease:'none',
-      scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:.6 }
-    });
-  }
-
-  /* ---------- hero starfield (scoped canvas, ambient) ---------- */
   (function(){
-    var canvas = document.getElementById('heroStars');
-    var hero = document.getElementById('hero');
+    var canvas = document.getElementById('starfield');
     var ctx = canvas.getContext('2d');
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var stars = [];
+    var resizeTimer;
 
-    function seed(w, h){
-      var count = Math.max(50, Math.min(Math.round((w * h) / 12000), 220));
+    function seedStars(){
+      var count = Math.round((window.innerWidth * window.innerHeight) / 9000);
+      count = Math.max(60, Math.min(count, 180));
       stars = [];
       for(var i = 0; i < count; i++){
+        var glow = Math.random() < 0.05;
         stars.push({
-          x: Math.random() * w, y: Math.random() * h,
-          r: (0.5 + Math.random() * 1.2) * dpr,
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: (glow ? (1.6 + Math.random() * 1.4) : (0.5 + Math.random() * 1.1)) * dpr,
           base: 0.25 + Math.random() * 0.5,
-          amp: reduceMotion ? 0 : 0.25 + Math.random() * 0.35,
+          amp: 0.25 + Math.random() * 0.35,
           speed: 0.4 + Math.random() * 0.8,
-          phase: Math.random() * Math.PI * 2
+          phase: Math.random() * Math.PI * 2,
+          glow: glow
         });
       }
     }
 
     function resize(){
-      var w = hero.clientWidth, h = hero.clientHeight;
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      seed(canvas.width, canvas.height);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      seedStars();
     }
 
     function loop(t){
       requestAnimationFrame(loop);
       if(document.hidden) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if(document.documentElement.getAttribute('data-theme') !== 'dark') return;
       for(var i = 0; i < stars.length; i++){
         var s = stars[i];
-        var o = s.base + s.amp * Math.sin(t * 0.001 * s.speed + s.phase);
+        var o = reduceMotion ? s.base : s.base + s.amp * Math.sin(t * 0.001 * s.speed + s.phase);
         o = Math.max(0, Math.min(1, o));
-        ctx.fillStyle = 'rgba(237,234,225,' + o + ')';
+        if(s.glow){
+          var grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 6);
+          grad.addColorStop(0, 'rgba(193,27,21,' + (o * 0.35) + ')');
+          grad.addColorStop(1, 'rgba(193,27,21,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r * 6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = 'rgba(243,237,225,' + o + ')';
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fill();
       }
     }
 
-    var resizeTimer;
     window.addEventListener('resize', function(){
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(resize, 150);
     });
-    window.addEventListener('load', resize);
     resize();
     requestAnimationFrame(loop);
   })();
-
-  /* ---------- bon voyage heart flood ---------- */
-  (function(){
-    var HEART_PATH = 'M12 21s-7.5-4.6-10-9.3C.4 8.4 2 4.8 5.3 4a5 5 0 0 1 6.7 2 5 5 0 0 1 6.7-2c3.3.8 4.9 4.4 3.3 7.7C19.5 16.4 12 21 12 21z';
-    var SVG_NS = 'http://www.w3.org/2000/svg';
-    var btn = document.getElementById('bonVoyageBtn');
-    var overlay = document.getElementById('heartFlood');
-    if(!btn || !overlay) return;
-
-    function buildHeart(){
-      var svg = document.createElementNS(SVG_NS, 'svg');
-      svg.setAttribute('viewBox', '0 0 24 24');
-      svg.classList.add('heart-flood__heart');
-      var path = document.createElementNS(SVG_NS, 'path');
-      path.setAttribute('d', HEART_PATH);
-      path.setAttribute('fill', 'currentColor');
-      svg.appendChild(path);
-      return svg;
-    }
-
-    btn.addEventListener('click', function(){
-      if(overlay.dataset.busy === '1') return;
-
-      if(reduceMotion){
-        overlay.dataset.busy = '1';
-        var still = buildHeart();
-        still.style.left = '50vw'; still.style.top = '50vh';
-        still.style.width = '80px'; still.style.height = '80px';
-        still.style.marginLeft = '-40px'; still.style.marginTop = '-40px';
-        still.style.opacity = '1'; still.style.animation = 'none'; still.style.transform = 'scale(1)';
-        overlay.appendChild(still);
-        setTimeout(function(){ overlay.innerHTML = ''; overlay.dataset.busy = '0'; }, 900);
-        return;
-      }
-
-      overlay.dataset.busy = '1';
-      overlay.innerHTML = '';
-
-      var COUNT = 140;
-      var colors = ['var(--ember)', 'var(--ember)', 'var(--ember)', 'var(--mint-deep)'];
-      var maxFinish = 0;
-
-      for(var i = 0; i < COUNT; i++){
-        var heart = buildHeart();
-        var size = 20 + Math.random() * 48;
-        var delay = Math.random() * 700;
-        var dur = 1600 + Math.random() * 700;
-        heart.style.left = (Math.random() * 100) + 'vw';
-        heart.style.top = (Math.random() * 100) + 'vh';
-        heart.style.width = size + 'px';
-        heart.style.height = size + 'px';
-        heart.style.setProperty('--rot', (Math.random() * 44 - 22) + 'deg');
-        heart.style.color = colors[Math.floor(Math.random() * colors.length)];
-        heart.style.animationDelay = delay + 'ms';
-        heart.style.animationDuration = dur + 'ms';
-        overlay.appendChild(heart);
-        maxFinish = Math.max(maxFinish, delay + dur);
-      }
-
-      setTimeout(function(){
-        overlay.innerHTML = '';
-        overlay.dataset.busy = '0';
-      }, maxFinish + 80);
-    });
-  })();
-
-  /* ---------- magnetic hover on primary CTAs ---------- */
-  if(window.matchMedia && matchMedia('(hover:hover)').matches && !reduceMotion){
-    document.querySelectorAll('.btn-mint-outline, .btn-mint-solid, .btn-deep-solid, .btn-ember-outline').forEach(function(btn){
-      btn.addEventListener('mousemove', function(e){
-        var r = btn.getBoundingClientRect();
-        var x = (e.clientX - r.left - r.width/2) * 0.18;
-        var y = (e.clientY - r.top - r.height/2) * 0.35;
-        btn.style.transform = 'translate(' + x + 'px,' + (y - 2) + 'px)';
-      });
-      btn.addEventListener('mouseleave', function(){ btn.style.transform = ''; });
-    });
-  }
-
-  /* ---------- email form (ConvertKit) ---------- */
-  function wireEmailForm(formId, statusId, successId){
-    var form = document.getElementById(formId);
-    var status = document.getElementById(statusId);
-    var success = document.getElementById(successId);
-    if(!form) return;
-    form.addEventListener('submit', async function(evt){
-      evt.preventDefault();
-      var input = form.querySelector('input[type="email"]');
-      if(!input.checkValidity()){ input.reportValidity(); return; }
-      if(form.action.includes('FORM_ID')){
-        status.textContent = 'Form not connected yet — add your ConvertKit form ID in index.html.';
-        return;
-      }
-      status.textContent = 'Joining…';
-      try{
-        await fetch(form.action, { method:'POST', mode:'no-cors', body:new FormData(form) });
-        var emailSpan = success.querySelector('.success-email');
-        if(emailSpan) emailSpan.textContent = input.value;
-        status.textContent = '';
-        form.hidden = true;
-        success.hidden = false;
-      }catch(err){
-        status.textContent = 'Something went wrong — please try again.';
-      }
-    });
-  }
-  wireEmailForm('community-form', 'community-status', 'community-success');
-
-  /* ---------- contact form (mailto fallback) ---------- */
-  (function(){
-    var form = document.getElementById('contact-form');
-    if(!form) return;
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      var name = document.getElementById('contact-name').value;
-      var email = document.getElementById('contact-email').value;
-      var message = document.getElementById('contact-message').value;
-      var subject = encodeURIComponent('Hello from ' + name);
-      var body = encodeURIComponent(message + '\n\n— ' + name + ' (' + email + ')');
-      window.location.href = 'mailto:hello@theforceofnature.com?subject=' + subject + '&body=' + body;
-    });
-  })();
-})();
 </script>
 
 </body>
