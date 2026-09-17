@@ -144,9 +144,15 @@
     transform:rotateX(calc(-32deg + var(--tilt))) rotateY(var(--spin));
     --spin:0deg;--tilt:0deg;
   }
+  /* the ring lines sit in a wrapper that cancels the spin (same trick as the heart), so the
+     mask below stays put: it hides the far arc, where the ring would show through the black hole,
+     and the ring reads as running into it. The far apex is the top of each line's own box. */
+  .orbit__ring{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;transform:rotateY(calc(-1 * var(--spin)));}
   .orbit__line{
     position:absolute;left:calc(var(--R) * -1);top:calc(var(--R) * -1);width:calc(var(--R) * 2);height:calc(var(--R) * 2);
     border-radius:50%;border:1px solid rgba(244,241,236,.34);transform:rotateX(90deg);
+    -webkit-mask-image:radial-gradient(ellipse 46% 26% at 50% 0%, transparent 62%, #000 100%);
+    mask-image:radial-gradient(ellipse 46% 26% at 50% 0%, transparent 62%, #000 100%);
   }
   .orbit__line--body{border-width:14px;border-color:rgba(244,241,236,.055);}
   .orbit__line--glow{border-width:3px;border-color:rgba(244,241,236,.28);filter:blur(7px);}
@@ -339,11 +345,13 @@
     <div class="hero__stage">
       <div class="orbit" id="orbit">
         <div class="orbit__sys" id="sys">
-          <div class="orbit__line orbit__line--body" aria-hidden="true"></div>
-          <div class="orbit__line orbit__line--glow" aria-hidden="true"></div>
-          <div class="orbit__line orbit__line--r" aria-hidden="true"></div>
-          <div class="orbit__line orbit__line--c" aria-hidden="true"></div>
-          <div class="orbit__line" aria-hidden="true"></div>
+          <div class="orbit__ring" aria-hidden="true">
+            <div class="orbit__line orbit__line--body"></div>
+            <div class="orbit__line orbit__line--glow"></div>
+            <div class="orbit__line orbit__line--r"></div>
+            <div class="orbit__line orbit__line--c"></div>
+            <div class="orbit__line"></div>
+          </div>
           <div class="orbit__spark" id="spark" aria-hidden="true"></div>
           <img class="orbit__heart" src="assets/logo.png" alt="Force of Nature heart">
           <a class="window" href="#classic" style="--i:0" data-window>
@@ -691,6 +699,9 @@
       sys.style.setProperty('--spin', spin + 'deg');
       sys.style.setProperty('--tilt', tilt + 'deg');
       spark.style.setProperty('--sa', (-spin * 1.6) + 'deg');
+      // the spark's angle in the system is spin + sa = -.6 spin; hide it on the far side like the ring
+      const sparkFront = (Math.cos(spin * -.6 * Math.PI / 180) + 1) / 2;
+      spark.style.opacity = Math.max(0, Math.min(1, (sparkFront - .3) / .25)).toFixed(3);
       for (let i = 0; i < windows.length; i++) {
         const a = ((i * 72 + spin) % 360) * Math.PI / 180;
         windows[i].style.setProperty('--front', ((Math.cos(a) + 1) / 2).toFixed(3));
