@@ -257,6 +257,35 @@
   .btn:hover{background:#8F130F;border-color:#8F130F;}
   .btn:active{transform:scale(0.97);}
 
+  /* ---------- Bon Voyage CTA ---------- */
+  .voyage{
+    padding:clamp(40px, 6vw, 72px) 0 clamp(56px, 8vw, 96px);
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:center;
+  }
+  .voyage__btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-family:inherit;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    text-decoration:none;
+    font-size:clamp(1.25rem, 2.4vw, 1.75rem);
+    padding:clamp(20px, 3vw, 28px) clamp(40px, 6vw, 72px);
+    border-radius:16px;
+    border:2px solid var(--red);
+    background:var(--red);
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 18px 40px -16px rgba(193,27,21,0.55);
+    transition:transform 160ms cubic-bezier(.2,.8,.2,1), background 160ms ease, box-shadow 160ms ease;
+  }
+  .voyage__btn:hover{background:#8F130F;border-color:#8F130F;box-shadow:0 22px 48px -14px rgba(143,19,15,0.6);transform:translateY(-2px);}
+  .voyage__btn:active{transform:scale(0.97);}
+
   /* ---------- Follow ---------- */
   .follow{
     padding:clamp(24px, 3.4vw, 40px) 0;
@@ -337,7 +366,8 @@
   }
   .perks__grid{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns:1fr;
+    max-width:360px;
     gap:clamp(28px, 4vw, 48px);
   }
   .perk__num{
@@ -456,17 +486,11 @@
       <h3 class="perk__title">First access</h3>
       <p class="perk__body">New drops and limited colourways before they hit the shop, plus early access to restocks.</p>
     </div>
-    <div class="perk">
-      <p class="perk__num mono">02</p>
-      <h3 class="perk__title">Impact reports</h3>
-      <p class="perk__body">Where the 10% actually goes, which reef, which forest, which coastline, and what changed because of it.</p>
-    </div>
-    <div class="perk">
-      <p class="perk__num mono">03</p>
-      <h3 class="perk__title">The story behind it</h3>
-      <p class="perk__body">Founder notes from Mauritius, the people and places behind every shirt, not just marketing copy.</p>
-    </div>
   </div>
+</section>
+
+<section class="voyage">
+  <a class="voyage__btn" href="http://localhost:3001">Bon Voyage</a>
 </section>
 
 <script>
