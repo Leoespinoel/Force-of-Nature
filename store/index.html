@@ -61,6 +61,20 @@
   }
   #stars,#bloom{position:fixed;inset:0;z-index:1;width:100%;height:100%;pointer-events:none;opacity:0;}
   #bloom{z-index:0;--reveal:0;--fade:1;opacity:calc(var(--reveal) * var(--fade));}
+  /* ---------- black hole: a Seedance 2.5 clip screened over the sky in the top band ----------
+     Two copies of the same clip; the loop is a .7s crossfade between them. The clip's own black
+     keeps the event horizon black; an elliptical mask melts its edges into the sky. It sits
+     under the star canvas so stars and meteors pass in front of it. */
+  .hole{
+    position:fixed;left:50%;top:21vh;z-index:1;width:min(680px, 50vw);aspect-ratio:16/9;
+    transform:translate(-50%,-50%);pointer-events:none;
+    -webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%, #000 52%, transparent 100%);
+    mask-image:radial-gradient(ellipse 50% 50% at 50% 50%, #000 52%, transparent 100%);
+    --reveal:0;--fade:1;opacity:calc(var(--reveal) * var(--fade));
+  }
+  .hole video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .7s linear;}
+  .hole video.is-on{opacity:1;}
+  @media (max-width:900px){.hole{width:130vw;top:28vh;}}
   main{position:relative;z-index:2;}
 
   /* ---------- loader ---------- */
@@ -278,7 +292,7 @@
     .plane{clip-path:polygon(0 18%, 100% 5%, 100% 100%, 0 100%) !important;}
     .wordmark{clip-path:none !important;}
     .brand,.menu,.pill,#stars{opacity:1 !important;}
-    #bloom{--reveal:1;}
+    #bloom,.hole{--reveal:1;}
     .card:hover::after{animation:none;}
     .card img,.card__name{transition:none;}
   }
@@ -294,6 +308,10 @@
 
 <div class="nebula" aria-hidden="true"></div>
 <canvas id="bloom" aria-hidden="true"></canvas>
+<div class="hole" id="hole" aria-hidden="true">
+  <video src="assets/hole.mp4" muted playsinline preload="auto"></video>
+  <video src="assets/hole.mp4" muted playsinline preload="auto"></video>
+</div>
 <canvas id="stars" aria-hidden="true"></canvas>
 
 <div class="chrome">
@@ -549,7 +567,7 @@
     { c: '112,52,40',   x: .94, y: .74,  rx: .34, ry: .28, a: .18, sp: .00010, ph: 5.1 },
   ];
   function drawBloom(t, fade) {
-    if (fade !== bloomFade) { bloomFade = fade; bloom.style.setProperty('--fade', fade.toFixed(3)); }
+    if (fade !== bloomFade) { bloomFade = fade; bloom.style.setProperty('--fade', fade.toFixed(3)); hole.style.setProperty('--fade', fade.toFixed(3)); holeSleep(fade <= 0); }
     if (fade <= 0) return;
     if (bloomTick++ % 3) return;
     bloomH = Math.max(40, Math.round(BLOOM_W * H / W));
@@ -568,6 +586,28 @@
       bctx.restore();
     }
   }
+
+  /* ---------- black hole loop: two copies of the clip, .7s crossfade at the seam ---------- */
+  const hole = $('#hole'), holeVids = $$('video', hole);
+  const HOLE_XF = .7; let holeCur = 0, holeOn = false, holeAsleep = false;
+  function holeStart() {
+    holeOn = true;
+    const v = holeVids[holeCur]; v.currentTime = 0; v.classList.add('is-on'); v.play().catch(() => {});
+  }
+  function holeSleep(asleep) {
+    if (asleep === holeAsleep || !holeOn) return;
+    holeAsleep = asleep;
+    if (asleep) holeVids.forEach((v) => v.pause()); else holeVids[holeCur].play().catch(() => {});
+  }
+  holeVids.forEach((v, i) => v.addEventListener('timeupdate', () => {
+    if (i !== holeCur || !v.duration || holeAsleep) return;
+    if (v.duration - v.currentTime > HOLE_XF) return;
+    const n = holeVids[1 - i];
+    n.currentTime = 0; n.play().catch(() => {}); n.classList.add('is-on');
+    v.classList.remove('is-on'); holeCur = 1 - i;
+    setTimeout(() => { if (holeCur !== i) v.pause(); }, HOLE_XF * 1000 + 50);
+  }));
+  if (RM) { holeVids[0].classList.add('is-on'); holeVids[0].addEventListener('loadeddata', () => { holeVids[0].currentTime = .1; }, { once: true }); }
 
   /* ---------- meteors: a streak every 3–5 s across the top third, hero only ----------
      Long tail with a soft outer glow and a bright head; one in four comes as a pair. */
@@ -761,6 +801,8 @@
     const tl = gsap.timeline();
     tl.to('#stars', { opacity: 1, duration: 1.4, ease: 'power2.out' }, 0)
       .to('#bloom', { '--reveal': 1, duration: 1.4, ease: 'power2.out' }, 0)
+      .add(holeStart, 0)
+      .to('#hole', { '--reveal': 1, duration: 1.6, ease: 'power2.out' }, .2)
       .to(orbit, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, .1)
       .to(['.brand', '.menu', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
     if (!intro) tl.progress(1);
