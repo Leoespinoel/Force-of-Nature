@@ -76,9 +76,17 @@
   }
 
   /* ---------- Nav ---------- */
+  .nav-bar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--bg);
+    border-bottom:1px solid transparent;
+    transition:background 220ms ease, border-color 220ms ease;
+  }
+  .nav-bar.is-scrolled{border-color:var(--line);}
   .nav{
     position:relative;
-    z-index:5;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -102,9 +110,52 @@
     transform:translateY(-4px);
   }
   .nav__right{
+    position:relative;
     display:flex;
     align-items:center;
     gap:clamp(16px, 3vw, 32px);
+  }
+
+  /* ---------- Hand-drawn ink arrow pointing at the theme toggle ---------- */
+  .toggle-hint{
+    position:absolute;
+    top:6px;
+    right:44px;
+    width:118px;
+    height:78px;
+    overflow:visible;
+    pointer-events:none;
+    color:var(--red);
+    animation:inkNudge 1.8s cubic-bezier(.45,0,.55,1) 2.3s infinite;
+  }
+  .toggle-hint path{
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2.4;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    filter:url(#inkWobble);
+  }
+  .toggle-hint .ink-curve{
+    stroke-dasharray:190;
+    stroke-dashoffset:190;
+    animation:inkDraw 950ms cubic-bezier(.3,.7,.2,1) 1050ms forwards;
+  }
+  .toggle-hint .ink-head{
+    stroke-dasharray:40;
+    stroke-dashoffset:40;
+    animation:inkDraw 320ms ease-out 1900ms forwards;
+  }
+  @keyframes inkDraw{
+    to{stroke-dashoffset:0;}
+  }
+  @keyframes inkNudge{
+    0%,100%{transform:translate(0,0) rotate(0deg);}
+    50%{transform:translate(3px,-3px) rotate(-2deg);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .toggle-hint{animation:none;}
+    .toggle-hint .ink-curve,.toggle-hint .ink-head{animation:none;stroke-dashoffset:0;}
   }
   .theme-toggle{
     display:inline-flex;
@@ -405,6 +456,7 @@
   }
 
   @media (max-width: 780px){
+    .toggle-hint{width:88px;height:58px;top:4px;right:42px;}
     .nav{padding-top:12px;padding-bottom:12px;}
     .hero{padding-top:4px;padding-bottom:12px;}
     .hero__stage{grid-template-columns:1fr;gap:10px;}
@@ -424,16 +476,28 @@
 
 <canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
 
-<div class="wrap nav">
-  <a class="nav__brand" href="#top">
-    <img src="assets/logo.png" alt="">
-    <span>Force of Nature</span>
-  </a>
-  <div class="nav__right">
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
-      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
-      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-    </button>
+<div class="nav-bar" id="navBar">
+  <div class="wrap nav">
+    <a class="nav__brand" href="#top">
+      <img src="assets/logo.png" alt="">
+      <span>Force of Nature</span>
+    </a>
+    <div class="nav__right">
+      <svg class="toggle-hint" viewBox="0 0 118 78" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="inkWobble" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="7" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+        <path class="ink-curve" d="M 9 70 C 14 44, 30 22, 58 16 C 76 12, 90 15, 104 22"/>
+        <path class="ink-head" d="M 92 10 C 97 14, 101 18, 105 22 C 99 24, 93 27, 88 31"/>
+      </svg>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -503,6 +567,15 @@
 </section>
 
 <script>
+  (function(){
+    var navBar = document.getElementById('navBar');
+    function syncScrolled(){
+      navBar.classList.toggle('is-scrolled', window.scrollY > 4);
+    }
+    window.addEventListener('scroll', syncScrolled, { passive: true });
+    syncScrolled();
+  })();
+
   (function(){
     var btn = document.getElementById('themeToggle');
     btn.addEventListener('click', function(){
