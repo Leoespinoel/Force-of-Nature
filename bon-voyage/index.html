@@ -50,7 +50,10 @@ img{max-width:100%;display:block}
 /* Twinkling stars, the newsletter site's starfield verbatim (owner asked 17 Sep): a fixed full-viewport canvas at z-index -1,
    so it sits behind every section and never moves with the scroll. Only the stars' brightness animates. Dark theme only;
    it fades out over 600ms when the light theme is chosen. Sections that paint their own background (clay, plate) cover it. */
-.starfield{position:fixed;inset:0;z-index:-1;opacity:1;pointer-events:none;transition:opacity 600ms ease}
+/* transform + backface-visibility force the canvas onto its own GPU layer: without this, mobile Safari/Chrome can
+   visibly lag a position:fixed element a frame or two behind an active finger-drag scroll (it still snaps back
+   correctly once scrolling stops) — owner reported the stars appearing to move while scrolling */
+.starfield{position:fixed;inset:0;z-index:-1;opacity:1;pointer-events:none;transition:opacity 600ms ease;transform:translateZ(0);-webkit-transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
 :root[data-theme="light"] .starfield{opacity:0}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}

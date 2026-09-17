@@ -38,7 +38,10 @@
 
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
-  /* Fixed so the twinkling sky sits behind every section as the page scrolls. */
+  /* Fixed so the twinkling sky sits behind every section as the page scrolls.
+     transform + backface-visibility force the canvas onto its own GPU layer: without this, mobile Safari/Chrome can
+     visibly lag a position:fixed element a frame or two behind an active finger-drag scroll (it still snaps back
+     correctly once scrolling stops) — owner reported the stars appearing to move while scrolling. */
   .starfield{
     position:fixed;
     inset:0;
@@ -46,6 +49,10 @@
     opacity:0;
     pointer-events:none;
     transition:opacity 600ms ease;
+    transform:translateZ(0);
+    -webkit-transform:translateZ(0);
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
   }
   :root[data-theme="dark"] .starfield{opacity:1;}
   body{
