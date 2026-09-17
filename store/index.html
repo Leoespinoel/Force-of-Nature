@@ -72,6 +72,18 @@
   .chrome > *{pointer-events:auto;}
   .brand{position:absolute;left:var(--gutter);top:22px;display:flex;align-items:center;gap:12px;opacity:0;}
   .brand img{height:26px;width:auto;}
+  .nav{position:absolute;left:50%;top:22px;height:26px;transform:translateX(-50%);display:flex;align-items:center;white-space:nowrap;opacity:0;}
+  .nav a{position:relative;display:inline-block;padding:4px 0;line-height:18px;transition:color 400ms cubic-bezier(.19,1,.22,1);}
+  .nav a:hover{color:#fff;}
+  .nav a + a::before{content:"·";margin:0 12px;color:var(--pebble);}
+  .nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform 500ms cubic-bezier(.19,1,.22,1);}
+  .nav a + a::after{left:calc(12px + 1ch + 12px);}
+  .nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1);}
+  .nav a[aria-current]{color:#E8392F;font-weight:700;}
+  .nav a[aria-current]:hover{color:#E8392F;}
+  @media (max-width:1180px){
+    .nav{left:var(--gutter);right:var(--gutter);top:60px;height:auto;transform:none;flex-wrap:wrap;white-space:normal;row-gap:2px;}
+  }
   .pill{
     position:absolute;right:var(--gutter);top:20px;display:flex;align-items:center;gap:18px;
     padding:11px 20px;border-radius:999px;background:rgba(21,19,17,.55);
@@ -84,7 +96,12 @@
   .count{display:inline-block;position:relative;overflow:hidden;vertical-align:bottom;height:1em;line-height:1;}
   .count span{display:block;}
   .hint{position:absolute;left:var(--gutter);bottom:22px;color:var(--pebble);opacity:0;white-space:nowrap;}
-  @media (max-width:900px){.brand span{display:none;}.pill{top:16px;padding:10px 16px;}}
+  @media (max-width:900px){
+    .brand span{display:none;}.pill{top:16px;padding:10px 16px;}
+    .nav{top:64px;column-gap:18px;}
+    .nav a + a::before{content:none;margin:0;}
+    .nav a + a::after{left:0;}
+  }
 
   /* ---------- glitch ---------- */
   .gl{position:relative;display:inline-block;}
@@ -252,7 +269,7 @@
     .hero__stage,.chapter__stage{position:sticky;top:0;}
     .plane{clip-path:polygon(0 18%, 100% 5%, 100% 100%, 0 100%) !important;}
     .wordmark{clip-path:none !important;}
-    .brand,.pill,#stars{opacity:1 !important;}
+    .brand,.nav,.pill,#stars{opacity:1 !important;}
     .card:hover::after{animation:none;}
     .card img,.card__name{transition:none;}
   }
@@ -274,6 +291,16 @@
     <img src="assets/logo.png" alt="">
     <span>Force of Nature</span>
   </a>
+  <nav class="nav mono" aria-label="Sections">
+    <a href="https://forceofnature.org.in/bon-voyage/#podcast">Podcast</a>
+    <a href="https://forceofnature.org.in/bon-voyage/#community">Community</a>
+    <a href="https://forceofnature.org.in/bon-voyage/#partnerships">Partnerships</a>
+    <a href="https://forceofnature.org.in/bon-voyage/#impact">Impact</a>
+    <a href="https://forceofnature.org.in/bon-voyage/#design">Design</a>
+    <a href="https://forceofnature.org.in/bon-voyage/#production">Production</a>
+    <a href="#top" aria-current="page">Store</a>
+    <a href="https://forceofnature.org.in/bon-voyage/#contact">Contact</a>
+  </nav>
   <div class="pill">
     <button type="button" id="bag-open" aria-haspopup="dialog" aria-controls="bag">Bag (<span class="count"><span id="bag-count">0</span></span>)</button>
   </div>
@@ -509,11 +536,18 @@
   /* ---------- orbit ---------- */
   const orbit = $('#orbit'), sys = $('#sys'), spark = $('#spark');
   const windows = $$('[data-window]');
-  let autoSpin = 0, dragSpin = 0, scrollSpin = 0, vel = 0, dragging = false, dragDist = 0, lastX = 0;
-  orbit.addEventListener('pointerdown', (e) => { dragging = true; dragDist = 0; lastX = e.clientX; orbit.classList.add('is-drag'); orbit.setPointerCapture(e.pointerId); });
+  let autoSpin = 0, dragSpin = 0, scrollSpin = 0, vel = 0, dragging = false, dragDist = 0, lastX = 0, pressTarget = null;
+  orbit.addEventListener('pointerdown', (e) => { dragging = true; dragDist = 0; lastX = e.clientX; pressTarget = e.target.closest('[data-window]'); orbit.classList.add('is-drag'); orbit.setPointerCapture(e.pointerId); });
   orbit.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; dragDist += Math.abs(dx); vel = dx * .35; dragSpin += dx * .35; });
-  const endDrag = () => { dragging = false; orbit.classList.remove('is-drag'); };
-  orbit.addEventListener('pointerup', endDrag); orbit.addEventListener('pointercancel', endDrag);
+  orbit.addEventListener('pointerup', (e) => {
+    dragging = false; orbit.classList.remove('is-drag');
+    // setPointerCapture retargets the mouse's click event to #orbit, so a plain
+    // click on a window anchor never reaches its own listener — drive navigation
+    // from here instead, using whichever window the press started on.
+    if (pressTarget && dragDist <= 6) goTo(pressTarget.getAttribute('href'), e);
+    pressTarget = null;
+  });
+  orbit.addEventListener('pointercancel', () => { dragging = false; orbit.classList.remove('is-drag'); pressTarget = null; });
   windows.forEach((w) => w.addEventListener('click', (e) => { if (dragDist > 6) { e.preventDefault(); return; } goTo(w.getAttribute('href'), e); }));
   windows.forEach((w) => w.addEventListener('pointerenter', () => glitch($('.gl', w), 420)));
 
@@ -573,14 +607,34 @@
   const loader = $('#loader'), glyph = $('#glyph'), gctx = glyph.getContext('2d'), countEl = $('.loader__count');
   const seen = sessionStorage.getItem('fon-store-intro');
   function buildGlyph() {
-    const cols = 34, rows = 24, cw = 10, ch = 13.5, cells = [];
+    const cols = 34, rows = 24, cw = 10, ch = 13.5, cells = [], byRow = new Map();
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
       const x = (c / (cols - 1)) * 2.8 - 1.4, y = 1.25 - (r / (rows - 1)) * 2.55;
       if ((x * x + y * y - 1) ** 3 - x * x * y * y * y <= 0) {
-        const rnd = Math.random();
-        cells.push({ c, r, ch: rnd < .7 ? '/' : rnd < .85 ? '0' : '7', d: Math.hypot(x, y - .15) + Math.random() * .45 });
+        const cell = { c, r, ch: '/', d: Math.hypot(x, y - .15) + Math.random() * .45 };
+        cells.push(cell);
+        if (!byRow.has(r)) byRow.set(r, []);
+        byRow.get(r).push(cell);
       }
     }
+    /* "143" tiles the whole glyph: every contiguous stretch of columns in a row is stamped
+       in repeating 1,4,3 groups (a dash after each group so one "143" reads apart from the
+       next, instead of running the digits together), so they only ever appear as that one
+       group, in that order, wherever they appear (leftover cells stay '/') */
+    byRow.forEach(rowCells => {
+      rowCells.sort((a, b) => a.c - b.c);
+      let runStart = 0;
+      for (let i = 1; i <= rowCells.length; i++) {
+        const broke = i === rowCells.length || rowCells[i].c !== rowCells[i - 1].c + 1;
+        if (!broke) continue;
+        const run = rowCells.slice(runStart, i);
+        for (let j = 0; j + 3 <= run.length; j += 4) {
+          run[j].ch = '1'; run[j + 1].ch = '4'; run[j + 2].ch = '3';
+          if (j + 3 < run.length) run[j + 3].ch = '-';
+        }
+        runStart = i;
+      }
+    });
     cells.sort((a, b) => a.d - b.d);
     glyph.width = 340 * DPR; glyph.height = 330 * DPR; gctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     return { cells, cw, ch, cols, rows };
@@ -591,17 +645,16 @@
     const n = Math.floor(p * g.cells.length), ox = (340 - g.cols * g.cw) / 2 + g.cw / 2, oy = (330 - g.rows * g.ch) / 2 + g.ch / 2;
     for (let i = 0; i < n; i++) {
       const cell = g.cells[i];
-      if (Math.random() < .015) cell.ch = Math.random() < .7 ? '/' : Math.random() < .5 ? '0' : '7';
       gctx.fillText(cell.ch, ox + cell.c * g.cw, oy + cell.r * g.ch);
     }
   }
-  gsap.set(['.brand', '.pill', '.hint'], { y: 12 });
+  gsap.set(['.brand', '.nav', '.pill', '.hint'], { y: 12 });
   gsap.set(orbit, { scale: .6, autoAlpha: 0 });
   function revealChrome(intro) {
     const tl = gsap.timeline();
     tl.to('#stars', { opacity: 1, duration: 1.4, ease: 'power2.out' }, 0)
       .to(orbit, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, .1)
-      .to(['.brand', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
+      .to(['.brand', '.nav', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
     if (!intro) tl.progress(1);
     return tl;
   }
