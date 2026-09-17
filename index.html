@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Force of Nature, Not Just a Tee</title>
 <meta name="description" content="A t-shirt with a second job. Where consuming creates positive change, 10% of every sale, not profit, funds reef, forest, and coastline conservation.">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#F7F2E7">
+<meta name="theme-color" content="#17110D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
     --max:1280px;
     --gutter:clamp(24px, 5vw, 72px);
 
-    /* light (default) */
+    /* light (the page opens dark: data-theme="dark" is set on <html>; the toggle switches to these) */
     --bg:#F7F2E7;
     --card:#FFFFFF;
     --ink:#17110D;
@@ -393,7 +393,7 @@
     background:transparent;
     opacity:0;
     pointer-events:none;
-    transition:opacity 300ms ease;
+    transition:opacity 200ms ease;
   }
   .voyage-portal.is-open{opacity:1;pointer-events:auto;}
   /* screen blend: the video's black is see-through, so the spiral grows over the page while the blocks are still
@@ -405,12 +405,12 @@
   body.is-departing .follow,
   body.is-departing .perks,
   body.is-departing .voyage{
-    transition:transform 1100ms cubic-bezier(.7,0,.3,1), opacity 900ms ease-in;
+    transition:transform 600ms cubic-bezier(.7,0,.3,1), opacity 450ms ease-in;
     will-change:transform, opacity;
     pointer-events:none;
   }
   body.is-departing .voyage__btn{
-    transition:transform 900ms cubic-bezier(.7,0,.3,1), opacity 600ms ease-in;
+    transition:transform 450ms cubic-bezier(.7,0,.3,1), opacity 320ms ease-in;
     transform:scale(1.35);
     opacity:0;
   }
@@ -746,7 +746,9 @@
     var video = document.getElementById('voyageVideo');
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var departing = false;
-    var VIDEO_FALLBACK_MS = 7500;
+    /* the tunnel clip is 6s; it runs at VIDEO_RATE so the whole trip is ~2.5s, and the fallback covers a stalled play */
+    var VIDEO_RATE = 2.5;
+    var VIDEO_FALLBACK_MS = 3500;
 
     function destination(){
       var url = new URL(btn.href);
@@ -767,7 +769,7 @@
         var r = el.getBoundingClientRect();
         var dx = cx - (r.left + r.width / 2), dy = cy - (r.top + r.height / 2);
         var rot = (Math.random() - 0.5) * 60;
-        el.style.transitionDelay = (i * 70) + 'ms';
+        el.style.transitionDelay = (i * 40) + 'ms';
         el.style.transformOrigin = '50% 50%';
         el.style.transform = 'translate(' + dx.toFixed(0) + 'px,' + dy.toFixed(0) + 'px) rotate(' + rot.toFixed(1) + 'deg) scale(0.04)';
         el.style.opacity = '0';
@@ -788,9 +790,10 @@
       setTimeout(function(){
         portal.classList.add('is-open');
         portal.removeAttribute('aria-hidden');
+        video.playbackRate = VIDEO_RATE;
         var played = video.play();
         if(played && played.catch){ played.catch(function(){ setTimeout(go, 600); }); }
-      }, 420);
+      }, 160);
       video.addEventListener('ended', go);
       video.addEventListener('error', function(){ setTimeout(go, 600); });
       setTimeout(go, VIDEO_FALLBACK_MS);

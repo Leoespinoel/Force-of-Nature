@@ -95,6 +95,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .nav a::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:1px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease-out)}
 .nav a + a::after{left:calc(12px + 1ch + 12px)}
 .nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1)}
+.nav a[data-store]{color:var(--red-lift);font-weight:700}
 .cart-pill{display:inline-flex;align-items:center;gap:10px;border:1px solid currentColor;border-radius:0;padding:10px 16px;min-height:44px}
 .cart-pill .count{display:inline-block;overflow:hidden;height:1.2em;line-height:1.2em;vertical-align:bottom}
 .cart-pill .count span{display:block}
@@ -126,34 +127,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 @keyframes dotWave{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:1;transform:scale(1.3)}}
 .sound-toggle.is-on .icon-on .wd{animation:dotWave 1.3s ease-in-out infinite;animation-delay:calc(var(--i) * 110ms)}
 @media (prefers-reduced-motion:reduce){.sound-toggle.is-on .icon-on .wd{animation:none;opacity:1;transform:none}}
-/* ---------- Brush-stroke arrow pointing at the sound button (owner asked 17 Sep): the newsletter site's toggle-hint, same ink ----------
-   Same SVG (tapered body, chunky chevron head, bristle streaks, dry-brush edges), same paint-on and pull-back nudge. On the store
-   the cart pill sits to the sound button's left, so instead of arriving from the bottom-left the arrow is rotated about its own
-   tip to climb from directly below: the tip is pinned 1px under the button's bottom edge, on its centre line. The SVG renders at
-   its viewBox size (1 unit = 1px) so the tip can be placed exactly; the ink's vertex sits at (112,31) in the viewBox and the
-   offsets below put it at (19px, 40.5px) inside the 38px wrapper. The rotate property composes with the nudge's transform,
-   so the nudge becomes a small pull-back straight down, away from the button. Paint-on waits for the intro to finish.
-   One click on the sound button and the arrow fades for good (remembered for the session, like the sound itself). */
 .sound-wrap{position:relative;display:inline-flex;width:38px;height:38px}
-.sound-hint{
-  position:absolute;top:9.5px;left:-89px;width:120px;height:100px;overflow:visible;pointer-events:none;
-  color:var(--red);transform-origin:112px 31px;rotate:-55deg;transition:opacity 220ms ease;
-}
-.sound-hint.is-gone{opacity:0}
-html.intro-done .sound-hint{animation:inkNudge 1.8s cubic-bezier(.45,0,.55,1) 2.55s infinite}
-.sound-hint .brush{fill:currentColor;stroke:none}
-.sound-hint .bristle{fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round}
-.sound-hint .reveal{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;opacity:0;stroke-dasharray:1;stroke-dashoffset:1}
-.sound-hint .reveal-body{stroke-width:24}
-.sound-hint .reveal-head{stroke-width:18}
-html.intro-done .sound-hint .reveal-body{animation:inkDraw 950ms cubic-bezier(.3,.7,.2,1) 1300ms forwards}
-html.intro-done .sound-hint .reveal-head{animation:inkDraw 320ms ease-out 2150ms forwards}
-@keyframes inkDraw{from{opacity:1;stroke-dashoffset:1}to{opacity:1;stroke-dashoffset:0}}
-@keyframes inkNudge{0%,100%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(-3px,2px) rotate(-1deg)}}
-@media (prefers-reduced-motion:reduce){
-  html.intro-done .sound-hint{animation:none}
-  .sound-hint .reveal,html.intro-done .sound-hint .reveal-body,html.intro-done .sound-hint .reveal-head{animation:none;opacity:1;stroke-dashoffset:0}
-}
 .strip{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;width:100%;color:var(--pebble)}
 .strip > :nth-child(2){text-align:center}
 .strip > :nth-child(3){text-align:right}
@@ -208,7 +182,7 @@ section{position:relative}
 .hero-object .mono{position:absolute;left:0;top:calc(100% + 14px);white-space:nowrap;color:var(--pebble)}
 
 /* manifesto → menu: two statements brighten word by word, then their red words leave the copy and stack up as the menu */
-.m-track{height:520vh;position:relative}
+.m-track{height:360vh;position:relative}
 .m-pin{position:sticky;top:0;height:100svh;display:grid;align-content:center;padding:110px var(--gutter) 60px;overflow:clip}
 .m-block + .m-block{margin-top:clamp(28px,4vw,56px)}
 /* the copy and the menu share one size (the links must sit exactly on their words); height-aware so the two statements always fit the pin */
@@ -421,11 +395,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   .brand .mono{display:none}
   .chrome.top{padding:14px 16px 0;flex-wrap:wrap;row-gap:0;background:var(--void);transition:color .6s var(--ease-out),background .6s var(--ease-out)}
   .chrome.bottom{display:none}
-  .chrome.top .nav{order:3;width:100%;justify-content:flex-start;padding-top:2px}
+  .chrome.top .nav{order:3;width:100%;justify-content:flex-start;flex-wrap:wrap;row-gap:6px;padding-top:2px}
   .chrome.top .nav a{padding:10px 0}
   .cart-pill{padding:10px 12px}
-  /* phones: the arrow at 60% (72×60), tip still 1px under the button's centre: (112,31)×.6 = (67.2,18.6) → left 19−67.2, top 40.5−18.6 */
-  .sound-hint{width:72px;height:60px;left:-46px;top:21.3px;transform-origin:67.2px 18.6px}
   .hero{padding-top:150px}
   .grid{grid-template-columns:repeat(2,1fr)}
   body.on-clay .chrome.top{background:var(--red)}
@@ -503,7 +475,14 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     <span class="mono" data-scramble>Force of Nature</span>
   </a>
   <nav class="nav mono" aria-label="Sections">
-    <a href="#drop" data-anchor="#drop" data-scramble>Drop</a>
+    <a href="#podcast" data-anchor="#podcast" data-cursor="Open" data-scramble>Podcast</a>
+    <a href="#community" data-anchor="#community" data-cursor="Open" data-scramble>Community</a>
+    <a href="#partnerships" data-anchor="#partnerships" data-cursor="Open" data-scramble>Partnerships</a>
+    <a href="#impact" data-anchor="#impact" data-cursor="Open" data-scramble>Impact</a>
+    <a href="#design" data-anchor="#design" data-cursor="Open" data-scramble>Design</a>
+    <a href="#production" data-anchor="#production" data-cursor="Open" data-scramble>Production</a>
+    <a href="#" data-store data-cursor="Shop" data-scramble target="_blank" rel="noopener">Store</a>
+    <a href="#contact" data-anchor="#contact" data-cursor="Open" data-scramble>Contact</a>
   </nav>
   <div class="chrome-end">
     <button class="cart-pill mono" id="cart-open" aria-haspopup="dialog" aria-controls="cart-panel">
@@ -511,36 +490,6 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg>
     </button>
     <span class="sound-wrap">
-      <svg class="sound-hint" id="sound-hint" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-        <defs>
-          <filter id="shDryBrush" x="-15%" y="-15%" width="130%" height="130%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="3" result="grain"/>
-            <feDisplacementMap in="SourceGraphic" in2="grain" scale="3" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-          <mask id="shRevealBody" maskUnits="userSpaceOnUse" x="-10" y="-10" width="140" height="120">
-            <path class="reveal reveal-body" pathLength="1" d="M 12 96 C 12 66, 66 51.3, 100 34"/>
-          </mask>
-          <mask id="shRevealHead" maskUnits="userSpaceOnUse" x="-10" y="-10" width="140" height="120">
-            <path class="reveal reveal-head" pathLength="1" d="M 76 19 L 108 30 L 110 34 L 95 55"/>
-          </mask>
-        </defs>
-        <g filter="url(#shDryBrush)">
-          <g mask="url(#shRevealBody)">
-            <!-- tapered body: rises almost vertically from the tail, arcs over, and arrives at the head climbing at ~27° -->
-            <path class="brush" d="M 10.5 96 C 8.2 61.4, 63.8 45.2, 97.7 29.5 L 102.3 38.5 C 68.2 57.4, 15.8 70.6, 13.5 96 Z"/>
-            <!-- dry bristle streaks trailing off the tail -->
-            <path class="bristle" d="M 7 90 C 8 80, 10 74, 14 66"/>
-            <path class="bristle" d="M 19 92 C 19 84, 21 78, 24 72"/>
-          </g>
-          <g mask="url(#shRevealHead)">
-            <!-- chevron head: loaded vertex at (108,30), long upper wing sweeping back up-left, shorter lower wing hanging from the vertex's right side -->
-            <path class="brush" d="M 109.1 26.7 L 76.6 16.5 L 75 21.3 L 106.9 33.3 Z"/>
-            <path class="brush" d="M 112.9 36 L 97.1 56.7 L 93.1 53.9 L 107.1 32 Z"/>
-            <path class="brush" d="M 104 26 L 111 27 L 112.5 34 L 108 37 L 102 35 Z"/>
-            <circle class="brush" cx="80" cy="14" r="1"/>
-          </g>
-        </g>
-      </svg>
       <button class="theme-toggle sound-toggle" id="sound-toggle" type="button" aria-label="Turn sound on" aria-pressed="false" data-cursor="Sound on">
         <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/></svg>
         <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true">
@@ -912,8 +861,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   const CONTACT_EMAIL = '';
   /* MUSIC_SRCS: the song the sound toggle plays (loops), tried in order. Drop the file in assets/ as music.mp3 or music.mp4 (the audio track of an MP4 plays fine), or add a path here. None found = the toggle stays off and reads "Song to come". */
   const MUSIC_SRCS = ['assets/music.mp3', 'assets/music.mp4', 'assets/music.m4a'];
-  const storeLink = $('[data-store]');
-  if (STORE_URL) storeLink.href = STORE_URL; else storeLink.addEventListener('click', (e) => e.preventDefault());
+  $$('[data-store]').forEach(storeLink => {
+    if (STORE_URL) storeLink.href = STORE_URL; else storeLink.addEventListener('click', (e) => e.preventDefault());
+  });
   $$('[data-contact]').forEach(a => {
     if (CONTACT_EMAIL) { a.href = 'mailto:' + CONTACT_EMAIL; $('.txt', a).textContent = CONTACT_EMAIL; }
     else a.addEventListener('click', (e) => e.preventDefault());
@@ -1045,22 +995,12 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     };
     /* try each path in turn; when none loads the button dims */
     const tryNext = () => {
-      if (!srcs.length) { missing = true; on = false; soundBtn.setAttribute('aria-disabled', 'true'); setUi(); hideHint(); return; }
+      if (!srcs.length) { missing = true; on = false; soundBtn.setAttribute('aria-disabled', 'true'); setUi(); return; }
       music.src = srcs.shift();
     };
-    /* the brush arrow pointing at this button: gone for the session after the first click (or when there is no song to point at) */
-    const hint = $('#sound-hint');
-    const hideHint = () => {
-      if (!hint) return;
-      hint.classList.add('is-gone');
-      try { sessionStorage.setItem('fon-sound-hint', '1'); } catch (e) {}
-    };
-    let hintSeen = false;
-    try { hintSeen = sessionStorage.getItem('fon-sound-hint') === '1' || sessionStorage.getItem('fon-sound') === '1'; } catch (e) {}
-    if (hintSeen && hint) hint.classList.add('is-gone');
     music.addEventListener('error', tryNext);
     tryNext();
-    soundBtn.addEventListener('click', () => { hideHint(); on ? stop() : start(); });
+    soundBtn.addEventListener('click', () => { on ? stop() : start(); });
     document.addEventListener('visibilitychange', () => {
       if (!on) return;
       if (document.hidden) music.pause(); else { const p = music.play(); if (p && p.catch) p.catch(() => {}); }
@@ -1242,7 +1182,8 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
         v.addEventListener('ended', finish, { once: true });
         v.addEventListener('error', finish, { once: true });
         setTimeout(() => { if (!started) finish(); }, 4000);
-        setTimeout(finish, 12000);
+        setTimeout(finish, 8000);
+        v.playbackRate = 2.5; /* same speed as the newsletter's Bon Voyage tunnel: the 6s clip runs in ~2.4s */
         const p = v.play(); if (p && p.catch) p.catch(finish);
       });
       Promise.all([document.fonts.ready, warp()]).then(() => { sizeIntro(); tl.play(); });
