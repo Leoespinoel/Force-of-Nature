@@ -617,10 +617,15 @@
         byRow.get(r).push(cell);
       }
     }
-    /* "143" tiles the whole glyph: every contiguous stretch of columns in a row is stamped
-       in repeating 1,4,3 groups (a dash after each group so one "143" reads apart from the
-       next, instead of running the digits together), so they only ever appear as that one
-       group, in that order, wherever they appear (leftover cells stay '/') */
+    /* "143" appears here and there, never tiled solid: each contiguous stretch of columns in
+       a row gets one 1,4,3 group (two, on stretches long enough to fit both with room to
+       spare), placed most of the time, so it reads clearly against the "/" field */
+    const tryStamp = (arr) => {
+      if (arr.length >= 3 && Math.random() < .85) {
+        const start = Math.floor(Math.random() * (arr.length - 2));
+        arr[start].ch = '1'; arr[start + 1].ch = '4'; arr[start + 2].ch = '3';
+      }
+    };
     byRow.forEach(rowCells => {
       rowCells.sort((a, b) => a.c - b.c);
       let runStart = 0;
@@ -628,9 +633,12 @@
         const broke = i === rowCells.length || rowCells[i].c !== rowCells[i - 1].c + 1;
         if (!broke) continue;
         const run = rowCells.slice(runStart, i);
-        for (let j = 0; j + 3 <= run.length; j += 4) {
-          run[j].ch = '1'; run[j + 1].ch = '4'; run[j + 2].ch = '3';
-          if (j + 3 < run.length) run[j + 3].ch = '-';
+        if (run.length >= 7) {
+          const mid = Math.floor(run.length / 2);
+          tryStamp(run.slice(0, mid));
+          tryStamp(run.slice(mid));
+        } else {
+          tryStamp(run);
         }
         runStart = i;
       }
