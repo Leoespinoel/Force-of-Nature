@@ -116,13 +116,15 @@
     gap:clamp(16px, 3vw, 32px);
   }
 
-  /* ---------- Hand-drawn ink arrow pointing at the theme toggle ---------- */
+  /* ---------- Mind-map-style arrow pointing at the theme toggle ----------
+     Straight ballpoint strokes, not a curvy scribble: a shaft drawn as a main line plus two short
+     retrace strokes, and a double-struck chevron head, like a quick student doodle on a mind map. */
   .toggle-hint{
     position:absolute;
-    top:6px;
-    right:44px;
-    width:118px;
-    height:78px;
+    top:-2px;
+    right:34px;
+    width:112px;
+    height:96px;
     overflow:visible;
     pointer-events:none;
     color:var(--red);
@@ -131,23 +133,26 @@
   .toggle-hint path{
     fill:none;
     stroke:currentColor;
-    stroke-width:2.4;
     stroke-linecap:round;
     stroke-linejoin:round;
-    filter:url(#inkWobble);
   }
-  .toggle-hint .ink-curve{
-    stroke-dasharray:190;
-    stroke-dashoffset:190;
-    animation:inkDraw 950ms cubic-bezier(.3,.7,.2,1) 1050ms forwards;
+  .toggle-hint .tail{stroke-width:2.2;}
+  .toggle-hint .head{stroke-width:2.4;}
+  .toggle-hint path{
+    opacity:0; /* hidden until its own draw starts, so nothing pops in early */
+    stroke-dasharray:1;
+    stroke-dashoffset:1;
   }
-  .toggle-hint .ink-head{
-    stroke-dasharray:40;
-    stroke-dashoffset:40;
-    animation:inkDraw 320ms ease-out 1900ms forwards;
-  }
+  .toggle-hint .t1{animation:inkDraw 320ms ease-out 1050ms forwards;}
+  .toggle-hint .t2{animation:inkDraw 160ms ease-out 1350ms forwards;}
+  .toggle-hint .t3{animation:inkDraw 160ms ease-out 1480ms forwards;}
+  .toggle-hint .h1{animation:inkDraw 150ms ease-out 1620ms forwards;}
+  .toggle-hint .h2{animation:inkDraw 150ms ease-out 1740ms forwards;}
+  .toggle-hint .h3{animation:inkDraw 110ms ease-out 1860ms forwards;}
+  .toggle-hint .h4{animation:inkDraw 110ms ease-out 1940ms forwards;}
   @keyframes inkDraw{
-    to{stroke-dashoffset:0;}
+    from{opacity:1; stroke-dashoffset:1;}
+    to{opacity:1; stroke-dashoffset:0;}
   }
   @keyframes inkNudge{
     0%,100%{transform:translate(0,0) rotate(0deg);}
@@ -155,7 +160,7 @@
   }
   @media (prefers-reduced-motion: reduce){
     .toggle-hint{animation:none;}
-    .toggle-hint .ink-curve,.toggle-hint .ink-head{animation:none;stroke-dashoffset:0;}
+    .toggle-hint path{animation:none;opacity:1;stroke-dashoffset:0;}
   }
   .theme-toggle{
     display:inline-flex;
@@ -456,7 +461,7 @@
   }
 
   @media (max-width: 780px){
-    .toggle-hint{width:88px;height:58px;top:4px;right:42px;}
+    .toggle-hint{width:72px;height:60px;top:-8px;right:30px;}
     .nav{padding-top:12px;padding-bottom:12px;}
     .hero{padding-top:4px;padding-bottom:12px;}
     .hero__stage{grid-template-columns:1fr;gap:10px;}
@@ -483,15 +488,16 @@
       <span>Force of Nature</span>
     </a>
     <div class="nav__right">
-      <svg class="toggle-hint" viewBox="0 0 118 78" aria-hidden="true" focusable="false">
-        <defs>
-          <filter id="inkWobble" x="-10%" y="-10%" width="120%" height="120%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="7" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
-        <path class="ink-curve" d="M 9 70 C 14 44, 30 22, 58 16 C 76 12, 90 15, 104 22"/>
-        <path class="ink-head" d="M 92 10 C 97 14, 101 18, 105 22 C 99 24, 93 27, 88 31"/>
+      <svg class="toggle-hint" viewBox="0 0 106 92" aria-hidden="true" focusable="false">
+        <!-- shaft: one straight line plus two short retrace strokes, like a quick doodled line -->
+        <path class="tail t1" pathLength="1" d="M 8 82 L 98 18"/>
+        <path class="tail t2" pathLength="1" d="M 12 76 L 34 61"/>
+        <path class="tail t3" pathLength="1" d="M 66 36 L 92 20"/>
+        <!-- chevron head, double-struck like it was drawn over twice -->
+        <path class="head h1" pathLength="1" d="M 80 4 L 98 18"/>
+        <path class="head h2" pathLength="1" d="M 98 18 L 84 36"/>
+        <path class="head h3" pathLength="1" d="M 88 9 L 98 18"/>
+        <path class="head h4" pathLength="1" d="M 98 18 L 90 30"/>
       </svg>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
