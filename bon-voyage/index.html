@@ -6,8 +6,8 @@
 <title>Force of Nature — The Drop</title>
 <meta name="description" content="Force of Nature store. A t-shirt with a second job: 10% of every sale, not profit, funds reef, forest and coastline conservation.">
 <meta name="theme-color" content="#0A0908">
-<script>/* theme before first paint: dark by default (owner confirmed 17 Sep: the store opens black, the newsletter site opens white),
-   light only if this browser chose it last time */(function(){try{if(localStorage.getItem('fon-theme')==='light'){document.documentElement.setAttribute('data-theme','light');document.querySelector('meta[name="theme-color"]').content='#F4F1EC';}}catch(e){}})();</script>
+<script>/* theme before first paint: every load opens dark (owner, 17 Sep: the page must load dark first). The toggle still
+   switches to light for the visit, and the stored 'fon-theme' choice is deliberately not restored here. */(function(){try{localStorage.removeItem('fon-theme');}catch(e){}})();</script>
 <link rel="icon" href="assets/logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -338,6 +338,12 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 .field input:focus-visible{outline:none;border-bottom:2px solid var(--red)}
 .join form{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:20px}
 .join .msg{width:100%;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#F4F1EC;min-height:1.2em;text-align:center}
+/* the exit: the very last block, under the wordmark and the join band, sends people to the shop */
+/* extra bottom room: the button must clear the fixed bottom chrome and still cross the 88% reveal line at max scroll */
+.exit{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--gap) var(--gutter) calc(var(--gap) + 80px);background:var(--void);color:var(--bone)}
+.exit .h-section{margin-bottom:32px}
+.exit-cta{background:var(--red);border-color:var(--red);color:#F4F1EC;padding:16px 26px;transition:background .5s var(--ease-out),border-color .5s var(--ease-out),transform .5s var(--ease-out)}
+.exit-cta:hover{background:var(--red-lift);border-color:var(--red-lift);transform:translateY(-2px)}
 .wordmark{padding:0 var(--gutter);color:var(--red);font-size:100px;line-height:.8;letter-spacing:-.06em}
 .wordmark span{display:block;white-space:nowrap;width:max-content;letter-spacing:-.06em;clip-path:inset(0 0 0 0)}
 .foot-meta{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;padding:0 var(--gutter) 32px;color:var(--pebble)}
@@ -767,6 +773,11 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
         <button class="cta" type="submit"><span class="txt" data-scramble>Welcome on board</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></button>
       </form>
       <p class="msg" id="join-msg" aria-live="polite"></p>
+    </div>
+    <div class="exit" id="exit">
+      <p class="eyebrow mono" data-reveal>The store</p>
+      <h2 class="display h-section" data-reveal>Five lines.<br><em>one</em> store</h2>
+      <a class="cta pill exit-cta" href="https://forceofnature.org.in/store/" data-store data-cursor="Shop" target="_blank" rel="noopener" data-reveal><span class="txt" data-scramble>Enter the store</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
     </div>
   </footer>
 </main>
