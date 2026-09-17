@@ -116,51 +116,50 @@
     gap:clamp(16px, 3vw, 32px);
   }
 
-  /* ---------- Mind-map-style arrow pointing at the theme toggle ----------
-     Straight ballpoint strokes, not a curvy scribble: a shaft drawn as a main line plus two short
-     retrace strokes, and a double-struck chevron head, like a quick student doodle on a mind map. */
+  /* ---------- Brush-stroke arrow pointing at the theme toggle ----------
+     Filled brush shapes (tapered body, chunky chevron head, bristle streaks) with roughened edges.
+     The SVG renders at its viewBox size (1 unit = 1px) so the tip can be placed exactly: the head's
+     rightmost ink is at x=112, y=30 in the viewBox, and the offsets below put that one pixel outside
+     the 38px button's left edge at its mid-height. It paints on through masks whose strokes draw
+     along the arrow, then idles with a small pull-back nudge that never enters the button. */
   .toggle-hint{
     position:absolute;
-    top:-2px;
-    right:34px;
-    width:112px;
-    height:96px;
+    top:-11px;
+    right:31px;
+    width:120px;
+    height:100px;
     overflow:visible;
     pointer-events:none;
     color:var(--red);
+    transition:opacity 220ms ease;
     animation:inkNudge 1.8s cubic-bezier(.45,0,.55,1) 2.3s infinite;
   }
-  .toggle-hint path{
+  /* the hint only matters in light mode: once dark mode is on, the arrow fades away with the theme */
+  :root[data-theme="dark"] .toggle-hint{opacity:0;}
+  .toggle-hint .brush{fill:currentColor;stroke:none;}
+  .toggle-hint .bristle{fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;}
+  .toggle-hint .reveal{
     fill:none;
-    stroke:currentColor;
+    stroke:#fff;
     stroke-linecap:round;
     stroke-linejoin:round;
-  }
-  .toggle-hint .tail{stroke-width:2.2;}
-  .toggle-hint .head{stroke-width:2.4;}
-  .toggle-hint path{
     opacity:0; /* hidden until its own draw starts, so nothing pops in early */
     stroke-dasharray:1;
     stroke-dashoffset:1;
   }
-  .toggle-hint .t1{animation:inkDraw 320ms ease-out 1050ms forwards;}
-  .toggle-hint .t2{animation:inkDraw 160ms ease-out 1350ms forwards;}
-  .toggle-hint .t3{animation:inkDraw 160ms ease-out 1480ms forwards;}
-  .toggle-hint .h1{animation:inkDraw 150ms ease-out 1620ms forwards;}
-  .toggle-hint .h2{animation:inkDraw 150ms ease-out 1740ms forwards;}
-  .toggle-hint .h3{animation:inkDraw 110ms ease-out 1860ms forwards;}
-  .toggle-hint .h4{animation:inkDraw 110ms ease-out 1940ms forwards;}
+  .toggle-hint .reveal-body{stroke-width:24;animation:inkDraw 950ms cubic-bezier(.3,.7,.2,1) 1050ms forwards;}
+  .toggle-hint .reveal-head{stroke-width:18;animation:inkDraw 320ms ease-out 1900ms forwards;}
   @keyframes inkDraw{
     from{opacity:1; stroke-dashoffset:1;}
     to{opacity:1; stroke-dashoffset:0;}
   }
   @keyframes inkNudge{
     0%,100%{transform:translate(0,0) rotate(0deg);}
-    50%{transform:translate(3px,-3px) rotate(-2deg);}
+    50%{transform:translate(-3px,2px) rotate(-1deg);}
   }
   @media (prefers-reduced-motion: reduce){
     .toggle-hint{animation:none;}
-    .toggle-hint path{animation:none;opacity:1;stroke-dashoffset:0;}
+    .toggle-hint .reveal{animation:none;opacity:1;stroke-dashoffset:0;}
   }
   .theme-toggle{
     display:inline-flex;
@@ -461,7 +460,7 @@
   }
 
   @media (max-width: 780px){
-    .toggle-hint{width:72px;height:60px;top:-8px;right:30px;}
+    .toggle-hint{width:72px;height:60px;top:1px;right:34px;}
     .nav{padding-top:12px;padding-bottom:12px;}
     .hero{padding-top:4px;padding-bottom:12px;}
     .hero__stage{grid-template-columns:1fr;gap:10px;}
@@ -488,16 +487,37 @@
       <span>Force of Nature</span>
     </a>
     <div class="nav__right">
-      <svg class="toggle-hint" viewBox="0 0 106 92" aria-hidden="true" focusable="false">
-        <!-- shaft: one straight line plus two short retrace strokes, like a quick doodled line -->
-        <path class="tail t1" pathLength="1" d="M 8 82 L 98 18"/>
-        <path class="tail t2" pathLength="1" d="M 12 76 L 34 61"/>
-        <path class="tail t3" pathLength="1" d="M 66 36 L 92 20"/>
-        <!-- chevron head, double-struck like it was drawn over twice -->
-        <path class="head h1" pathLength="1" d="M 80 4 L 98 18"/>
-        <path class="head h2" pathLength="1" d="M 98 18 L 84 36"/>
-        <path class="head h3" pathLength="1" d="M 88 9 L 98 18"/>
-        <path class="head h4" pathLength="1" d="M 98 18 L 90 30"/>
+      <svg class="toggle-hint" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="dryBrush" x="-15%" y="-15%" width="130%" height="130%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="3" result="grain"/>
+            <feDisplacementMap in="SourceGraphic" in2="grain" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <mask id="revealBody" maskUnits="userSpaceOnUse" x="-10" y="-10" width="140" height="120">
+            <path class="reveal reveal-body" pathLength="1" d="M 12 96 C 12 66, 66 51.3, 100 34"/>
+          </mask>
+          <mask id="revealHead" maskUnits="userSpaceOnUse" x="-10" y="-10" width="140" height="120">
+            <path class="reveal reveal-head" pathLength="1" d="M 76 19 L 108 30 L 110 34 L 95 55"/>
+          </mask>
+        </defs>
+        <g filter="url(#dryBrush)">
+          <g mask="url(#revealBody)">
+            <!-- tapered body: rises almost vertically from the tail, arcs over, and arrives at the head climbing at ~27° -->
+            <path class="brush" d="M 10.5 96 C 8.2 61.4, 63.8 45.2, 97.7 29.5 L 102.3 38.5 C 68.2 57.4, 15.8 70.6, 13.5 96 Z"/>
+            <!-- dry bristle streaks trailing off the tail -->
+            <path class="bristle" d="M 7 90 C 8 80, 10 74, 14 66"/>
+            <path class="bristle" d="M 19 92 C 19 84, 21 78, 24 72"/>
+          </g>
+          <g mask="url(#revealHead)">
+            <!-- chevron head: loaded vertex at (108,30), long upper wing sweeping back up-left,
+                 shorter lower wing hanging from the vertex's right side so it clears the shaft.
+                 Rightmost ink is x=112.9 (lower wing's start corner), which the CSS offsets rely on. -->
+            <path class="brush" d="M 109.1 26.7 L 76.6 16.5 L 75 21.3 L 106.9 33.3 Z"/>
+            <path class="brush" d="M 112.9 36 L 97.1 56.7 L 93.1 53.9 L 107.1 32 Z"/>
+            <path class="brush" d="M 104 26 L 111 27 L 112.5 34 L 108 37 L 102 35 Z"/>
+            <circle class="brush" cx="80" cy="14" r="1"/>
+          </g>
+        </g>
       </svg>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
