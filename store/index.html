@@ -59,7 +59,8 @@
       radial-gradient(50% 40% at 8% 108%, rgba(52,38,34,.5) 0%, rgba(52,38,34,0) 60%),
       var(--void);
   }
-  #stars{position:fixed;inset:0;z-index:1;width:100%;height:100%;pointer-events:none;opacity:0;}
+  #stars,#bloom{position:fixed;inset:0;z-index:1;width:100%;height:100%;pointer-events:none;opacity:0;}
+  #bloom{z-index:0;--reveal:0;--fade:1;opacity:calc(var(--reveal) * var(--fade));}
   main{position:relative;z-index:2;}
 
   /* ---------- loader ---------- */
@@ -145,6 +146,7 @@
     position:absolute;left:0;top:0;height:calc(var(--R) * .86);width:auto;max-width:none;
     transform:translate(-50%, -52%) rotateY(calc(-1 * var(--spin))) rotateX(calc(32deg - var(--tilt)));
     filter:drop-shadow(0 30px 50px rgba(0,0,0,.6));
+    will-change:transform;
   }
   .window{
     position:absolute;left:calc(var(--win-w) / -2);top:calc(var(--win-w) * -0.667);
@@ -152,7 +154,7 @@
     background:rgba(21,19,17,.72);border:1px solid rgba(255,255,255,.08);border-top-color:rgba(255,255,255,.5);
     transform:rotateY(calc(var(--i) * 72deg)) translateZ(var(--R)) rotateY(calc(var(--i) * -72deg)) rotateY(calc(-1 * var(--spin))) rotateX(calc(32deg - var(--tilt)));
     opacity:calc(.28 + .72 * var(--front, 1));
-    text-align:left;cursor:pointer;
+    text-align:left;cursor:pointer;will-change:transform,opacity;
   }
   .window img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.9;}
   .window::after{
@@ -178,6 +180,7 @@
   .plane{
     position:absolute;inset:0;background:var(--void);
     clip-path:polygon(0 118%, 100% 105%, 100% 200%, 0 200%);
+    will-change:clip-path;
   }
   .plane::before{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 82% 6%, rgba(70,58,50,.45) 0%, rgba(70,58,50,0) 60%);pointer-events:none;}
   .track{
@@ -275,6 +278,7 @@
     .plane{clip-path:polygon(0 18%, 100% 5%, 100% 100%, 0 100%) !important;}
     .wordmark{clip-path:none !important;}
     .brand,.menu,.pill,#stars{opacity:1 !important;}
+    #bloom{--reveal:1;}
     .card:hover::after{animation:none;}
     .card img,.card__name{transition:none;}
   }
@@ -289,6 +293,7 @@
 </div>
 
 <div class="nebula" aria-hidden="true"></div>
+<canvas id="bloom" aria-hidden="true"></canvas>
 <canvas id="stars" aria-hidden="true"></canvas>
 
 <div class="chrome">
@@ -493,6 +498,7 @@
 <script>
 (() => {
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const PHONE = matchMedia('(max-width: 900px)').matches;
   const $ = (s, r = document) => r.querySelector(s);
@@ -500,17 +506,19 @@
   const DPR = Math.min(devicePixelRatio || 1, 1.5);
 
   const ptr = { x: .5, y: .5 }, ptrS = { x: .5, y: .5 };
-  let scrollY = 0, lastScroll = 0;
+  let scrollY = 0, lastScroll = 0, frameT = 0;
   addEventListener('pointermove', (e) => { ptr.x = e.clientX / innerWidth; ptr.y = e.clientY / innerHeight; }, { passive: true });
 
   let lenis = null;
   if (!RM) {
-    lenis = new Lenis({ lerp: .1, smoothWheel: true });
+    // lower lerp = longer glide after each wheel notch; wheelMultiplier tames the
+    // big per-notch jumps of desktop mice so the pinned chapters never lurch
+    lenis = new Lenis({ lerp: .075, smoothWheel: true, wheelMultiplier: .85, syncTouch: false });
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
   }
-  window.__fon = { scrollTo: (y) => lenis ? lenis.scrollTo(y, { immediate: true }) : scrollTo(0, y) };
+  window.__fon = { scrollTo: (y) => lenis ? lenis.scrollTo(y, { immediate: true }) : scrollTo(0, y), meteor: () => spawnMeteor(frameT) };
 
   /* ---------- stars ---------- */
   const stars = $('#stars'), sctx = stars.getContext('2d');
@@ -524,8 +532,71 @@
       return { x: Math.random() * W, y: Math.random() * H * 1.5, z, r: (.4 + Math.random() * 1.3) * z, a: (.25 + Math.random() * .6) * z, red: Math.random() < .03, ph: Math.random() * 6.28, tw: .4 + Math.random() * 1.2 };
     });
   }
+  /* ---------- nebula bloom: colour along the top edge, thinning toward the ring ----------
+     Painted at 160px wide on its own canvas that CSS stretches over the viewport: the GPU
+     upscale is the blur, so no full-screen drawImage runs per frame. Warm red-brown on the
+     left, a cool cyan pocket on the right, each cloud drifting on its own slow loop. The
+     clouds move so slowly that repainting every third frame is invisible; the scroll fade
+     is a composited opacity so it belongs to the hero only. */
+  const bloom = $('#bloom'), bctx = bloom.getContext('2d');
+  const BLOOM_W = 160; let bloomH = 100, bloomTick = 0, bloomFade = -1;
+  const clouds = [
+    { c: '150,48,36',   x: .18, y: -.02, rx: .60, ry: .30, a: .28, sp: .00011, ph: 0.0 },
+    { c: '96,44,34',    x: .46, y: -.10, rx: .66, ry: .26, a: .24, sp: .00008, ph: 2.1 },
+    { c: '54,142,152',  x: .86, y: .02,  rx: .48, ry: .32, a: .30, sp: .00013, ph: 4.0 },
+    { c: '150,48,36',   x: .62, y: .16,  rx: .34, ry: .16, a: .12, sp: .00017, ph: 1.2 },
+  ];
+  function drawBloom(t, fade) {
+    if (fade !== bloomFade) { bloomFade = fade; bloom.style.setProperty('--fade', fade.toFixed(3)); }
+    if (fade <= 0) return;
+    if (bloomTick++ % 3) return;
+    bloomH = Math.max(40, Math.round(BLOOM_W * H / W));
+    if (bloom.width !== BLOOM_W || bloom.height !== bloomH) { bloom.width = BLOOM_W; bloom.height = bloomH; }
+    bctx.clearRect(0, 0, BLOOM_W, bloomH);
+    for (const k of clouds) {
+      const dx = Math.sin(t * k.sp + k.ph) * .05, dy = Math.cos(t * k.sp * .7 + k.ph) * .03;
+      const cx = (k.x + dx) * BLOOM_W, cy = (k.y + dy) * bloomH, rx = k.rx * BLOOM_W, ry = k.ry * bloomH;
+      bctx.save();
+      bctx.translate(cx, cy); bctx.scale(1, ry / rx);
+      const g = bctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+      g.addColorStop(0, `rgba(${k.c},${k.a.toFixed(3)})`);
+      g.addColorStop(.55, `rgba(${k.c},${(k.a * .35).toFixed(3)})`);
+      g.addColorStop(1, `rgba(${k.c},0)`);
+      bctx.fillStyle = g; bctx.beginPath(); bctx.arc(0, 0, rx, 0, 6.283); bctx.fill();
+      bctx.restore();
+    }
+  }
+
+  /* ---------- meteors: one streak every 6–10 s across the top third, hero only ---------- */
+  const meteors = []; let nextMeteor = 4000;
+  function spawnMeteor(now) {
+    const right = Math.random() < .5, ang = (14 + Math.random() * 18) * Math.PI / 180;
+    const len = 90 + Math.random() * 90, speed = 900 + Math.random() * 500;
+    const travel = 220 + Math.random() * 220;
+    const x0 = W * (.08 + Math.random() * .84), y0 = H * (.03 + Math.random() * .16);
+    meteors.push({ x0, y0, dx: Math.cos(ang) * (right ? 1 : -1), dy: Math.sin(ang), len, speed, travel, t0: now, dur: travel / speed * 1000 });
+  }
+  function drawMeteors(now, fade) {
+    if (fade > .2 && now > nextMeteor) { spawnMeteor(now); nextMeteor = now + 6000 + Math.random() * 4000; }
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i], p = (now - m.t0) / m.dur;
+      if (p >= 1) { meteors.splice(i, 1); continue; }
+      const d = p * m.travel, hx = m.x0 + m.dx * d, hy = m.y0 + m.dy * d;
+      const tail = Math.min(m.len, d), tx = hx - m.dx * tail, ty = hy - m.dy * tail;
+      const env = Math.min(1, p * 6) * Math.min(1, (1 - p) * 2.2) * fade;
+      const g = sctx.createLinearGradient(tx, ty, hx, hy);
+      g.addColorStop(0, 'rgba(255,240,225,0)'); g.addColorStop(1, `rgba(255,240,225,${(env * .9).toFixed(3)})`);
+      sctx.strokeStyle = g; sctx.lineWidth = 1.2; sctx.lineCap = 'round';
+      sctx.beginPath(); sctx.moveTo(tx, ty); sctx.lineTo(hx, hy); sctx.stroke();
+      sctx.fillStyle = `rgba(255,246,236,${env.toFixed(3)})`;
+      sctx.beginPath(); sctx.arc(hx, hy, 1.4, 0, 6.283); sctx.fill();
+    }
+  }
+
   function drawStars(t) {
     sctx.clearRect(0, 0, W, H);
+    const heroFade = Math.max(0, 1 - scrollY / (H * 1.1));
+    drawBloom(t, heroFade);
     const px = (ptrS.x - .5) * W, py = (ptrS.y - .5) * H;
     for (const s of field) {
       const tw = RM ? 1 : .7 + .3 * Math.sin(t * .001 * s.tw + s.ph);
@@ -535,6 +606,7 @@
       sctx.fillStyle = s.red ? `rgba(232,57,47,${s.a * tw})` : `rgba(244,241,236,${s.a * tw})`;
       sctx.arc(x, y - H * .25, s.r, 0, 6.283); sctx.fill();
     }
+    if (!RM) drawMeteors(t, heroFade);
   }
 
   /* ---------- orbit ---------- */
@@ -571,10 +643,17 @@
   }
 
   /* ---------- loop ---------- */
+  // past 2.1 viewports the chapters have wiped over the hero and the footer is opaque,
+  // so nothing the hero loop paints can be seen: skip it and give the frame to the scroll
+  const HERO_GONE = 2.1;
   function frame(t) {
+    frameT = t;
     ptrS.x += (ptr.x - ptrS.x) * .06; ptrS.y += (ptr.y - ptrS.y) * .06;
     scrollY = lenis ? lenis.scroll : window.scrollY;
-    drawStars(t); tickOrbit(); lastScroll = scrollY;
+    const gone = scrollY > H * HERO_GONE && lastScroll > H * HERO_GONE;
+    lastScroll = scrollY;
+    if (gone) return;
+    drawStars(t); tickOrbit();
   }
   addEventListener('resize', () => { seedStars(); fitWordmark(); });
   seedStars();
@@ -665,6 +744,7 @@
   function revealChrome(intro) {
     const tl = gsap.timeline();
     tl.to('#stars', { opacity: 1, duration: 1.4, ease: 'power2.out' }, 0)
+      .to('#bloom', { '--reveal': 1, duration: 1.4, ease: 'power2.out' }, 0)
       .to(orbit, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, .1)
       .to(['.brand', '.menu', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
     if (!intro) tl.progress(1);
@@ -704,7 +784,8 @@
       let glitched = false;
       const dist = () => Math.max(0, track.scrollWidth - innerWidth);
       // range = the whole 300vh section (end 'bottom top'), so this stage stays pinned while the next chapter wipes over it
-      gsap.timeline({ scrollTrigger: { trigger: ch, start: 'top top', end: 'bottom top', pin: stage, pinSpacing: false, scrub: true, invalidateOnRefresh: true,
+      // a short scrub lets the wipe and the slide glide over dropped frames instead of stepping with them
+      gsap.timeline({ scrollTrigger: { trigger: ch, start: 'top top', end: 'bottom top', pin: stage, pinSpacing: false, scrub: .35, invalidateOnRefresh: true,
         onToggle(st) { if (st.isActive) setLine(ch.id); else if (activeLine === ch.id) setLine(null); },
         onUpdate(st) { if (!glitched && st.progress > .22) { glitched = true; glitch(head, 900); } if (st.progress < .05) glitched = false; } } })
         .fromTo(plane, { clipPath: 'polygon(0 118%, 100% 105%, 100% 200%, 0 200%)' }, { clipPath: 'polygon(0 18%, 100% 5%, 100% 100%, 0 100%)', ease: 'none', duration: .7 }, 0)
