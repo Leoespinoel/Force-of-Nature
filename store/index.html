@@ -72,17 +72,20 @@
   .chrome > *{pointer-events:auto;}
   .brand{position:absolute;left:var(--gutter);top:22px;display:flex;align-items:center;gap:12px;opacity:0;}
   .brand img{height:26px;width:auto;}
-  .nav{position:absolute;left:50%;top:22px;height:26px;transform:translateX(-50%);display:flex;align-items:center;white-space:nowrap;opacity:0;}
-  .nav a{position:relative;display:inline-block;padding:4px 0;line-height:18px;transition:color 400ms cubic-bezier(.19,1,.22,1);}
-  .nav a:hover{color:#fff;}
-  .nav a + a::before{content:"·";margin:0 12px;color:var(--pebble);}
-  .nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform 500ms cubic-bezier(.19,1,.22,1);}
-  .nav a + a::after{left:calc(12px + 1ch + 12px);}
-  .nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1);}
-  .nav a[aria-current]{color:#E8392F;font-weight:700;}
-  .nav a[aria-current]:hover{color:#E8392F;}
+  .menu{position:absolute;left:50%;top:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;}
+  /* the five clothing lines */
+  .lines{position:relative;display:flex;align-items:center;column-gap:22px;white-space:nowrap;font-size:11px;letter-spacing:.1em;color:var(--pebble);}
+  .lines a{position:relative;display:inline-flex;align-items:baseline;gap:6px;padding:3px 0;line-height:16px;transition:color 400ms cubic-bezier(.19,1,.22,1);}
+  .lines i{font-style:normal;font-size:9px;color:var(--pebble);opacity:.7;transition:color 400ms cubic-bezier(.19,1,.22,1),opacity 400ms;}
+  .lines a:hover{color:var(--bone);}
+  .lines a:hover i{opacity:1;}
+  .lines a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform 500ms cubic-bezier(.19,1,.22,1);}
+  .lines a:hover::after,.lines a:focus-visible::after,.lines a[aria-current]::after{transform:scaleX(1);}
+  .lines a[aria-current]{color:var(--bone);}
+  .lines a[aria-current] i{color:#E8392F;opacity:1;}
   @media (max-width:1180px){
-    .nav{left:var(--gutter);right:var(--gutter);top:60px;height:auto;transform:none;flex-wrap:wrap;white-space:normal;row-gap:2px;}
+    .menu{left:var(--gutter);right:var(--gutter);top:60px;transform:none;align-items:flex-start;gap:6px;}
+    .lines{flex-wrap:wrap;white-space:normal;row-gap:2px;column-gap:16px;}
   }
   .pill{
     position:absolute;right:var(--gutter);top:20px;display:flex;align-items:center;gap:18px;
@@ -98,9 +101,7 @@
   .hint{position:absolute;left:var(--gutter);bottom:22px;color:var(--pebble);opacity:0;white-space:nowrap;}
   @media (max-width:900px){
     .brand span{display:none;}.pill{top:16px;padding:10px 16px;}
-    .nav{top:64px;column-gap:18px;}
-    .nav a + a::before{content:none;margin:0;}
-    .nav a + a::after{left:0;}
+    .menu{top:64px;}
   }
 
   /* ---------- glitch ---------- */
@@ -269,7 +270,7 @@
     .hero__stage,.chapter__stage{position:sticky;top:0;}
     .plane{clip-path:polygon(0 18%, 100% 5%, 100% 100%, 0 100%) !important;}
     .wordmark{clip-path:none !important;}
-    .brand,.nav,.pill,#stars{opacity:1 !important;}
+    .brand,.menu,.pill,#stars{opacity:1 !important;}
     .card:hover::after{animation:none;}
     .card img,.card__name{transition:none;}
   }
@@ -291,16 +292,15 @@
     <img src="assets/logo.png" alt="">
     <span>Force of Nature</span>
   </a>
-  <nav class="nav mono" aria-label="Sections">
-    <a href="https://forceofnature.org.in/bon-voyage/#podcast">Podcast</a>
-    <a href="https://forceofnature.org.in/bon-voyage/#community">Community</a>
-    <a href="https://forceofnature.org.in/bon-voyage/#partnerships">Partnerships</a>
-    <a href="https://forceofnature.org.in/bon-voyage/#impact">Impact</a>
-    <a href="https://forceofnature.org.in/bon-voyage/#design">Design</a>
-    <a href="https://forceofnature.org.in/bon-voyage/#production">Production</a>
-    <a href="#top" aria-current="page">Store</a>
-    <a href="https://forceofnature.org.in/bon-voyage/#contact">Contact</a>
-  </nav>
+  <div class="menu">
+    <nav class="lines mono" aria-label="Clothing lines" id="lines">
+      <a href="#classic" data-line-link="classic"><i>01</i>Classic</a>
+      <a href="#originals" data-line-link="originals"><i>02</i>Originals</a>
+      <a href="#collective" data-line-link="collective"><i>03</i>Collective</a>
+      <a href="#mer" data-line-link="mer"><i>04</i>Mer</a>
+      <a href="#terre" data-line-link="terre"><i>05</i>Terre</a>
+    </nav>
+  </div>
   <div class="pill">
     <button type="button" id="bag-open" aria-haspopup="dialog" aria-controls="bag">Bag (<span class="count"><span id="bag-count">0</span></span>)</button>
   </div>
@@ -656,13 +656,13 @@
       gctx.fillText(cell.ch, ox + cell.c * g.cw, oy + cell.r * g.ch);
     }
   }
-  gsap.set(['.brand', '.nav', '.pill', '.hint'], { y: 12 });
+  gsap.set(['.brand', '.menu', '.pill', '.hint'], { y: 12 });
   gsap.set(orbit, { scale: .6, autoAlpha: 0 });
   function revealChrome(intro) {
     const tl = gsap.timeline();
     tl.to('#stars', { opacity: 1, duration: 1.4, ease: 'power2.out' }, 0)
       .to(orbit, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, .1)
-      .to(['.brand', '.nav', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
+      .to(['.brand', '.menu', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
     if (!intro) tl.progress(1);
     return tl;
   }
@@ -687,12 +687,21 @@
     ScrollTrigger.create({ trigger: '.hero', start: 'top top', end: 'bottom top', pin: '.hero__stage', pinSpacing: false, onUpdate: (st) => { scrollSpin = st.progress * 360; } });
     ScrollTrigger.create({ trigger: '.hero', start: 'top top', end: '+=200', onLeave: () => gsap.to('#hint', { opacity: 0, duration: .6 }), onEnterBack: () => gsap.to('#hint', { opacity: 1, duration: .6 }) });
 
+    // the menu's line row follows the chapter on screen
+    let activeLine = null;
+    const lineLinks = $$('[data-line-link]');
+    function setLine(id) {
+      activeLine = id;
+      lineLinks.forEach((a) => { if (a.dataset.lineLink === id) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+    }
+
     $$('.chapter').forEach((ch) => {
       const stage = $('.chapter__stage', ch), plane = $('.plane', ch), track = $('.track', ch), head = $('.chapter__head .gl', ch);
       let glitched = false;
       const dist = () => Math.max(0, track.scrollWidth - innerWidth);
       // range = the whole 300vh section (end 'bottom top'), so this stage stays pinned while the next chapter wipes over it
       gsap.timeline({ scrollTrigger: { trigger: ch, start: 'top top', end: 'bottom top', pin: stage, pinSpacing: false, scrub: true, invalidateOnRefresh: true,
+        onToggle(st) { if (st.isActive) setLine(ch.id); else if (activeLine === ch.id) setLine(null); },
         onUpdate(st) { if (!glitched && st.progress > .22) { glitched = true; glitch(head, 900); } if (st.progress < .05) glitched = false; } } })
         .fromTo(plane, { clipPath: 'polygon(0 118%, 100% 105%, 100% 200%, 0 200%)' }, { clipPath: 'polygon(0 18%, 100% 5%, 100% 100%, 0 100%)', ease: 'none', duration: .7 }, 0)
         .fromTo(plane, { clipPath: 'polygon(0 18%, 100% 5%, 100% 100%, 0 100%)' }, { clipPath: 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)', ease: 'none', duration: .2 }, .7)
