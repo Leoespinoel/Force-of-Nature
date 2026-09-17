@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Force of Nature — The Drop</title>
+<meta name="description" content="Force of Nature store. A t-shirt with a second job: 10% of every sale, not profit, funds reef, forest and coastline conservation.">
+<meta name="theme-color" content="#0A0908">
+<script>/* theme before first paint: dark by default (owner confirmed 17 Sep: the store opens black, the newsletter site opens white),
+   light only if this browser chose it last time */(function(){try{if(localStorage.getItem('fon-theme')==='light'){document.documentElement.setAttribute('data-theme','light');document.querySelector('meta[name="theme-color"]').content='#F4F1EC';}}catch(e){}})();</script>
+<link rel="icon" href="assets/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0A0908; --plate:#151311; --smoke:#24201C;
+  --bone:#F4F1EC; --ash:#C9C3BA; --pebble:#8E877D;
+  --red:#C11B15; --red-lift:#E8392F;
+  --clay:#E7A196; --ink:#140806;
+  --hairline:rgba(244,241,236,.14); --hairline-ink:rgba(20,8,6,.22); --hairline-red:rgba(244,241,236,.32);
+  --gutter:clamp(16px,2.5vw,36px);
+  --gap:clamp(48px,5vw,72px); /* every section pads top and bottom with this, so neighbours sit 2× apart: 144px at desktop, 96px on phones */
+  --font-display:'Bricolage Grotesque',sans-serif;
+  --font-serif:'Instrument Serif',serif;
+  --font-mono:'Geist Mono',ui-monospace,monospace;
+  --ease-out:cubic-bezier(.19,1,.22,1);
+  --ease-main:cubic-bezier(.65,.01,.05,.99);
+}
+/* light theme: the same roles on a bone canvas. Clay and ink are untouched (the escape panel stays the escape panel);
+   red-lift darkens so 12px red labels still clear 4.5:1 on the light canvas */
+:root[data-theme="light"]{
+  --void:#F4F1EC; --plate:#EBE6DE; --smoke:#DDD7CD;
+  --bone:#0A0908; --ash:#3F3934; --pebble:#6B645B;
+  --red-lift:#A8140F;
+  --hairline:rgba(10,9,8,.16);
+}
+/* theme switch: the whole page crossfades once (View Transitions), nothing else animates colour */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.6s;animation-timing-function:var(--ease-out)}
+*{box-sizing:border-box}
+html{background:var(--void);color:var(--bone)}
+body{overflow-x:clip}
+.drop-pin{overflow:clip}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+/* body is transparent so the fixed starfield below can show through: the html background (above) still paints the page canvas */
+body{margin:0;background:transparent;color:var(--bone);font-family:var(--font-display);font-variation-settings:"wdth" 100,"opsz" 16;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img{max-width:100%;display:block}
+/* Twinkling stars, the newsletter site's starfield verbatim (owner asked 17 Sep): a fixed full-viewport canvas at z-index -1,
+   so it sits behind every section and never moves with the scroll. Only the stars' brightness animates. Dark theme only;
+   it fades out over 600ms when the light theme is chosen. Sections that paint their own background (clay, plate) cover it. */
+.starfield{position:fixed;inset:0;z-index:-1;opacity:1;pointer-events:none;transition:opacity 600ms ease}
+:root[data-theme="light"] .starfield{opacity:0}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+::selection{background:var(--red);color:#fff}
+:focus-visible{outline:2px solid var(--red-lift);outline-offset:4px}
+.skip{position:fixed;top:8px;left:-9999px;z-index:100;padding:12px 16px;background:var(--bone);color:var(--void);font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.skip:focus{left:8px}
+
+/* ---------- type ---------- */
+.mono{font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+.display{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 96;font-weight:700;text-transform:uppercase;letter-spacing:-.03em;line-height:.88;margin:0}
+.display em{font-family:var(--font-serif);font-style:italic;font-weight:400;text-transform:lowercase;letter-spacing:-.01em;font-size:.55em;vertical-align:baseline;position:relative;top:-.08em}
+.display .red{color:var(--red)}
+.h-hero{font-size:clamp(4rem,15.2vw,16rem)}
+.h-section{font-size:clamp(2.6rem,7vw,6rem)}
+.body{color:var(--ash);max-width:56ch;margin:0}
+.body strong{color:var(--bone);font-weight:500}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;color:var(--pebble);margin:0 0 20px}
+.eyebrow::before{content:"";width:22px;height:1px;background:currentColor;display:inline-block;opacity:.6}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red)}
+
+/* ---------- ghost CTA ---------- */
+.cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--bone);padding:16px 0;position:relative}
+.cta svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;transition:transform .5s var(--ease-out)}
+.cta:hover svg{transform:translate(3px,-3px)}
+.cta.pill{padding:12px 18px;border:1px solid var(--bone);border-radius:0;min-height:44px}
+.cta .txt{display:inline-block;min-width:1ch}
+
+/* ---------- chrome ---------- */
+.chrome{position:fixed;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:20px var(--gutter);pointer-events:none;color:var(--bone);transition:color .6s var(--ease-out)}
+.chrome > *{pointer-events:auto}
+.chrome.top{top:0}
+.chrome.bottom{bottom:0;padding-top:12px;padding-bottom:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:26px;width:auto}
+.nav{display:flex;gap:0}
+.nav a{position:relative;padding:14px 0;display:inline-block}
+.nav a + a::before{content:"·";margin:0 12px;color:var(--pebble)}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:1px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease-out)}
+.nav a + a::after{left:calc(12px + 1ch + 12px)}
+.nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1)}
+.cart-pill{display:inline-flex;align-items:center;gap:10px;border:1px solid currentColor;border-radius:0;padding:10px 16px;min-height:44px}
+.cart-pill .count{display:inline-block;overflow:hidden;height:1.2em;line-height:1.2em;vertical-align:bottom}
+.cart-pill .count span{display:block}
+.cart-pill svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.5;fill:none;transition:transform .5s var(--ease-out)}
+.cart-pill:hover svg{transform:translate(3px,-3px)}
+.chrome-end{display:flex;align-items:center;gap:10px}
+/* theme toggle: the newsletter site's button, verbatim (owner asked 17 Sep): 38px filled circle with its own card/line/ink colours,
+   moon in the light, sun in the dark, instant icon swap, red border + 1px lift on hover, .94 press */
+.theme-toggle{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:50%;
+  border:1px solid #312921;background:#211A15;color:#F3EDE1;
+  cursor:pointer;padding:0;
+  transition:border-color 160ms ease,transform 160ms ease;
+}
+:root[data-theme="light"] .theme-toggle{border-color:#E3D9C4;background:#FFFFFF;color:#17110D}
+.theme-toggle:hover{border-color:var(--red);transform:translateY(-1px)}
+.theme-toggle:active{transform:scale(0.94)}
+.theme-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.theme-toggle .icon-moon{display:none}
+:root[data-theme="light"] .theme-toggle .icon-moon{display:block}
+:root[data-theme="light"] .theme-toggle .icon-sun{display:none}
+/* sound toggle: the same circle beside the theme button (owner asked 17 Sep). Speaker with a slash while off; speaker with two waves that pulse while the song plays */
+.sound-toggle .icon-on{display:none}
+.sound-toggle.is-on .icon-on{display:block}
+.sound-toggle.is-on .icon-off{display:none}
+.sound-toggle[aria-disabled="true"]{opacity:.5;cursor:default}
+@keyframes wave{0%,100%{opacity:.3}50%{opacity:1}}
+.sound-toggle.is-on .w1{animation:wave 1.6s ease-in-out infinite}
+.sound-toggle.is-on .w2{animation:wave 1.6s ease-in-out infinite .4s}
+@media (prefers-reduced-motion:reduce){.sound-toggle .w1,.sound-toggle .w2{animation:none}}
+/* ---------- Brush-stroke arrow pointing at the sound button (owner asked 17 Sep): the newsletter site's toggle-hint, same ink ----------
+   Same SVG (tapered body, chunky chevron head, bristle streaks, dry-brush edges), same paint-on and pull-back nudge. On the store
+   the cart pill sits to the sound button's left, so instead of arriving from the bottom-left the arrow is rotated about its own
+   tip to climb from directly below: the tip is pinned 1px under the button's bottom edge, on its centre line. The SVG renders at
+   its viewBox size (1 unit = 1px) so the tip can be placed exactly; the ink's vertex sits at (112,31) in the viewBox and the
+   offsets below put it at (19px, 40.5px) inside the 38px wrapper. The rotate property composes with the nudge's transform,
+   so the nudge becomes a small pull-back straight down, away from the button. Paint-on waits for the intro to finish.
+   One click on the sound button and the arrow fades for good (remembered for the session, like the sound itself). */
+.sound-wrap{position:relative;display:inline-flex;width:38px;height:38px}
+.sound-hint{
+  position:absolute;top:9.5px;left:-93px;width:120px;height:100px;overflow:visible;pointer-events:none;
+  color:var(--red);transform-origin:112px 31px;rotate:-55deg;transition:opacity 220ms ease;
+}
+.sound-hint.is-gone{opacity:0}
+html.intro-done .sound-hint{animation:inkNudge 1.8s cubic-bezier(.45,0,.55,1) 2.55s infinite}
+.sound-hint .brush{fill:currentColor;stroke:none}
+.sound-hint .bristle{fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round}
+.sound-hint .reveal{fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;opacity:0;stroke-dasharray:1;stroke-dashoffset:1}
+.sound-hint .reveal-body{stroke-width:24}
+.sound-hint .reveal-head{stroke-width:18}
+html.intro-done .sound-hint .reveal-body{animation:inkDraw 950ms cubic-bezier(.3,.7,.2,1) 1300ms forwards}
+html.intro-done .sound-hint .reveal-head{animation:inkDraw 320ms ease-out 2150ms forwards}
+@keyframes inkDraw{from{opacity:1;stroke-dashoffset:1}to{opacity:1;stroke-dashoffset:0}}
+@keyframes inkNudge{0%,100%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(-3px,2px) rotate(-1deg)}}
+@media (prefers-reduced-motion:reduce){
+  html.intro-done .sound-hint{animation:none}
+  .sound-hint .reveal,html.intro-done .sound-hint .reveal-body,html.intro-done .sound-hint .reveal-head{animation:none;opacity:1;stroke-dashoffset:0}
+}
+.strip{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;width:100%;color:var(--pebble)}
+.strip > :nth-child(2){text-align:center}
+.strip > :nth-child(3){text-align:right}
+/* ---------- cursor ---------- */
+.cursor{position:fixed;left:0;top:0;z-index:60;pointer-events:none;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#fff;mix-blend-mode:difference;opacity:0;padding:6px 0;white-space:nowrap}
+.cursor::before{content:"↗";margin-right:8px}
+@media (hover:none){.cursor{display:none}}
+
+/* ---------- intro ---------- */
+.intro{position:fixed;inset:0;z-index:80;background:var(--void);display:grid;place-items:center;padding:var(--gutter)}
+.intro .display{color:var(--red);font-size:100px;text-align:left;line-height:.84;opacity:0;width:100%}
+.intro .display span{display:block;white-space:nowrap;width:max-content;letter-spacing:-.04em}
+html.intro-done .intro{display:none}
+
+/* ---------- sections ---------- */
+section{position:relative}
+.wrap{padding-left:var(--gutter);padding-right:var(--gutter)}
+.hero{min-height:100svh;display:grid;grid-template-columns:1fr;align-items:end;padding:120px var(--gutter) var(--gap);overflow:hidden;isolation:isolate}
+/* Milky Way behind the hero (owner asked 17 Sep): a generated astrophoto, dark theme only, held at half strength and
+   masked so it dissolves into the void before the manifesto. z-index -1 inside the hero's own stacking context keeps
+   it under the headline, copy and heart. The twinkling .starfield canvas sits behind it (page-level z-index -1) and shows through
+   where the mask thins. */
+.hero-sky{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;object-position:50% 35%;opacity:.5;pointer-events:none;
+  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,#000 14%,#000 58%,rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,#000 14%,#000 58%,rgba(0,0,0,0) 100%)}
+:root[data-theme="light"] .hero-sky{opacity:0}
+.hero-copy{position:static;z-index:2}
+.hero .h-hero{margin:0 0 36px}
+.hero .h-hero .l:last-child{display:block} /* "WEAR IT like YOU" runs on, "MEAN IT." always starts its own line */
+.hero-sub{display:grid;grid-template-columns:minmax(0,68ch) auto;align-items:end;justify-content:space-between;gap:40px}
+.hero-sub .cta{white-space:nowrap}
+.hero-copy-block{display:flex;flex-direction:column}
+.hero-vision{font-size:clamp(1.1rem,2.4vw,1.6rem);margin:0 0 14px}
+.hero-vision .red{font-weight:800}
+.hero-copy-block .body{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em;font-size:clamp(0.95rem,1.3vw,1.1rem)}
+/* in the light the key words can't be brighter than the copy, so they go bold instead (owner asked 17 Sep) */
+:root[data-theme="light"] .hero-vision{font-weight:800}
+:root[data-theme="light"] .hero-copy-block .body strong{font-weight:800}
+.body .red{color:var(--red)}
+.hero-object{position:absolute;right:12vw;bottom:calc(var(--gap) + 30px);width:min(28vw,40svh);z-index:1}
+.hero-object img{width:100%;height:auto;will-change:transform}
+/* below 1680px the headline is still growing with the viewport and "YOU" reaches further right, so the heart steps in a little */
+@media (max-width:1680px) and (min-width:901px){.hero-object{right:9vw;width:min(17.5vw,40svh)}}
+.hero-object .mono{position:absolute;left:0;top:calc(100% + 14px);white-space:nowrap;color:var(--pebble)}
+
+/* manifesto → menu: two statements brighten word by word, then their red words leave the copy and stack up as the menu */
+.m-track{height:520vh;position:relative}
+.m-pin{position:sticky;top:0;height:100svh;display:grid;align-content:center;padding:110px var(--gutter) 60px;overflow:clip}
+.m-block + .m-block{margin-top:clamp(28px,4vw,56px)}
+/* the copy and the menu share one size (the links must sit exactly on their words); height-aware so the two statements always fit the pin */
+.m-text,.m-menu{font-size:clamp(1.5rem,min(4vw,5.8vh),3.6rem);line-height:1.02} /* 5.8vh: eight menu items must fit the pin at 1.6× */
+.m-text .kw{color:var(--red);display:inline-block}
+.m-menu{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8em;padding:0 var(--gutter);pointer-events:none}
+.m-menu a{pointer-events:auto;position:relative;display:block;color:var(--red);will-change:transform;transform-origin:50% 50%}
+.m-menu a:nth-child(2n){margin-left:2.2em}
+.m-menu a:nth-child(3n){margin-left:-1.8em}
+.m-menu a:nth-child(5){margin-left:-.6em}
+.m-menu a::after{content:"";position:absolute;left:0;right:0;bottom:-.04em;height:2px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease-out)}
+.m-menu.is-menu a:hover::after,.m-menu.is-menu a:focus-visible::after{transform:scaleX(1)}
+
+.section-head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;margin-bottom:48px}
+.section-head .mono{color:var(--pebble);padding-bottom:10px}
+
+/* ---------- category sections (one per menu item; every layout and motion is different on purpose) ---------- */
+.sec{padding:var(--gap) var(--gutter)}
+.sec-head{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:clamp(28px,3.5vw,48px)}
+.sec-head .h-section{max-width:14ch}
+.sec-head .body{max-width:48ch}
+.ph{background:var(--plate);border:1px dashed var(--hairline);display:grid;align-content:end;gap:6px;padding:18px;color:var(--pebble)}
+.ph .tag{color:var(--red-lift)}
+/* podcast: an episode ledger */
+.eps{margin:0;padding:0;list-style:none;border-top:1px solid var(--hairline)}
+.ep{display:grid;grid-template-columns:56px 1fr auto auto;gap:24px;align-items:baseline;padding:26px 0;border-bottom:1px solid var(--hairline);color:var(--ash)}
+.ep .n{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:var(--pebble)}
+.ep .t{color:var(--bone);font-size:clamp(1.1rem,1.7vw,1.5rem);display:inline-block;transition:transform .6s var(--ease-out)}
+.ep:hover .t{transform:translateX(10px)}
+.ep .g,.ep .d{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pebble)}
+/* community: a strip of wearers that slides sideways as you scroll */
+.wear-wrap{overflow:hidden;margin:0 calc(-1 * var(--gutter))}
+.wearers{display:flex;width:max-content;will-change:transform}
+.wearer{width:clamp(220px,24vw,340px);aspect-ratio:4/5;border-right:1px solid var(--hairline)}
+/* community activities: a grid of ways in (run club, clean-ups, dives) under the strip */
+.acts-head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;margin:clamp(40px,5vw,64px) 0 24px}
+.acts-head .mono{color:var(--pebble)}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hairline);border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);margin:0;padding:0;list-style:none}
+.act{background:var(--void);display:grid;grid-template-rows:auto 1fr auto;gap:22px;padding:24px 22px 22px;min-height:240px;color:var(--ash)}
+.act .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--red-lift)}
+.act .name{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 96;font-weight:700;text-transform:uppercase;letter-spacing:-.03em;line-height:.9;font-size:clamp(1.8rem,3vw,2.6rem);color:var(--bone);display:inline-block;transition:transform .6s var(--ease-out)}
+.act:hover .name{transform:translateX(10px)}
+.act .meta{display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pebble)}
+.act .meta svg{width:14px;height:14px;stroke:var(--bone);stroke-width:1.5;fill:none;transition:transform .5s var(--ease-out)}
+.act:hover .meta svg{transform:translate(3px,-3px)}
+/* partnerships: the one escape panel, a ledger of where the ten percent lands.
+   It sits on the same red as the heart mark, so the copy goes bone (fixed, not themed) and the share bars go ink */
+.partners{background:var(--red);color:#F4F1EC}
+.partners .eyebrow,.partners .body,.partners .ph{color:#F4F1EC}
+.partners .body strong{color:#F4F1EC}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,80px);align-items:end}
+.big{font-size:clamp(6rem,20vw,20rem);line-height:.8;letter-spacing:-.05em}
+.big + .mono{display:block;margin-top:16px}
+.ledger{border-top:1px solid var(--hairline-red);margin:0;padding:0;list-style:none}
+.lrow{display:grid;grid-template-columns:auto 1fr auto;gap:8px 20px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--hairline-red)}
+.lrow .k{font-size:16px;text-transform:uppercase;font-weight:600;letter-spacing:.02em}
+.lrow .who{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.lrow .s{font-family:var(--font-mono);font-size:14px}
+.lrow .bar{grid-column:1/-1;height:2px;background:var(--ink);transform-origin:left}
+/* impact: the analytics page. Four counters, twelve months of money to the work as thin red bars, three targets with a fill.
+   One hue only (red on void); values wear text colours, never the bar colour. Every figure is a placeholder */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hairline);border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);margin:0;padding:0;list-style:none}
+.kpi{background:var(--void);display:grid;grid-template-rows:auto 1fr auto;gap:18px;padding:24px 22px 22px;min-height:200px}
+.kpi .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--red-lift)}
+.kpi .n{font-size:clamp(2.6rem,5.5vw,5.2rem);line-height:.86;color:var(--bone);font-variant-numeric:tabular-nums;align-self:end}
+.kpi .sub{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pebble)}
+.chart{margin-top:clamp(40px,5vw,64px)}
+.chart-head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;margin-bottom:24px}
+.chart-head .mono{color:var(--pebble)}
+.bars{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;height:clamp(160px,24vw,260px);align-items:end;border-bottom:1px solid var(--hairline)}
+.bar{position:relative;height:100%;display:grid;align-items:end;outline-offset:2px}
+.bar i{display:block;height:var(--h);background:var(--red);transform-origin:bottom;transition:background .3s var(--ease-out)}
+.bar:hover i,.bar:focus-visible i{background:var(--red-lift)}
+.bar .v{position:absolute;left:50%;bottom:calc(var(--h) + 8px);transform:translateX(-50%);font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:var(--bone);white-space:nowrap;opacity:0;transition:opacity .3s var(--ease-out);pointer-events:none}
+.bar:hover .v,.bar:focus-visible .v{opacity:1}
+.bar:first-child .v{left:0;transform:none}
+.bar:last-child .v{left:auto;right:0;transform:none} /* the end labels stay inside the chart, so no horizontal scroll on phones */
+.chart{overflow:clip}
+.months{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;padding-top:12px;color:var(--pebble);text-align:center}
+.targets{margin:clamp(40px,5vw,64px) 0 0;padding:0;list-style:none;border-top:1px solid var(--hairline)}
+.trow{display:grid;grid-template-columns:1fr auto;gap:10px 20px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--hairline)}
+.trow .k{font-size:16px;text-transform:uppercase;font-weight:600;letter-spacing:.02em;color:var(--bone)}
+.trow .s{font-family:var(--font-mono);font-size:14px;color:var(--pebble);font-variant-numeric:tabular-nums}
+.trow .track{grid-column:1/-1;height:2px;background:var(--hairline);position:relative}
+.trow .fill{position:absolute;inset:0;background:var(--red);transform-origin:left;transform:scaleX(var(--p))}
+/* design: the sketch table */
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,80px);align-items:center}
+.sketch{aspect-ratio:1;will-change:transform,clip-path}
+.sketch .ph{height:100%}
+/* production: three steps beside a line that draws as you scroll */
+.steps{position:relative;padding-left:clamp(32px,6vw,96px);margin:0;list-style:none}
+.steps::before,.steps .line{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--hairline)}
+.steps .line{background:var(--red);transform-origin:top}
+.step{display:grid;grid-template-columns:56px 1fr;gap:24px;padding:32px 0;border-bottom:1px solid var(--hairline)}
+.step:first-child{border-top:1px solid var(--hairline)}
+.step .n{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:var(--red-lift)}
+.step h3{font-size:16px;text-transform:uppercase;font-weight:600;letter-spacing:.02em;margin:0 0 8px}
+/* contact: one big question and three doors */
+.contact .h-section{font-size:clamp(3rem,9.5vw,9.5rem);max-width:none}
+/* the heart: what the mark means, the last chapter before the wordmark */
+.heart-grid{display:grid;grid-template-columns:minmax(200px,560px) auto;gap:clamp(32px,6vw,96px);align-items:start;justify-content:center}
+.heart-mark{width:min(100%,560px);will-change:transform}
+.heart-mark img{width:100%;height:auto;will-change:transform}
+.heart-text{font-size:clamp(1.7rem,3.6vw,3.8rem);line-height:1.02;max-width:20ch}
+.heart-text .red{color:var(--red)}
+.hero-object a{display:block}
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hairline);border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+.door{background:var(--void);padding:28px 24px 20px;display:grid;align-content:start;gap:12px}
+.door .k{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--red-lift)}
+/* chrome turns bone over the red partnerships panel (fixed, so the light theme doesn't flip it dark on red) */
+body.on-clay .chrome.top{color:#F4F1EC}
+body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
+
+/* drop */
+.drop{padding:var(--gap) 0}
+.drop-pin{position:relative}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hairline);border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+.tile{background:var(--void);text-align:left;display:block;width:100%;will-change:transform}
+.well{background:var(--plate);aspect-ratio:4/5;position:relative;overflow:hidden}
+.well .side{position:absolute;inset:0;display:grid;place-items:center;transition:transform 1.1s var(--ease-out),opacity 1.1s var(--ease-out)}
+.well svg{width:78%;height:auto;transform:translate(var(--ox,0),var(--oy,0)) scale(var(--zoom,1));transform-origin:var(--origin,50% 50%)}
+.well .back{transform:translateY(12%);opacity:0}
+.tile:hover .well .front,.tile:focus-visible .well .front{transform:translateY(-12%);opacity:0}
+.tile:hover .well .back,.tile:focus-visible .well .back{transform:translateY(0);opacity:1}
+.well .idx{position:absolute;right:16px;top:14px;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:var(--pebble)}
+.tile-meta{display:grid;grid-template-columns:1fr auto;gap:8px 16px;padding:18px 20px 22px;align-items:baseline}
+.tile-meta .name{color:var(--bone);font-size:16px;display:inline-block;transition:transform .6s var(--ease-out)}
+.tile:hover .tile-meta .name{transform:translateX(8px)}
+.tile-meta .price{font-family:var(--font-mono);font-size:14px;color:var(--ash);text-align:right}
+.tile-meta .ways{grid-column:1/-1;display:flex;gap:8px}
+.tile-meta .ways i{width:10px;height:10px;border-radius:50%;border:1px solid var(--hairline);display:inline-block}
+.tile-meta .ways i.bone{background:#F4F1EC}
+.tile-meta .ways i.ink{background:#24201C}
+.tile-meta .ways i.clay{background:var(--clay)}
+
+/* footer */
+.footer{padding:var(--gap) 0 0;border-top:1px solid var(--hairline);background:var(--plate)}
+/* join: the second red band, same treatment as the partnerships panel (full-bleed red, copy fixed bone, hairlines bone-on-red) */
+.join{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(24px,4vw,56px);margin:0;padding:var(--gap) var(--gutter);text-align:center;background:var(--red);color:#F4F1EC}
+.join .eyebrow{color:#F4F1EC}
+.join .field label{color:#F4F1EC;opacity:.75}
+.join .field input{color:#F4F1EC;border-bottom-color:var(--hairline-red)}
+.join .field input::placeholder{color:rgba(244,241,236,.5)}
+.join .field input:focus-visible{border-bottom:2px solid #F4F1EC}
+.join .cta{color:#F4F1EC}
+.join-head{text-align:center}
+.final{display:grid;grid-template-columns:minmax(0,1fr);align-content:end;padding-bottom:var(--gap);overflow:clip}
+.final + .join{margin-top:var(--gap)}
+.wordmark{min-width:0;overflow:clip}
+.field{display:flex;flex-direction:column;gap:8px;width:200px;text-align:left}
+.field label{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pebble)}
+.field input{font:inherit;font-size:16px;color:var(--bone);background:transparent;border:0;border-bottom:1px solid var(--hairline);padding:12px 0;border-radius:0;width:100%}
+.field input:focus-visible{outline:none;border-bottom:2px solid var(--red)}
+.join form{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:20px}
+.join .msg{width:100%;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#F4F1EC;min-height:1.2em;text-align:center}
+.wordmark{padding:0 var(--gutter);color:var(--red);font-size:100px;line-height:.8;letter-spacing:-.06em}
+.wordmark span{display:block;white-space:nowrap;width:max-content;letter-spacing:-.06em;clip-path:inset(0 0 0 0)}
+.foot-meta{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;padding:0 var(--gutter) 32px;color:var(--pebble)}
+.foot-meta > :nth-child(2){text-align:center}
+.foot-meta > :nth-child(3){text-align:right}
+.foot-meta a{position:relative}
+.foot-meta a + a{margin-left:20px}
+
+/* ---------- panels ---------- */
+.panel-root{position:fixed;inset:0;z-index:70;display:none}
+.panel-root[data-open="true"]{display:block}
+.overlay{position:absolute;inset:0;background:rgba(10,9,8,.78);opacity:0}
+.panel{position:absolute;top:0;right:0;height:100%;width:min(560px,100vw);overflow:hidden}
+.bg-panel{position:absolute;inset:0}
+.bg-panel.first{background:var(--smoke)}
+.bg-panel.third{background:var(--plate)}
+.bg-panel.second{background:var(--red);width:2px;right:auto;z-index:2}
+.panel-inner{position:relative;height:100%;display:flex;flex-direction:column;padding:28px var(--gutter);overflow-y:auto;color:var(--bone)}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+.panel-head .mono{color:var(--pebble)}
+.close{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:12px 0;min-height:44px}
+.close svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;transition:transform .5s var(--ease-out)}
+.close:hover svg{transform:rotate(90deg)}
+.p-well{background:var(--void);aspect-ratio:4/3;display:grid;place-items:center;margin-bottom:28px;border:1px solid var(--hairline)}
+.p-well svg{width:52%;height:auto}
+.panel .display{font-size:clamp(2.4rem,6vw,4.2rem);margin-bottom:12px}
+.panel .price{font-family:var(--font-mono);font-size:14px;color:var(--ash);margin-bottom:28px}
+.sizes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.sizes label{position:relative}
+.sizes input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.sizes span{display:inline-flex;align-items:center;justify-content:center;min-width:48px;height:44px;padding:0 14px;border:1px solid var(--hairline);border-radius:0;font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;transition:border-color .4s var(--ease-out)}
+.sizes input:checked + span{border-color:var(--red)}
+.sizes input:focus-visible + span{outline:2px solid var(--red-lift);outline-offset:4px}
+.panel .impact-line{color:var(--ash);font-size:14px;margin:0 0 24px;max-width:44ch;border-top:1px solid var(--hairline);padding-top:18px}
+.panel .impact-line strong{color:var(--bone);font-weight:500}
+.lines{margin:0;padding:0;list-style:none}
+.line{display:grid;grid-template-columns:56px 1fr auto;gap:16px;align-items:center;padding:20px 0;border-top:1px solid var(--hairline)}
+.line .thumb{width:56px;height:70px;background:var(--void);border-radius:4px;display:grid;place-items:center}
+.line .thumb svg{width:70%}
+.line .l-name{color:var(--bone)}
+.line .l-size{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:var(--pebble);text-transform:uppercase}
+.line .l-price{font-family:var(--font-mono);font-size:14px;color:var(--ash)}
+.line .rm{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pebble);padding:10px 0;margin-top:4px}
+.line .rm:hover{color:var(--bone)}
+.total{display:flex;justify-content:space-between;border-top:1px solid var(--hairline);padding:20px 0;margin-top:auto;font-family:var(--font-mono);font-size:14px}
+.empty{color:var(--pebble);margin:0}
+.panel-inner .fade{will-change:transform,opacity}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:110px;padding-bottom:110px;gap:40px}
+  .hero-object{position:static;width:84px;margin-bottom:40px;order:-1}
+  .hero-object .mono{position:static;display:block;margin-top:12px}
+  .hero-sub{grid-template-columns:1fr;gap:8px}
+  .brand .mono{display:none}
+  .chrome.top{padding:14px 16px 0;flex-wrap:wrap;row-gap:0;background:var(--void);transition:color .6s var(--ease-out),background .6s var(--ease-out)}
+  .chrome.bottom{display:none}
+  .chrome.top .nav{order:3;width:100%;justify-content:flex-start;padding-top:2px}
+  .chrome.top .nav a{padding:10px 0}
+  .cart-pill{padding:10px 12px}
+  /* phones: the arrow at 60% (72×60), tip still 1px under the button's centre: (112,31)×.6 = (67.2,18.6) → left 19−67.2, top 40.5−18.6 */
+  .sound-hint{width:72px;height:60px;left:-48px;top:22px;transform-origin:67.2px 18.6px}
+  .hero{padding-top:150px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  body.on-clay .chrome.top{background:var(--red)}
+  .ep{grid-template-columns:40px 1fr;gap:6px 16px}
+  .ep .g,.ep .d{grid-column:2}
+  .p-grid,.d-grid{grid-template-columns:1fr}
+  .doors{grid-template-columns:1fr}
+  .acts{grid-template-columns:repeat(2,1fr)}
+  .acts-head{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi{min-height:170px}
+  .chart-head{grid-template-columns:1fr}
+  .months span:not(:nth-child(3n+1)){visibility:hidden} /* twelve labels don't fit a phone: Oct · Jan · Apr · Jul */
+  .heart-grid{grid-template-columns:1fr}
+  .heart-mark{width:min(60%,320px)}
+  .join{flex-direction:column}
+  .join form{flex-direction:column;align-items:stretch}
+  .field{width:100%;max-width:340px}
+  .section-head{grid-template-columns:1fr}
+  .strip{grid-template-columns:1fr auto}
+  .strip > :nth-child(1){display:none}
+  .strip > :nth-child(2){text-align:left}
+  .strip > :nth-child(3){text-align:right}
+  .foot-meta{grid-template-columns:1fr;text-align:left}
+  .foot-meta > *{text-align:left!important}
+}
+@media (max-width:560px){
+  .grid{grid-template-columns:1fr}
+  .acts{grid-template-columns:1fr}
+  .hero .h-hero{font-size:clamp(3.4rem,17vw,6rem)}
+}
+@media (prefers-reduced-motion:reduce){
+  .intro{display:none}
+  .cursor{display:none}
+  *{transition-duration:.01ms!important}
+}
+
+/* ---------- Red dot cursor ----------
+   A solid dot in the heart's red replaces the native pointer on mouse devices. It trails
+   the mouse with a touch of easing, grows over links and buttons, and shrinks on press.
+   Touch and stylus devices keep their native behaviour; text fields keep the I-beam. */
+.cursor-dot{
+  position:fixed;top:0;left:0;width:14px;height:14px;border-radius:50%;
+  background:var(--red);pointer-events:none;z-index:9999;opacity:0;
+  transform:translate(-50%,-50%) scale(1);
+  transition:opacity 200ms ease,transform 220ms cubic-bezier(.2,.8,.2,1);
+  will-change:transform,opacity;
+}
+@media (hover:hover) and (pointer:fine){
+  html.has-dot-cursor,html.has-dot-cursor *{cursor:none!important}
+  html.has-dot-cursor input:not([type="radio"]):not([type="checkbox"]),html.has-dot-cursor textarea{cursor:text!important}
+  html.has-dot-cursor .cursor-dot.is-visible{opacity:1}
+  html.has-dot-cursor .cursor-dot.is-hover{transform:translate(-50%,-50%) scale(2.2)}
+  html.has-dot-cursor .cursor-dot.is-down{transform:translate(-50%,-50%) scale(.75)}
+  html.has-dot-cursor .cursor-dot.is-text{transform:translate(-50%,-50%) scale(0)}
+}
+</style>
+</head>
+<body>
+<canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<a class="skip" href="#top">Skip to content</a>
+<div class="cursor" aria-hidden="true"><span class="cursor-txt">View</span></div>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <p class="display" id="intro-text"><span data-text="NOT JUST">&nbsp;</span><span data-text="A TEE.">&nbsp;</span></p>
+</div>
+
+<header class="chrome top" id="chrome-top">
+  <a class="brand" href="#top" data-anchor="#top" aria-label="Force of Nature, back to top">
+    <img src="assets/logo.png" alt="" width="26" height="36">
+    <span class="mono" data-scramble>Force of Nature</span>
+  </a>
+  <nav class="nav mono" aria-label="Sections">
+    <a href="#drop" data-anchor="#drop" data-scramble>Drop</a>
+  </nav>
+  <div class="chrome-end">
+    <button class="cart-pill mono" id="cart-open" aria-haspopup="dialog" aria-controls="cart-panel">
+      <span>Cart</span><span class="count" aria-live="polite"><span id="cart-count">(0)</span></span>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg>
+    </button>
+    <span class="sound-wrap">
+      <svg class="sound-hint" id="sound-hint" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="shDryBrush" x="-15%" y="-15%" width="130%" height="130%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="3" result="grain"/>
+            <feDisplacementMap in="SourceGraphic" in2="grain" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <mask id="shRevealBody" maskUnits="userSpaceOnUse" x="-10" y="-10" width="140" height="120">
+            <path class="reveal reveal-body" pathLength="1" d="M 12 96 C 12 66, 66 51.3, 100 34"/>
+          </mask>
+          <mask id="shRevealHead" maskUnits="userSpaceOnUse" x="-10" y="-10" width="140" height="120">
+            <path class="reveal reveal-head" pathLength="1" d="M 76 19 L 108 30 L 110 34 L 95 55"/>
+          </mask>
+        </defs>
+        <g filter="url(#shDryBrush)">
+          <g mask="url(#shRevealBody)">
+            <!-- tapered body: rises almost vertically from the tail, arcs over, and arrives at the head climbing at ~27° -->
+            <path class="brush" d="M 10.5 96 C 8.2 61.4, 63.8 45.2, 97.7 29.5 L 102.3 38.5 C 68.2 57.4, 15.8 70.6, 13.5 96 Z"/>
+            <!-- dry bristle streaks trailing off the tail -->
+            <path class="bristle" d="M 7 90 C 8 80, 10 74, 14 66"/>
+            <path class="bristle" d="M 19 92 C 19 84, 21 78, 24 72"/>
+          </g>
+          <g mask="url(#shRevealHead)">
+            <!-- chevron head: loaded vertex at (108,30), long upper wing sweeping back up-left, shorter lower wing hanging from the vertex's right side -->
+            <path class="brush" d="M 109.1 26.7 L 76.6 16.5 L 75 21.3 L 106.9 33.3 Z"/>
+            <path class="brush" d="M 112.9 36 L 97.1 56.7 L 93.1 53.9 L 107.1 32 Z"/>
+            <path class="brush" d="M 104 26 L 111 27 L 112.5 34 L 108 37 L 102 35 Z"/>
+            <circle class="brush" cx="80" cy="14" r="1"/>
+          </g>
+        </g>
+      </svg>
+      <button class="theme-toggle sound-toggle" id="sound-toggle" type="button" aria-label="Turn sound on" aria-pressed="false" data-cursor="Sound on">
+        <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/></svg>
+        <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path class="w1" d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path class="w2" d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      </button>
+    </span>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false" data-cursor="Go light">
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+  </div>
+</header>
+
+<footer class="chrome bottom" aria-hidden="true">
+  <div class="strip mono">
+    <span data-scramble>Mauritius · 20.2°S 57.5°E</span>
+    <span id="clock">--:--</span>
+    <span><span id="scroll-pct">00</span>% · Scroll</span>
+  </div>
+</footer>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" aria-label="Intro">
+    <img class="hero-sky" src="assets/milky-way.jpg" srcset="assets/milky-way-sm.jpg 1200w, assets/milky-way.jpg 2400w" sizes="100vw" alt="" aria-hidden="true" decoding="async" fetchpriority="low">
+    <div class="hero-copy">
+      <div class="hero-object" id="hero-object" data-reveal>
+        <a href="#heart" data-anchor="#heart" data-cursor="The heart" aria-label="What the heart means"><img src="assets/logo.png" alt="Force of Nature heart logo, illustrated in red with black drips" width="132" height="182"></a>
+        <span class="mono" data-scramble>Est. Mauritius</span>
+      </div>
+      <p class="eyebrow mono" data-reveal><span data-scramble>Not just a tee</span></p>
+      <h1 class="display h-hero" id="hero-title">
+        <span class="l" data-reveal>Wear it</span>
+        <span class="l" data-reveal><em>like</em> you</span>
+        <span class="l" data-reveal><span class="red">Mean it.</span></span>
+      </h1>
+      <div class="hero-sub">
+        <div class="hero-copy-block">
+          <p class="display hero-vision" data-reveal>Look good. Feel good. <span class="red">Do good.</span></p>
+          <p class="body" data-reveal>These aren't trade-offs. They're intertwined, one habit built into the next. <strong>Look good</strong>, and you feel it. <strong>Feel good</strong>, and you want to keep doing something that matters. <strong>Do good</strong>, and it's no longer just yours, it rubs off. A friend notices. They try it too. <span class="red">That's how a movement actually starts</span>, not from a mission statement, but from people quietly passing something good along. It's all <strong>contagious</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO → MENU -->
+  <section class="manifesto" id="manifesto" aria-label="Who's with us and what we make">
+    <div class="m-track">
+      <div class="m-pin">
+        <div class="m-block">
+          <p class="eyebrow mono" data-reveal><span data-scramble>Who's with us</span></p>
+          <p class="display m-text">The <span class="kw" data-kw="podcast">podcast</span> hands the mic to the people doing the work, reef to forest floor. The <span class="kw" data-kw="community">community</span> is everyone who wears it like they mean it, Mauritius outward. Our <span class="kw" data-kw="partnerships">partnerships</span> put the money where the work is, and the <span class="kw" data-kw="impact">impact</span> is counted, not claimed.</p>
+        </div>
+        <div class="m-block">
+          <p class="eyebrow mono" data-reveal><span data-scramble>What we make</span></p>
+          <p class="display m-text"><span class="kw" data-kw="design">Design</span> starts with a story worth telling, not a print worth selling. <span class="kw" data-kw="production">Production</span> stays small and answerable — cut, sewn, and shipped plastic-free. Find the drop in the <span class="kw" data-kw="store">store</span>, or <span class="kw" data-kw="contact">contact</span> us to build, stock, or ask the harder question.</p>
+        </div>
+        <nav class="m-menu display" aria-label="Sections">
+          <a href="#podcast" data-anchor="#podcast" data-kw="podcast" data-cursor="Open" data-scramble>Podcast</a>
+          <a href="#community" data-anchor="#community" data-kw="community" data-cursor="Open" data-scramble>Community</a>
+          <a href="#partnerships" data-anchor="#partnerships" data-kw="partnerships" data-cursor="Open" data-scramble>Partnerships</a>
+          <a href="#impact" data-anchor="#impact" data-kw="impact" data-cursor="Open" data-scramble>Impact</a>
+          <a href="#design" data-anchor="#design" data-kw="design" data-cursor="Open" data-scramble>Design</a>
+          <a href="#production" data-anchor="#production" data-kw="production" data-cursor="Open" data-scramble>Production</a>
+          <a href="#" data-store data-kw="store" data-cursor="Shop" data-scramble target="_blank" rel="noopener">Store</a>
+          <a href="#contact" data-anchor="#contact" data-kw="contact" data-cursor="Open" data-scramble>Contact</a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 PODCAST -->
+  <section class="sec podcast" id="podcast" aria-labelledby="podcast-title">
+    <div class="sec-head">
+      <p class="eyebrow mono" data-reveal><span data-scramble>01 — Podcast</span></p>
+      <h2 class="display h-section" id="podcast-title" data-reveal>Hands the mic <em>to</em> the work</h2>
+      <p class="body" data-reveal>Conversations with the people restoring reef, forest and coastline. <strong>Episode titles, guests and runtimes are placeholders</strong> until the first recordings land.</p>
+    </div>
+    <ol class="eps">
+      <li><a class="ep" href="#" data-ph data-cursor="Listen" data-reveal><span class="n">EP 01</span><span class="t">Episode title to come</span><span class="g">Guest to come</span><span class="d">00:00</span></a></li>
+      <li><a class="ep" href="#" data-ph data-cursor="Listen" data-reveal><span class="n">EP 02</span><span class="t">Episode title to come</span><span class="g">Guest to come</span><span class="d">00:00</span></a></li>
+      <li><a class="ep" href="#" data-ph data-cursor="Listen" data-reveal><span class="n">EP 03</span><span class="t">Episode title to come</span><span class="g">Guest to come</span><span class="d">00:00</span></a></li>
+      <li><a class="ep" href="#" data-ph data-cursor="Listen" data-reveal><span class="n">EP 04</span><span class="t">Episode title to come</span><span class="g">Guest to come</span><span class="d">00:00</span></a></li>
+    </ol>
+  </section>
+
+  <!-- 02 COMMUNITY -->
+  <section class="sec community" id="community" aria-labelledby="community-title">
+    <div class="sec-head">
+      <p class="eyebrow mono" data-reveal><span data-scramble>02 — Community</span></p>
+      <h2 class="display h-section" id="community-title" data-reveal>Worn <em>like</em> they mean it</h2>
+      <p class="body" data-reveal>Wearers from Mauritius outward. <strong>Photos, handles and places are placeholders</strong> until the first drop ships.</p>
+    </div>
+    <div class="wear-wrap" data-reveal>
+      <div class="wearers" id="wearers">
+        <div class="wearer ph"><span class="mono tag">Photo to come</span><span class="mono">@wearer_01</span><span class="mono">Place to come</span></div>
+        <div class="wearer ph"><span class="mono tag">Photo to come</span><span class="mono">@wearer_02</span><span class="mono">Place to come</span></div>
+        <div class="wearer ph"><span class="mono tag">Photo to come</span><span class="mono">@wearer_03</span><span class="mono">Place to come</span></div>
+        <div class="wearer ph"><span class="mono tag">Photo to come</span><span class="mono">@wearer_04</span><span class="mono">Place to come</span></div>
+        <div class="wearer ph"><span class="mono tag">Photo to come</span><span class="mono">@wearer_05</span><span class="mono">Place to come</span></div>
+        <div class="wearer ph"><span class="mono tag">Photo to come</span><span class="mono">@wearer_06</span><span class="mono">Place to come</span></div>
+        <div class="wearer ph"><span class="mono tag">Photo to come</span><span class="mono">@wearer_07</span><span class="mono">Place to come</span></div>
+        <div class="wearer ph"><span class="mono tag">Photo to come</span><span class="mono">@wearer_08</span><span class="mono">Place to come</span></div>
+      </div>
+    </div>
+    <div class="acts-head">
+      <h3 class="display h-section" style="font-size:clamp(1.8rem,4vw,3.4rem)" data-reveal>Ways <em>in</em></h3>
+      <p class="mono" data-reveal data-scramble>Clubs · clean-ups · dives — links to come</p>
+    </div>
+    <ul class="acts">
+      <li><a class="act" href="#" data-ph data-cursor="Join" data-reveal><span class="k">Run club</span><span class="name">Club name to come</span><span class="meta"><span>Weekly · Place to come</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></span></a></li>
+      <li><a class="act" href="#" data-ph data-cursor="Join" data-reveal><span class="k">Beach clean-up</span><span class="name">Crew name to come</span><span class="meta"><span>Monthly · Place to come</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></span></a></li>
+      <li><a class="act" href="#" data-ph data-cursor="Join" data-reveal><span class="k">Reef dive</span><span class="name">Group name to come</span><span class="meta"><span>Seasonal · Place to come</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></span></a></li>
+      <li><a class="act" href="#" data-ph data-cursor="Join" data-reveal><span class="k">Trail day</span><span class="name">Group name to come</span><span class="meta"><span>Monthly · Place to come</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></span></a></li>
+      <li><a class="act" href="#" data-ph data-cursor="Join" data-reveal><span class="k">Planting day</span><span class="name">Crew name to come</span><span class="meta"><span>Seasonal · Place to come</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></span></a></li>
+      <li><a class="act" href="#" data-ph data-cursor="Join" data-reveal><span class="k">Your activity</span><span class="name">Add yours</span><span class="meta"><span>Tell us what you run</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></span></a></li>
+    </ul>
+  </section>
+
+  <!-- 03 PARTNERSHIPS -->
+  <section class="sec partners" id="partnerships" aria-labelledby="partners-title">
+    <div class="sec-head">
+      <p class="eyebrow mono" data-reveal><span data-scramble>03 — Partnerships</span></p>
+      <h2 class="display h-section" id="partners-title" data-reveal>Where <em>the</em> money lands</h2>
+      <p class="body" data-reveal>Ten percent of every sale, not profit, goes straight to the work. <strong>Partner names and shares are placeholders</strong> until agreements are signed; once they are, the receipts go here too.</p>
+    </div>
+    <div class="p-grid">
+      <div data-reveal>
+        <p class="display big" id="big-pct" aria-label="10 percent">10%</p>
+        <span class="mono">of every sale · not profit</span>
+      </div>
+      <ul class="ledger">
+        <li class="lrow" data-reveal><span class="k">Reef</span><span class="who">Partner to be confirmed</span><span class="s">4%</span><span class="bar" data-share="4"></span></li>
+        <li class="lrow" data-reveal><span class="k">Forest</span><span class="who">Partner to be confirmed</span><span class="s">3%</span><span class="bar" data-share="3"></span></li>
+        <li class="lrow" data-reveal><span class="k">Coastline</span><span class="who">Partner to be confirmed</span><span class="s">3%</span><span class="bar" data-share="3"></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 04 IMPACT -->
+  <section class="sec impact" id="impact" aria-labelledby="impact-title">
+    <div class="sec-head">
+      <p class="eyebrow mono" data-reveal><span data-scramble>04 — Impact</span></p>
+      <h2 class="display h-section" id="impact-title" data-reveal>Counted, <em>not</em> claimed</h2>
+      <p class="body" data-reveal>What the ten percent has done so far, updated as the receipts come in. <strong>Every figure here is a placeholder</strong> until the first drop ships and the first transfer clears.</p>
+    </div>
+    <ul class="kpis" id="kpis">
+      <li class="kpi" data-reveal><span class="k">Tees sold</span><span class="display n" data-count="1240">1,240</span><span class="sub">Since launch · placeholder</span></li>
+      <li class="kpi" data-reveal><span class="k">Sent to the work</span><span class="display n" data-count="96000" data-prefix="Rs ">Rs 96,000</span><span class="sub">Ten percent of sales · placeholder</span></li>
+      <li class="kpi" data-reveal><span class="k">Trees in the ground</span><span class="display n" data-count="480">480</span><span class="sub">Forest partner · placeholder</span></li>
+      <li class="kpi" data-reveal><span class="k">Coral fragments planted</span><span class="display n" data-count="310">310</span><span class="sub">Reef partner · placeholder</span></li>
+    </ul>
+    <div class="chart" data-reveal>
+      <div class="chart-head">
+        <h3 class="display h-section" style="font-size:clamp(1.8rem,4vw,3.4rem)">Money <em>to</em> the work, <em>by</em> month</h3>
+        <p class="mono" data-scramble>Rupees · last twelve months · placeholder</p>
+      </div>
+      <div class="bars" id="bars">
+        <span class="bar" style="--h:16%" tabindex="0" aria-label="October: Rs 2,200" data-cursor="Rs 2,200"><i></i><span class="v" aria-hidden="true">Rs 2,200</span></span>
+        <span class="bar" style="--h:23%" tabindex="0" aria-label="November: Rs 3,100" data-cursor="Rs 3,100"><i></i><span class="v" aria-hidden="true">Rs 3,100</span></span>
+        <span class="bar" style="--h:40%" tabindex="0" aria-label="December: Rs 5,400" data-cursor="Rs 5,400"><i></i><span class="v" aria-hidden="true">Rs 5,400</span></span>
+        <span class="bar" style="--h:36%" tabindex="0" aria-label="January: Rs 4,800" data-cursor="Rs 4,800"><i></i><span class="v" aria-hidden="true">Rs 4,800</span></span>
+        <span class="bar" style="--h:46%" tabindex="0" aria-label="February: Rs 6,200" data-cursor="Rs 6,200"><i></i><span class="v" aria-hidden="true">Rs 6,200</span></span>
+        <span class="bar" style="--h:59%" tabindex="0" aria-label="March: Rs 7,900" data-cursor="Rs 7,900"><i></i><span class="v" aria-hidden="true">Rs 7,900</span></span>
+        <span class="bar" style="--h:64%" tabindex="0" aria-label="April: Rs 8,600" data-cursor="Rs 8,600"><i></i><span class="v" aria-hidden="true">Rs 8,600</span></span>
+        <span class="bar" style="--h:70%" tabindex="0" aria-label="May: Rs 9,400" data-cursor="Rs 9,400"><i></i><span class="v" aria-hidden="true">Rs 9,400</span></span>
+        <span class="bar" style="--h:83%" tabindex="0" aria-label="June: Rs 11,200" data-cursor="Rs 11,200"><i></i><span class="v" aria-hidden="true">Rs 11,200</span></span>
+        <span class="bar" style="--h:80%" tabindex="0" aria-label="July: Rs 10,800" data-cursor="Rs 10,800"><i></i><span class="v" aria-hidden="true">Rs 10,800</span></span>
+        <span class="bar" style="--h:96%" tabindex="0" aria-label="August: Rs 12,900" data-cursor="Rs 12,900"><i></i><span class="v" aria-hidden="true">Rs 12,900</span></span>
+        <span class="bar" style="--h:100%" tabindex="0" aria-label="September: Rs 13,500" data-cursor="Rs 13,500"><i></i><span class="v" aria-hidden="true">Rs 13,500</span></span>
+      </div>
+      <div class="months mono" aria-hidden="true"><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div>
+    </div>
+    <ul class="targets">
+      <li class="trow" data-reveal><span class="k">Trees by year end</span><span class="s">480 / 1,000</span><span class="track"><i class="fill" style="--p:.48"></i></span></li>
+      <li class="trow" data-reveal><span class="k">Coral fragments by year end</span><span class="s">310 / 500</span><span class="track"><i class="fill" style="--p:.62"></i></span></li>
+      <li class="trow" data-reveal><span class="k">Coastline cleaned</span><span class="s">2.4 / 10 km</span><span class="track"><i class="fill" style="--p:.24"></i></span></li>
+    </ul>
+  </section>
+
+  <!-- 05 DESIGN -->
+  <section class="sec design" id="design" aria-labelledby="design-title">
+    <div class="d-grid">
+      <div class="sec-head" style="margin-bottom:0">
+        <p class="eyebrow mono" data-reveal><span data-scramble>05 — Design</span></p>
+        <h2 class="display h-section" id="design-title" data-reveal>A story <em>worth</em> telling</h2>
+        <p class="body" data-reveal>Every print starts as a story from the work, not a graphic for a shelf. <strong>Artwork and process notes are placeholders.</strong></p>
+      </div>
+      <div class="sketch" id="sketch">
+        <div class="ph"><span class="mono tag">Artwork to come</span><span class="mono">Print 01 · Story first</span><span class="mono">Sketch · proof · screen</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 PRODUCTION -->
+  <section class="sec production" id="production" aria-labelledby="production-title">
+    <div class="sec-head">
+      <p class="eyebrow mono" data-reveal><span data-scramble>06 — Production</span></p>
+      <h2 class="display h-section" id="production-title" data-reveal>Small <em>and</em> answerable</h2>
+      <p class="body" data-reveal>Cut, sewn and shipped plastic-free. <strong>Mill, workshop and packaging details are placeholders.</strong></p>
+    </div>
+    <ol class="steps" id="steps">
+      <span class="line" id="steps-line" aria-hidden="true"></span>
+      <li class="step" data-reveal><span class="n">01</span><div><h3>Cut</h3><p class="body">Fabric, mill and certification to come.</p></div></li>
+      <li class="step" data-reveal><span class="n">02</span><div><h3>Sewn</h3><p class="body">Workshop, location and the people who make it to come.</p></div></li>
+      <li class="step" data-reveal><span class="n">03</span><div><h3>Shipped plastic-free</h3><p class="body">Packaging and carrier details to come.</p></div></li>
+    </ol>
+  </section>
+
+  <!-- 06 CONTACT -->
+  <section class="sec contact" id="contact" aria-labelledby="contact-title">
+    <div class="sec-head">
+      <p class="eyebrow mono" data-reveal><span data-scramble>07 — Contact</span></p>
+      <h2 class="display h-section" id="contact-title" data-reveal>Ask <em>the</em> harder<br><span class="red">question.</span></h2>
+    </div>
+    <div class="doors">
+      <div class="door" data-reveal><span class="k">Build</span><p class="body">Collaborate on a print, a drop or a story.</p><a class="cta" data-contact href="#"><span class="txt" data-scramble>Email to come</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a></div>
+      <div class="door" data-reveal><span class="k">Stock</span><p class="body">Carry Force of Nature in your shop.</p><a class="cta" data-contact href="#"><span class="txt" data-scramble>Email to come</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a></div>
+      <div class="door" data-reveal><span class="k">Ask</span><p class="body">Anything about where the ten percent goes.</p><a class="cta" data-contact href="#"><span class="txt" data-scramble>Email to come</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a></div>
+    </div>
+  </section>
+
+  <!-- DROP -->
+  <section class="drop" id="drop" aria-labelledby="drop-title">
+    <div class="drop-pin">
+      <div class="wrap section-head">
+        <h2 class="display h-section" id="drop-title" data-reveal>The drop<br><em>six</em> tees, <span class="red">one</span> job</h2>
+        <p class="mono" data-reveal data-scramble>Organic cotton · Printed in Mauritius</p>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <!-- 07 THE HEART -->
+  <section class="sec heart" id="heart" aria-labelledby="heart-title">
+    <div class="heart-grid">
+      <div class="heart-mark" id="heart-mark">
+        <img src="assets/logo.png" alt="The Force of Nature heart, illustrated in red with black drips" width="560" height="773">
+      </div>
+      <div>
+        <p class="eyebrow mono" data-reveal><span data-scramble>08 — The heart</span></p>
+        <h2 class="display heart-text" id="heart-title">It is not a logo. It is everything that <span class="red">drives</span> us: <span class="red">passion</span>, <span class="red">despair</span>, <span class="red">love</span> with passion, <span class="red">jealousy</span> with grief — and the <span class="red">creativity</span> they leave behind, turned toward a <span class="red">positive impact</span> on the world.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="footer">
+    <div class="final" id="final">
+      <div class="foot-meta mono">
+        <span data-scramble>Mauritius</span>
+        <span>© 2026 Force of Nature</span>
+        <span><a href="#" data-scramble>Privacy</a><a href="#" data-scramble>Terms</a></span>
+      </div>
+      <p class="display wordmark" id="wordmark" aria-label="Force of Nature"><span>Force of Nature</span></p>
+    </div>
+    <div class="join" id="join">
+      <div class="join-head">
+        <p class="eyebrow mono" data-reveal>Join the story</p>
+        <h2 class="display h-section" data-reveal>Follow<br><em>the</em> journey</h2>
+      </div>
+      <form class="field-form" id="join-form" data-reveal novalidate>
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="Your name" autocomplete="given-name" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <button class="cta" type="submit"><span class="txt" data-scramble>Welcome on board</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></button>
+      </form>
+      <p class="msg" id="join-msg" aria-live="polite"></p>
+    </div>
+  </footer>
+</main>
+
+<!-- PRODUCT PANEL -->
+<div class="panel-root" id="product-panel" data-open="false" role="dialog" aria-modal="true" aria-labelledby="pp-title">
+  <div class="overlay" data-close></div>
+  <div class="panel">
+    <div class="bg-panel first"></div><div class="bg-panel second"></div><div class="bg-panel third"></div>
+    <div class="panel-inner">
+      <div class="panel-head fade"><span class="mono" id="pp-eyebrow">Drop 01</span><button class="close" data-close><span data-scramble>Close</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13"/></svg></button></div>
+      <div class="p-well fade" id="pp-well"></div>
+      <h2 class="display fade" id="pp-title"></h2>
+      <p class="price fade" id="pp-price"></p>
+      <div class="sizes fade" id="pp-sizes" role="radiogroup" aria-label="Size"></div>
+      <button class="cta fade" id="pp-add" data-cursor="Add"><span class="txt" data-scramble>Add to cart</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></button>
+      <p class="impact-line fade"><strong>10% of this sale, not profit,</strong> funds reef, forest and coastline conservation.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CART PANEL -->
+<div class="panel-root" id="cart-panel" data-open="false" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+  <div class="overlay" data-close></div>
+  <div class="panel">
+    <div class="bg-panel first"></div><div class="bg-panel second"></div><div class="bg-panel third"></div>
+    <div class="panel-inner">
+      <div class="panel-head fade"><span class="mono" id="cart-title">Cart</span><button class="close" data-close><span data-scramble>Close</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13"/></svg></button></div>
+      <ul class="lines fade" id="cart-lines"></ul>
+      <p class="empty fade" id="cart-empty">Nothing in here yet. The reef is waiting.</p>
+      <div class="total fade"><span>Total</span><span id="cart-total">$0</span></div>
+      <a class="cta fade" href="#" id="checkout" data-cursor="Open"><span class="txt" data-scramble>Checkout</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+<script>
+(() => {
+  gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin, CustomEase);
+  CustomEase.create('main', '0.65, 0.01, 0.05, 0.99');
+  gsap.defaults({ ease: 'main', duration: 0.9 });
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  /* ---------- products ---------- */
+  /* Each tile is composed differently: full tee, oversized crop, print detail, back view first, offset. */
+  /* One line of merchandise: every tile shows the whole tee at the same scale on the same dark plate; variety comes from the print and the side shown first. */
+  const products = [
+    { id: 'reef', name: 'Reef Tee', price: 38, way: 'bone', ways: ['bone', 'ink'], view: { zoom: 1, ox: '0', oy: '0' } },
+    { id: 'forest', name: 'Forest Tee', price: 38, way: 'ink', ways: ['ink', 'bone'], view: { zoom: 1, ox: '0', oy: '0' } },
+    { id: 'coastline', name: 'Coastline Tee', price: 38, way: 'bone', ways: ['bone', 'ink'], view: { zoom: 1, ox: '0', oy: '0' } },
+    { id: 'drip', name: 'Drip Tee', price: 42, way: 'bone', ways: ['bone', 'ink'], view: { zoom: 1, ox: '0', oy: '0' } },
+    { id: 'founder', name: 'Founder Tee', price: 42, way: 'ink', ways: ['ink'], view: { zoom: 1, ox: '0', oy: '0' }, backFirst: true },
+    { id: 'island', name: 'Island Tee', price: 38, way: 'ink', ways: ['ink', 'bone'], view: { zoom: 1, ox: '0', oy: '0' } },
+  ];
+  const fills = { bone: ['#F4F1EC', 'rgba(20,8,6,.22)', '#140806'], ink: ['#24201C', 'rgba(244,241,236,.22)', '#F4F1EC'], clay: ['#E7A196', 'rgba(20,8,6,.22)', '#140806'] };
+  /* Code-native product art until photography exists: one tee silhouette, six different one-colour prints, front and back. */
+  const teeSvg = (p, side = 'front') => {
+    const [fill, stroke, inkc] = fills[p.way];
+    const flt = p.way === 'ink' ? 'grayscale(1) invert(1) contrast(1.6) brightness(1.2)' : 'grayscale(1) contrast(1.2)';
+    const logo = (x, y, w) => `<image href="assets/logo.png" x="${x}" y="${y}" width="${w}" height="${(w * 1.38).toFixed(0)}" style="filter:${flt}"/>`;
+    const txt = (lines, y, size) => lines.map((l, i) => `<text x="128" y="${y + i * size * 0.9}" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="700" font-size="${size}" fill="${inkc}" style="font-variation-settings:'wdth' 75,'opsz' 96;letter-spacing:-0.03em;text-transform:uppercase">${l}</text>`).join('');
+    const prints = {
+      reef:      { front: logo(112, 106, 32),                     back: txt(['REEF', 'FUND'], 132, 40) },
+      forest:    { front: logo(100, 100, 56),                     back: txt(['FOREST'], 150, 40) },
+      coastline: { front: txt(['NOT', 'JUST', 'A TEE.'], 118, 38), back: logo(112, 106, 32) },
+      drip:      { front: logo(88, 92, 80),                       back: txt(['10%'], 168, 84) },
+      founder:   { front: logo(72, 104, 22),                      back: txt(['EST.', 'MRU'], 136, 40) },
+      island:    { front: txt(['20.2°S', '57.5°E'], 132, 34),     back: logo(108, 104, 40) },
+    };
+    return `<svg viewBox="0 0 256 256" aria-hidden="true">
+      <path d="M46 22 96 6q32 30 64 0l50 16 36 64-48 26v138H58V112L10 86Z" fill="${fill}" stroke="${stroke}" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M96 6q32 30 64 0" fill="none" stroke="${stroke}" stroke-width="5"/>
+      <path d="M14 80 54 104M242 80 202 104M62 242h132" fill="none" stroke="${stroke}" stroke-width="1"/>
+      ${prints[p.id][side]}
+    </svg>`;
+  };
+  const money = (n) => '$' + n;
+
+  /* MERCH: false removes the Drop grid, the cart control and the Drop nav link until real products exist. Flip to true to bring them back. */
+  const MERCH = false;
+  if (!MERCH) $$('#drop, #cart-open, .nav a[href="#drop"]').forEach(el => el.remove());
+  /* STORE_URL: the Store menu item opens the separate shop site in a new tab. CONTACT_EMAIL fills the three contact doors. Empty = placeholder, click does nothing. */
+  const STORE_URL = '';
+  const CONTACT_EMAIL = '';
+  /* MUSIC_SRCS: the song the sound toggle plays (loops), tried in order. Drop the file in assets/ as music.mp3 or music.mp4 (the audio track of an MP4 plays fine), or add a path here. None found = the toggle stays off and reads "Song to come". */
+  const MUSIC_SRCS = ['assets/music.mp3', 'assets/music.mp4', 'assets/music.m4a'];
+  const storeLink = $('[data-store]');
+  if (STORE_URL) storeLink.href = STORE_URL; else storeLink.addEventListener('click', (e) => e.preventDefault());
+  $$('[data-contact]').forEach(a => {
+    if (CONTACT_EMAIL) { a.href = 'mailto:' + CONTACT_EMAIL; $('.txt', a).textContent = CONTACT_EMAIL; }
+    else a.addEventListener('click', (e) => e.preventDefault());
+  });
+  $$('[data-ph]').forEach(a => a.addEventListener('click', (e) => e.preventDefault()));
+  /* the chrome turns ink while the clay panel sits under it (top and bottom independently) */
+  ScrollTrigger.create({ trigger: '#partnerships', start: 'top 48px', end: 'bottom 48px', toggleClass: { targets: 'body', className: 'on-clay' } });
+  ScrollTrigger.create({ trigger: '#partnerships', start: 'top bottom-=40px', end: 'bottom bottom-=40px', toggleClass: { targets: 'body', className: 'on-clay-bottom' } });
+  /* the join band at the foot is the same red, so the chrome turns bone over it too (ranges never overlap the partnerships ones) */
+  ScrollTrigger.create({ trigger: '#join', start: 'top 48px', end: 'bottom 48px', toggleClass: { targets: 'body', className: 'on-clay' } });
+  ScrollTrigger.create({ trigger: '#join', start: 'top bottom-=40px', end: 'bottom bottom-=40px', toggleClass: { targets: 'body', className: 'on-clay-bottom' } });
+  const grid = $('#grid');
+  if (grid) grid.innerHTML = products.map((p, i) => {
+    const v = p.view, style = `--zoom:${v.zoom};--ox:${v.ox};--oy:${v.oy};--origin:${v.origin || '50% 50%'}`;
+    const a = p.backFirst ? 'back' : 'front', b = p.backFirst ? 'front' : 'back';
+    return `
+    <button class="tile" data-id="${p.id}" data-cursor="View" aria-label="${p.name}, ${money(p.price)}">
+      <div class="well" style="${style}"><span class="idx">0${i + 1}</span><div class="side front">${teeSvg(p, a)}</div><div class="side back">${teeSvg(p, b)}</div></div>
+      <div class="tile-meta">
+        <span class="name">${p.name}</span><span class="price">${money(p.price)}</span>
+        <span class="ways" aria-hidden="true">${p.ways.map(w => `<i class="${w}"></i>`).join('')}</span>
+      </div>
+    </button>`; }).join('');
+
+  /* ---------- lenis ---------- */
+  let lenis = null;
+  if (!reduce) {
+    lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+  const scrollTo = (target) => {
+    const el = typeof target === 'string' ? $(target) : target;
+    if (!el) return;
+    if (lenis) lenis.scrollTo(el, { duration: 1.4, easing: (t) => 1 - Math.pow(2, -10 * t), offset: target === '#top' ? 0 : -8 });
+    else el.scrollIntoView({ behavior: 'auto' });
+  };
+  $$('[data-anchor]').forEach(a => a.addEventListener('click', (e) => { e.preventDefault(); scrollTo(a.dataset.anchor); }));
+
+  /* ---------- scramble hovers ---------- */
+  $$('[data-scramble]').forEach(el => {
+    const original = el.textContent;
+    const host = el.closest('a,button') || el;
+    host.addEventListener('mouseenter', () => {
+      if (reduce) return;
+      gsap.to(el, { duration: 0.35, scrambleText: { text: original, chars: 'upperCase', speed: 0.5 } });
+    });
+  });
+
+  /* ---------- cursor ---------- */
+  const cursor = $('.cursor'), cursorTxt = $('.cursor-txt');
+  if (!reduce && window.matchMedia('(hover:hover)').matches) {
+    const xTo = gsap.quickTo(cursor, 'x', { duration: 0.9, ease: 'power3' });
+    const yTo = gsap.quickTo(cursor, 'y', { duration: 0.9, ease: 'power3' });
+    gsap.set(cursor, { xPercent: 12, yPercent: 60 });
+    /* the label trails the pointer to the right, and flips to the left near the right edge so it never leaves the viewport (the theme toggle lives there) */
+    let flipped = false;
+    window.addEventListener('mousemove', (e) => {
+      xTo(e.clientX); yTo(e.clientY);
+      const near = e.clientX > window.innerWidth - 180;
+      if (near !== flipped) { flipped = near; gsap.to(cursor, { xPercent: near ? -112 : 12, duration: 0.4 }); }
+    });
+    document.addEventListener('mouseover', (e) => {
+      const t = e.target.closest('[data-cursor]');
+      if (t) { cursorTxt.textContent = t.dataset.cursor; gsap.to(cursor, { autoAlpha: 1, duration: 0.4 }); }
+      else gsap.to(cursor, { autoAlpha: 0, duration: 0.4 });
+    });
+  }
+
+  /* ---------- chrome: clock + scroll % ---------- */
+  const clock = $('#clock');
+  const tick = () => { clock.textContent = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Indian/Mauritius' }).format(new Date()) + ' MUT'; };
+  tick(); setInterval(tick, 15000);
+  const pct = $('#scroll-pct');
+  ScrollTrigger.create({ onUpdate: (self) => { pct.textContent = String(Math.round(self.progress * 100)).padStart(2, '0'); }, start: 0, end: 'max' });
+
+  /* ---------- theme: dark by default, light on request, remembered per browser ---------- */
+  const themeBtn = $('#theme-toggle'), themeMeta = $('meta[name="theme-color"]');
+  const applyTheme = (t) => {
+    const light = t === 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    themeMeta.content = light ? '#F4F1EC' : '#0A0908';
+    themeBtn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
+    themeBtn.setAttribute('aria-pressed', String(light));
+    themeBtn.dataset.cursor = light ? 'Go dark' : 'Go light';
+    if (themeBtn.matches(':hover')) cursorTxt.textContent = themeBtn.dataset.cursor;
+    try { localStorage.setItem('fon-theme', t); } catch (e) {}
+  };
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+  themeBtn.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    /* one 0.6s crossfade of the whole page where the browser supports it; an instant swap elsewhere and under reduced motion */
+    if (!reduce && document.startViewTransition) document.startViewTransition(() => applyTheme(next));
+    else applyTheme(next);
+  });
+
+  /* ---------- sound: off by default, one click starts the song with a 1s fade, remembered for the session ----------
+     Browsers refuse audio before the visitor has clicked or tapped, so on a reload with sound remembered the first click or key
+     anywhere on the page starts it. Hidden tab pauses it, back to the tab resumes it. */
+  const soundBtn = $('#sound-toggle');
+  if (soundBtn) {
+    const music = new Audio();
+    music.loop = true; music.preload = 'auto'; music.volume = 0;
+    const srcs = MUSIC_SRCS.slice();
+    const LEVEL = 0.6;
+    let on = false, fade = null, missing = false;
+    const setUi = () => {
+      soundBtn.classList.toggle('is-on', on);
+      soundBtn.setAttribute('aria-pressed', String(on));
+      soundBtn.setAttribute('aria-label', missing ? 'Song to come' : on ? 'Turn sound off' : 'Turn sound on');
+      soundBtn.dataset.cursor = missing ? 'Song to come' : on ? 'Sound off' : 'Sound on';
+      if (soundBtn.matches(':hover')) cursorTxt.textContent = soundBtn.dataset.cursor;
+    };
+    const start = () => {
+      if (missing) return;
+      const p = music.play();
+      if (p && p.catch) p.catch(() => { on = false; setUi(); });
+      if (fade) fade.kill();
+      fade = gsap.to(music, { volume: LEVEL, duration: reduce ? 0 : 1, ease: 'power1.out' });
+      on = true; setUi();
+      try { sessionStorage.setItem('fon-sound', '1'); } catch (e) {}
+    };
+    const stop = () => {
+      if (fade) fade.kill();
+      fade = gsap.to(music, { volume: 0, duration: reduce ? 0 : 0.6, ease: 'power1.in', onComplete: () => music.pause() });
+      on = false; setUi();
+      try { sessionStorage.removeItem('fon-sound'); } catch (e) {}
+    };
+    /* try each path in turn; when none loads the button dims */
+    const tryNext = () => {
+      if (!srcs.length) { missing = true; on = false; soundBtn.setAttribute('aria-disabled', 'true'); setUi(); hideHint(); return; }
+      music.src = srcs.shift();
+    };
+    /* the brush arrow pointing at this button: gone for the session after the first click (or when there is no song to point at) */
+    const hint = $('#sound-hint');
+    const hideHint = () => {
+      if (!hint) return;
+      hint.classList.add('is-gone');
+      try { sessionStorage.setItem('fon-sound-hint', '1'); } catch (e) {}
+    };
+    let hintSeen = false;
+    try { hintSeen = sessionStorage.getItem('fon-sound-hint') === '1' || sessionStorage.getItem('fon-sound') === '1'; } catch (e) {}
+    if (hintSeen && hint) hint.classList.add('is-gone');
+    music.addEventListener('error', tryNext);
+    tryNext();
+    soundBtn.addEventListener('click', () => { hideHint(); on ? stop() : start(); });
+    document.addEventListener('visibilitychange', () => {
+      if (!on) return;
+      if (document.hidden) music.pause(); else { const p = music.play(); if (p && p.catch) p.catch(() => {}); }
+    });
+    let remembered = false;
+    try { remembered = sessionStorage.getItem('fon-sound') === '1'; } catch (e) {}
+    if (remembered) {
+      const arm = (e) => { if (e.type === 'keydown' && e.key === 'Tab') return; document.removeEventListener('pointerdown', arm); document.removeEventListener('keydown', arm); start(); };
+      document.addEventListener('pointerdown', arm); document.addEventListener('keydown', arm);
+    }
+    setUi();
+  }
+
+  /* ---------- panels ---------- */
+  const cart = [];
+  let lastFocus = null;
+  const panelTl = new Map();
+  /* openPanel(root, opener, replace): `replace` is a panel already open that this one slides over; it is hidden once covered */
+  const openPanel = (root, opener, replace) => {
+    lastFocus = opener || document.activeElement;
+    root.dataset.open = 'true';
+    if (lenis) lenis.stop();
+    gsap.to('.chrome', { autoAlpha: 0, duration: reduce ? 0 : 0.4 });
+    const overlay = $('.overlay', root), bg = $$('.bg-panel', root), strip = $('.bg-panel.second', root), fades = $$('.fade', root);
+    const tl = gsap.timeline();
+    panelTl.set(root, tl);
+    const f = $$('a[href],button,input,[tabindex]:not([tabindex="-1"])', root).filter(el => !el.closest('.overlay'));
+    root._focusables = f;
+    const focusFirst = () => (f[0] || root).focus({ preventScroll: true });
+    const hideReplaced = () => { if (replace) { replace.dataset.open = 'false'; gsap.set($$('.fade', replace), { clearProps: 'all' }); } };
+    if (reduce) { gsap.set(overlay, { autoAlpha: 1 }); gsap.set(bg, { xPercent: 0 }); gsap.set(fades, { autoAlpha: 1, yPercent: 0 }); hideReplaced(); focusFirst(); }
+    else {
+      tl.fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, duration: replace ? 0.01 : 0.9 })
+        .fromTo(bg, { xPercent: 101 }, { xPercent: 0, stagger: 0.16, duration: 0.95, ease: 'expo.inOut' }, '<')
+        .call(hideReplaced, null, 1.0)
+        .fromTo(fades, { autoAlpha: 0, yPercent: 60 }, { autoAlpha: 1, yPercent: 0, stagger: 0.08, duration: 1.1 }, 0.7)
+        .call(focusFirst, null, 0.85);
+    }
+  };
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const open = $('.panel-root[data-open="true"]');
+    if (open) closePanel(open);
+  });
+  const closePanel = (root) => {
+    const overlay = $('.overlay', root), bg = $$('.bg-panel', root), fades = $$('.fade', root);
+    const done = () => { root.dataset.open = 'false'; if (lenis) lenis.start(); if (lastFocus) lastFocus.focus({ preventScroll: true }); };
+    if (!$$('.panel-root[data-open="true"]').filter(r => r !== root).length) gsap.to('.chrome', { autoAlpha: 1, duration: reduce ? 0 : 0.8, delay: reduce ? 0 : 0.4 });
+    if (reduce) { done(); return; }
+    gsap.timeline({ onComplete: done })
+      .to(fades, { autoAlpha: 0, yPercent: 20, duration: 0.45, stagger: 0.02 })
+      .to(bg, { xPercent: 120, duration: 0.8, stagger: -0.08, ease: 'expo.inOut' }, 0.15)
+      .to(overlay, { autoAlpha: 0, duration: 0.7 }, 0.35);
+  };
+  $$('.panel-root').forEach(root => {
+    $$('[data-close]', root).forEach(b => b.addEventListener('click', () => closePanel(root)));
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab' && root._focusables && root._focusables.length) {
+        const f = root._focusables, first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  });
+
+  /* product panel */
+  const pp = $('#product-panel');
+  let current = null, productOpener = null;
+  const openProduct = (id) => {
+    current = products.find(p => p.id === id);
+    $('#pp-eyebrow').textContent = 'Drop 01 — ' + current.way;
+    $('#pp-well').innerHTML = teeSvg(current, 'front');
+    const [first, ...rest] = current.name.split(' ');
+    $('#pp-title').innerHTML = `<em>the</em> ${first}<br>${rest.join(' ')}`;
+    $('#pp-price').textContent = money(current.price) + ' · Organic cotton, 220gsm';
+    $('#pp-sizes').innerHTML = ['XS', 'S', 'M', 'L', 'XL'].map((s, i) => `<label><input type="radio" name="size" value="${s}" ${i === 2 ? 'checked' : ''}><span>${s}</span></label>`).join('');
+    openPanel(pp);
+  };
+  if (grid) grid.addEventListener('click', (e) => { const t = e.target.closest('.tile'); if (t) { productOpener = t; openProduct(t.dataset.id); } });
+
+  /* cart */
+  const cartPanel = $('#cart-panel'), lines = $('#cart-lines'), empty = $('#cart-empty'), total = $('#cart-total'), countEl = $('#cart-count');
+  const renderCart = () => {
+    lines.innerHTML = cart.map((l, i) => `
+      <li class="line">
+        <span class="thumb">${teeSvg(l, 'front')}</span>
+        <span><span class="l-name">${l.name}</span><br><span class="l-size">Size ${l.size}</span><br><button class="rm" data-rm="${i}">Remove</button></span>
+        <span class="l-price">${money(l.price)}</span>
+      </li>`).join('');
+    empty.style.display = cart.length ? 'none' : 'block';
+    total.textContent = money(cart.reduce((s, l) => s + l.price, 0));
+  };
+  const flipCount = () => {
+    const next = `(${cart.length})`;
+    if (reduce) { countEl.textContent = next; return; }
+    gsap.timeline()
+      .to(countEl, { yPercent: -100, duration: 0.4, onComplete: () => { countEl.textContent = next; } })
+      .fromTo(countEl, { yPercent: 100 }, { yPercent: 0, duration: 0.5 });
+  };
+  $('#pp-add').addEventListener('click', () => {
+    const size = ($('input[name="size"]:checked') || {}).value || 'M';
+    cart.push({ ...current, size });
+    renderCart(); flipCount();
+    openPanel(cartPanel, productOpener, pp);
+  });
+  lines.addEventListener('click', (e) => { const b = e.target.closest('[data-rm]'); if (!b) return; cart.splice(+b.dataset.rm, 1); renderCart(); flipCount(); });
+  const cartOpen = $('#cart-open');
+  if (cartOpen) cartOpen.addEventListener('click', () => { renderCart(); openPanel(cartPanel); });
+  $('#checkout').addEventListener('click', (e) => { e.preventDefault(); });
+  renderCart();
+
+  /* join form */
+  $('#join-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nameInput = $('#name'), emailInput = $('#email'), msg = $('#join-msg');
+    if (!nameInput.validity.valid) { msg.textContent = 'Tell us your name first.'; nameInput.focus(); return; }
+    if (!emailInput.validity.valid) { msg.textContent = 'That email needs an @ and a dot.'; emailInput.focus(); return; }
+    msg.textContent = "You're in. Watch your inbox."; nameInput.value = ''; emailInput.value = '';
+  });
+
+  /* ---------- motion ---------- */
+  const mm = gsap.matchMedia();
+  const html = document.documentElement;
+
+  mm.add('(prefers-reduced-motion: reduce)', () => {
+    html.classList.add('intro-done');
+  });
+
+  mm.add('(prefers-reduced-motion: no-preference)', () => {
+    /* arriving through the newsletter site's Bon Voyage wormhole (?voyage=1) always plays the decode, even if this
+       session has seen it: the wormhole ends on black and the intro's void beat is its landing. The flag is then
+       dropped from the address so a reload behaves normally */
+    const viaVoyage = new URLSearchParams(location.search).has('voyage');
+    if (viaVoyage) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
+    const introSeen = !viaVoyage && sessionStorage.getItem('fon-intro') === '1';
+    const reveals = $$('[data-reveal]');
+    gsap.set(reveals, { autoAlpha: 0, y: 40 });
+
+    /* hero + chrome reveal (runs after intro or immediately) */
+    const heroReveal = () => {
+      const heroEls = $$('.hero [data-reveal]');
+      gsap.timeline()
+        .to(heroEls, { autoAlpha: 1, y: 0, duration: 1.4, stagger: 0.12, ease: 'expo.out' }, 0)
+        .to('#chrome-top', { autoAlpha: 1, y: 0, duration: 1.2 }, 0.3)
+        .to('.chrome.bottom', { autoAlpha: 1, y: 0, duration: 1.2 }, 0.45)
+        .from('#hero-object img', { scale: 0.9, rotation: -6, duration: 1.8, ease: 'expo.out' }, 0.4);
+    };
+    gsap.set(['#chrome-top', '.chrome.bottom'], { autoAlpha: 0, y: -12 });
+    gsap.set('.chrome.bottom', { y: 12 });
+
+    if (introSeen) { html.classList.add('intro-done'); heroReveal(); }
+    else {
+      const spans = $$('#intro-text span');
+      const rnd = (n) => Array.from({ length: n }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]).join('');
+      spans.forEach(s => { s.textContent = rnd(s.dataset.text.length); });
+      /* size each line edge to edge once the display font is in: fit on the real words, then scramble at that size */
+      const sizeIntro = () => {
+        const it = $('#intro-text');
+        spans.forEach(s => { s.textContent = s.dataset.text; });
+        fitLines(it);
+        /* one size for every line: the longest line sets it, and the block must stay inside 84% of the viewport height */
+        let fs = Math.min(...spans.map(s => parseFloat(s.style.fontSize)));
+        spans.forEach(s => { s.style.fontSize = fs.toFixed(2) + 'px'; });
+        const maxH = window.innerHeight * 0.84, h = it.getBoundingClientRect().height;
+        if (h > maxH) { fs = fs * maxH / h; spans.forEach(s => { s.style.fontSize = fs.toFixed(2) + 'px'; }); }
+        spans.forEach(s => { s.textContent = rnd(s.dataset.text.length); });
+      };
+      /* 0–0.7s void only; 0.7–3.5s decode in red; holds; then the string lifts out and the hero reveals underneath */
+      const tl = gsap.timeline({ paused: true, delay: 0.7, onComplete: () => { html.classList.add('intro-done'); sessionStorage.setItem('fon-intro', '1'); } });
+      document.fonts.ready.then(() => { sizeIntro(); tl.play(); });
+      tl.to('#intro-text', { opacity: 1, duration: 0.4, ease: 'power1.out' }, 0);
+      spans.forEach((s, i) => {
+        tl.to(s, { duration: 2.4, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.3, revealDelay: 0.5, tweenLength: false } }, i * 0.35);
+      });
+      tl.to('#intro-text', { yPercent: -12, autoAlpha: 0, duration: 1.0, ease: 'expo.in' }, '>+0.6')
+        .add(heroReveal, '>-0.4')
+        .to('#intro', { autoAlpha: 0, duration: 0.5 }, '<');
+    }
+
+    /* generic reveals on scroll (everything outside the hero) */
+    $$('[data-reveal]').filter(el => !el.closest('.hero')).forEach(el => {
+      gsap.to(el, { autoAlpha: 1, y: 0, duration: 1.2, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+    });
+
+    /* hero object follows the pointer */
+    const obj = $('#hero-object img');
+    if (window.matchMedia('(hover:hover)').matches) {
+      const ox = gsap.quickTo(obj, 'x', { duration: 1, ease: 'power4' });
+      const oy = gsap.quickTo(obj, 'y', { duration: 1, ease: 'power4' });
+      const orot = gsap.quickTo(obj, 'rotation', { duration: 1, ease: 'power4' });
+      let idle;
+      window.addEventListener('mousemove', (e) => {
+        const nx = (e.clientX / window.innerWidth - 0.5), ny = (e.clientY / window.innerHeight - 0.5);
+        ox(nx * 16); oy(ny * 16); orot(nx * 12);
+        clearTimeout(idle); idle = setTimeout(() => { ox(0); oy(0); orot(0); }, 900);
+      });
+    }
+    /* hero copy drifts up and out as you leave the hero */
+    gsap.to('.hero-copy', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'bottom 90%', end: 'bottom 20%', scrub: 1 } });
+    gsap.to('#hero-object', { yPercent: 30, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 } });
+
+    /* manifesto → menu: the copy brightens word by word while pinned; then every other word falls away and the red words
+       fly (matchLocation) from their place in the sentence to a stacked column, where they grow into the menu */
+    const mSection = $('#manifesto');
+    if (mSection) {
+      const track = $('.m-track', mSection), menu = $('.m-menu', mSection), links = $$('a', menu), eyebrows = $$('.eyebrow', mSection);
+      const kws = $$('.kw', mSection);
+      const linkFor = (kw) => links.find(a => a.dataset.kw === kw.dataset.kw);
+      let split, mtl;
+      const buildManifesto = () => {
+        const progress = mtl ? mtl.progress() : 0;
+        if (mtl) { mtl.scrollTrigger.kill(); mtl.kill(); }
+        if (!split) split = new SplitText($$('.m-text', mSection), { type: 'words', wordsClass: 'w', ignore: '.kw' });
+        gsap.set(links, { clearProps: 'transform' });
+        gsap.set(kws, { opacity: 0 });
+        /* the link starts exactly on top of its word in the sentence; its rest position is the column */
+        kws.forEach(kw => {
+          const a = linkFor(kw), r = kw.getBoundingClientRect(), b = a.getBoundingClientRect();
+          gsap.set(a, { x: r.left - b.left, y: r.top - b.top });
+        });
+        /* words and keywords in reading order, so a flying link brightens exactly when its word would */
+        const seq = $$('.w, .kw', mSection).filter(el => el.classList.contains('kw') || !el.closest('.kw'));
+        const words = seq.filter(el => !el.classList.contains('kw'));
+        const each = 0.08, T = seq.length * each;
+        mtl = gsap.timeline({ scrollTrigger: { trigger: track, start: 'top top', end: 'bottom bottom', scrub: 1, onUpdate: (s) => menu.classList.toggle('is-menu', s.progress > 0.8) } });
+        seq.forEach((el, i) => {
+          const t = el.classList.contains('kw') ? linkFor(el) : el;
+          mtl.fromTo(t, { opacity: 0.25 }, { opacity: 1, duration: 0.5, ease: 'none' }, i * each);
+        });
+        const fadeAt = T + 0.6;
+        mtl.fromTo(words, { opacity: 1, yPercent: 0, scale: 1 }, { opacity: 0, yPercent: -5, scale: 0.8, duration: 0.8, stagger: { amount: 1.2 }, immediateRender: false }, fadeAt)
+          .fromTo(eyebrows, { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.8, immediateRender: false }, fadeAt)
+          .to(links, { x: 0, duration: 2 }, fadeAt + 0.4)
+          .to(links, { y: 0, duration: 1.2, ease: 'power1.inOut' }, '>-1')
+          .to(links, { scale: 1.6, duration: 1, ease: 'power3.out', stagger: 0.1 }, '>-0.2')
+          .to({}, { duration: 1.5 });
+        mtl.progress(progress);
+      };
+      document.fonts.ready.then(buildManifesto);
+      let mz; window.addEventListener('resize', () => { clearTimeout(mz); mz = setTimeout(buildManifesto, 120); });
+    }
+
+    /* community: the strip of wearers slides sideways for as long as the section is on screen */
+    if ($('#wearers')) gsap.to('#wearers', { xPercent: -35, ease: 'none', scrollTrigger: { trigger: '#community', start: 'top bottom', end: 'bottom top', scrub: 1 } });
+
+    /* partnerships: the number counts up to ten once, and each share draws its red bar */
+    const bigPct = $('#big-pct');
+    if (bigPct) {
+      const n = { v: 0 };
+      bigPct.textContent = '0%';
+      gsap.to(n, { v: 10, duration: 1.6, ease: 'expo.out', onUpdate: () => { bigPct.textContent = Math.round(n.v) + '%'; }, scrollTrigger: { trigger: bigPct, start: 'top 80%', once: true } });
+      $$('.lrow .bar').forEach(b => gsap.fromTo(b, { scaleX: 0 }, { scaleX: +b.dataset.share / 10, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: b, start: 'top 90%', once: true } }));
+    }
+
+    /* impact: the four counters run up once (staggered), the twelve bars rise from the baseline in order, and each target fill draws to its share */
+    const kpiNums = $$('.kpi .n');
+    if (kpiNums.length) {
+      const fmt = (el, v) => (el.dataset.prefix || '') + Math.round(v).toLocaleString('en-US');
+      kpiNums.forEach((el, i) => {
+        const o = { v: 0 }; el.textContent = fmt(el, 0);
+        gsap.to(o, { v: +el.dataset.count, duration: 1.8, delay: i * 0.12, ease: 'expo.out', onUpdate: () => { el.textContent = fmt(el, o.v); }, scrollTrigger: { trigger: '#kpis', start: 'top 80%', once: true } });
+      });
+      gsap.fromTo('#bars .bar i', { scaleY: 0 }, { scaleY: 1, duration: 1.4, ease: 'expo.out', stagger: 0.06, scrollTrigger: { trigger: '#bars', start: 'top 85%', once: true } });
+      $$('.trow .fill').forEach(f => gsap.fromTo(f, { scaleX: 0 }, { scaleX: parseFloat(f.style.getPropertyValue('--p')), duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: f, start: 'top 90%', once: true } }));
+    }
+
+    /* design: the sketch table is unmasked from the top, then leans toward the pointer */
+    const sketch = $('#sketch');
+    if (sketch) {
+      gsap.fromTo(sketch, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: sketch, start: 'top 80%', once: true } });
+      if (window.matchMedia('(hover:hover)').matches) {
+        const rx = gsap.quickTo(sketch, 'rotationY', { duration: 1, ease: 'power4' });
+        const ry = gsap.quickTo(sketch, 'rotationX', { duration: 1, ease: 'power4' });
+        gsap.set(sketch, { transformPerspective: 900 });
+        const d = $('#design');
+        d.addEventListener('mousemove', (e) => { const r = sketch.getBoundingClientRect(); rx(((e.clientX - r.left) / r.width - 0.5) * 10); ry(-((e.clientY - r.top) / r.height - 0.5) * 8); });
+        d.addEventListener('mouseleave', () => { rx(0); ry(0); });
+      }
+    }
+
+    /* production: the red line draws down the steps as you scroll past them */
+    if ($('#steps-line')) gsap.fromTo('#steps-line', { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: '#steps', start: 'top 70%', end: 'bottom 60%', scrub: 1 } });
+
+    /* the heart: the mark grows in and then keeps a slow beat; the statement rises line by line out of a mask */
+    const heartMark = $('#heart-mark');
+    if (heartMark) {
+      gsap.from(heartMark, { scale: 0.7, rotation: -8, autoAlpha: 0, duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: heartMark, start: 'top 75%', once: true },
+        onComplete: () => gsap.to($('img', heartMark), { scale: 1.04, duration: 0.55, ease: 'power1.inOut', yoyo: true, repeat: -1, repeatDelay: 0.6 }) });
+      document.fonts.ready.then(() => {
+        SplitText.create('#heart-title', { type: 'lines', mask: 'lines', autoSplit: true, onSplit: (self) => gsap.from(self.lines, { yPercent: 110, duration: 1.2, stagger: 0.1, ease: 'expo.out', scrollTrigger: { trigger: '#heart-title', start: 'top 80%', once: true } }) });
+      });
+    }
+
+    /* drop grid: each tile rises from below with rotation jitter, scrubbed across the grid's own scroll distance */
+    const tiles = $$('.tile');
+    if (tiles.length) ScrollTrigger.matchMedia({
+      '(min-width: 901px)': () => {
+        gsap.set(tiles, { yPercent: 55, autoAlpha: 0, rotation: () => (Math.random() - 0.5) * 14, transformOrigin: '50% 100%' });
+        gsap.timeline({ scrollTrigger: { trigger: '#grid', start: 'top 92%', end: 'bottom 30%', scrub: 1.2 } })
+          .to(tiles, { yPercent: 0, autoAlpha: 1, rotation: 0, stagger: 0.3, duration: 1, ease: 'power2.out' });
+      },
+      '(max-width: 900px)': () => {
+        tiles.forEach(t => gsap.fromTo(t, { yPercent: 20, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 1.1, scrollTrigger: { trigger: t, start: 'top 90%', once: true } }));
+      }
+    });
+
+    /* footer wordmark: clip reveal from the bottom, then a slow parallax settle as the final viewport lands */
+    gsap.fromTo('#wordmark span', { clipPath: 'inset(100% 0 0 0)', yPercent: 24 }, { clipPath: 'inset(0% 0 0 0)', yPercent: 0, duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: '#final', start: 'top 60%', once: true } });
+    gsap.fromTo('.foot-meta', { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.2, scrollTrigger: { trigger: '#final', start: 'top 60%', once: true } });
+  });
+
+  /* lines that must fill the full width: the intro decode and the footer wordmark */
+  const fitLines = (wrap) => {
+    const cs = getComputedStyle(wrap);
+    const avail = wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    $$('span', wrap).forEach(s => {
+      s.style.fontSize = '100px';
+      let fs = 100 * avail / s.getBoundingClientRect().width;
+      s.style.fontSize = fs.toFixed(2) + 'px';
+      fs = fs * avail / s.getBoundingClientRect().width; /* second pass corrects rounding */
+      s.style.fontSize = Math.floor(fs * 100) / 100 + 'px';
+    });
+  };
+  const fitAll = () => { fitLines($('#wordmark')); }; /* the intro sizes itself once in the intro timeline */
+  /* the hero heart is centred on the gap between the headline and the subheading (layout values, so scroll transforms don't skew it) */
+  const placeHeart = () => {
+    const obj = $('#hero-object'), t = $('#hero-title');
+    if (!obj || !t) return;
+    if (window.innerWidth <= 900) { obj.style.top = ''; obj.style.bottom = ''; return; }
+    const centre = t.offsetTop + t.offsetHeight + parseFloat(getComputedStyle(t).marginBottom) / 2;
+    obj.style.bottom = 'auto';
+    obj.style.top = Math.round(centre - obj.offsetHeight / 2) + 'px';
+  };
+  document.fonts.ready.then(() => { fitAll(); placeHeart(); ScrollTrigger.refresh(); });
+  let fz; window.addEventListener('resize', () => { clearTimeout(fz); fz = setTimeout(() => { fitAll(); placeHeart(); ScrollTrigger.refresh(); }, 150); });
+
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+})();
+
+/* ---------- starfield: the newsletter site's twinkle, verbatim (owner asked 17 Sep) ----------
+   60 to 180 stars seeded by viewport area, 5% with a soft red halo. Each star only breathes in opacity on its own
+   sine (no drift, no parallax) and the canvas is position:fixed, so the sky stays put while the page scrolls.
+   Cleared and skipped in the light theme; under reduced motion the stars hold their base brightness. */
+(function(){
+  var canvas = document.getElementById('starfield');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var stars = [];
+  var resizeTimer;
+
+  function seedStars(){
+    var count = Math.round((window.innerWidth * window.innerHeight) / 9000);
+    count = Math.max(60, Math.min(count, 180));
+    stars = [];
+    for(var i = 0; i < count; i++){
+      var glow = Math.random() < 0.05;
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: (glow ? (1.6 + Math.random() * 1.4) : (0.5 + Math.random() * 1.1)) * dpr,
+        base: 0.25 + Math.random() * 0.5,
+        amp: 0.25 + Math.random() * 0.35,
+        speed: 0.4 + Math.random() * 0.8,
+        phase: Math.random() * Math.PI * 2,
+        glow: glow
+      });
+    }
+  }
+
+  function resize(){
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    seedStars();
+  }
+
+  function loop(t){
+    requestAnimationFrame(loop);
+    if(document.hidden) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(document.documentElement.getAttribute('data-theme') === 'light') return;
+    for(var i = 0; i < stars.length; i++){
+      var s = stars[i];
+      var o = reduceMotion ? s.base : s.base + s.amp * Math.sin(t * 0.001 * s.speed + s.phase);
+      o = Math.max(0, Math.min(1, o));
+      if(s.glow){
+        var grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 6);
+        grad.addColorStop(0, 'rgba(193,27,21,' + (o * 0.35) + ')');
+        grad.addColorStop(1, 'rgba(193,27,21,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = 'rgba(243,237,225,' + o + ')';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 150);
+  });
+  resize();
+  requestAnimationFrame(loop);
+})();
+
+(function(){
+  var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+  if(!finePointer.matches) return;
+  var dot = document.getElementById('cursorDot');
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var targetX = -100, targetY = -100, x = -100, y = -100;
+  var ease = reduceMotion ? 1 : 0.28;
+  var shown = false;
+  var interactive = 'a, button, [role="button"], label, summary, select';
+  var textual = 'input:not([type="radio"]):not([type="checkbox"]), textarea, [contenteditable="true"]';
+
+  root.classList.add('has-dot-cursor');
+
+  function render(){
+    x += (targetX - x) * ease;
+    y += (targetY - y) * ease;
+    dot.style.left = x + 'px';
+    dot.style.top = y + 'px';
+    requestAnimationFrame(render);
+  }
+
+  document.addEventListener('mousemove', function(e){
+    targetX = e.clientX;
+    targetY = e.clientY;
+    if(!shown){
+      shown = true;
+      x = targetX; y = targetY;
+      dot.classList.add('is-visible');
+    }
+    var el = e.target;
+    dot.classList.toggle('is-hover', !!(el.closest && el.closest(interactive)));
+    dot.classList.toggle('is-text', !!(el.closest && el.closest(textual)));
+  }, { passive: true });
+
+  document.addEventListener('mousedown', function(){ dot.classList.add('is-down'); });
+  document.addEventListener('mouseup', function(){ dot.classList.remove('is-down'); });
+  document.addEventListener('mouseleave', function(){ dot.classList.remove('is-visible'); });
+  document.addEventListener('mouseenter', function(){ if(shown) dot.classList.add('is-visible'); });
+  window.addEventListener('blur', function(){ dot.classList.remove('is-visible'); });
+
+  // if the pointer situation changes (e.g. a mouse is unplugged), fall back to the native cursor
+  finePointer.addEventListener && finePointer.addEventListener('change', function(ev){
+    root.classList.toggle('has-dot-cursor', ev.matches);
+    if(!ev.matches) dot.classList.remove('is-visible');
+  });
+
+  requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>

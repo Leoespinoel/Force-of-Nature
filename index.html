@@ -38,8 +38,9 @@
 
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
+  /* Fixed so the twinkling sky sits behind every section as the page scrolls. */
   .starfield{
-    position:absolute;
+    position:fixed;
     inset:0;
     z-index:-1;
     opacity:0;
@@ -201,6 +202,34 @@
     mix-blend-mode:multiply;
   }
   :root[data-theme="dark"] .hero__grain{mix-blend-mode:overlay;}
+
+  /* ---------- Red dot cursor ----------
+     A solid dot in the heart's red replaces the native pointer on mouse devices. It trails
+     the mouse with a touch of easing, grows over links and buttons, and shrinks on press.
+     Touch and stylus devices keep their native behaviour; text fields keep the I-beam. */
+  .cursor-dot{
+    position:fixed;
+    top:0;
+    left:0;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--red);
+    pointer-events:none;
+    z-index:9999;
+    opacity:0;
+    transform:translate(-50%, -50%) scale(1);
+    transition:opacity 200ms ease, transform 220ms cubic-bezier(.2,.8,.2,1);
+    will-change:transform, opacity;
+  }
+  @media (hover: hover) and (pointer: fine){
+    html.has-dot-cursor, html.has-dot-cursor *{cursor:none !important;}
+    html.has-dot-cursor input:not([type="radio"]):not([type="checkbox"]), html.has-dot-cursor textarea{cursor:text !important;}
+    html.has-dot-cursor .cursor-dot.is-visible{opacity:1;}
+    html.has-dot-cursor .cursor-dot.is-hover{transform:translate(-50%, -50%) scale(2.2);}
+    html.has-dot-cursor .cursor-dot.is-down{transform:translate(-50%, -50%) scale(0.75);}
+    html.has-dot-cursor .cursor-dot.is-text{transform:translate(-50%, -50%) scale(0);}
+  }
   .hero__globe{
     position:absolute;
     top:50%;
@@ -210,23 +239,28 @@
     aspect-ratio:1 / 1;
     border-radius:50%;
     overflow:hidden;
+    /* Opaque page-colored disc so the starfield stays behind the earth instead of showing
+       through it; the dimming lives on the video and shading layers, not the container. */
+    background:var(--bg);
     opacity:0;
     pointer-events:none;
     z-index:0;
     transition:opacity 600ms ease;
   }
-  :root[data-theme="dark"] .hero__globe{opacity:0.24;}
+  :root[data-theme="dark"] .hero__globe{opacity:1;}
   .hero__globe video{
     width:100%;
     height:100%;
     object-fit:cover;
     display:block;
+    opacity:0.24;
   }
   .hero__globe::after{
     content:"";
     position:absolute;
     inset:0;
     border-radius:50%;
+    opacity:0.24;
     background:
       radial-gradient(circle at 34% 30%, rgba(255,255,255,0.22), rgba(255,255,255,0) 42%),
       radial-gradient(circle at 68% 72%, rgba(0,0,0,0.55), rgba(0,0,0,0) 62%);
@@ -340,6 +374,41 @@
   }
   .voyage__btn:hover{background:#8F130F;border-color:#8F130F;box-shadow:0 22px 48px -14px rgba(143,19,15,0.6);transform:translateY(-2px);}
   .voyage__btn:active{transform:scale(0.97);}
+
+  /* ---------- Bon Voyage wormhole ----------
+     Click: the page breaks apart (every block is pulled into the button and shrinks away, staggered),
+     the portal fades up over it and the wormhole video runs, then the browser lands on the store,
+     whose intro opens on black. Reduced motion, modifier clicks and missing video fall back to a plain link. */
+  .voyage-portal{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    background:transparent;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 300ms ease;
+  }
+  .voyage-portal.is-open{opacity:1;pointer-events:auto;}
+  /* screen blend: the video's black is see-through, so the spiral grows over the page while the blocks are still
+     being pulled in, and the page itself (body goes black on departure) is what the tunnel finally collapses onto */
+  .voyage-portal video{width:100%;height:100%;object-fit:cover;display:block;mix-blend-mode:screen;}
+  body.is-departing{overflow:hidden;background:#000;}
+  body.is-departing .nav-bar,
+  body.is-departing .hero,
+  body.is-departing .follow,
+  body.is-departing .perks,
+  body.is-departing .voyage{
+    transition:transform 1100ms cubic-bezier(.7,0,.3,1), opacity 900ms ease-in;
+    will-change:transform, opacity;
+    pointer-events:none;
+  }
+  body.is-departing .voyage__btn{
+    transition:transform 900ms cubic-bezier(.7,0,.3,1), opacity 600ms ease-in;
+    transform:scale(1.35);
+    opacity:0;
+  }
+  /* the red dot cursor leaves with the page, so nothing of the site is left over the tunnel */
+  html.has-dot-cursor body.is-departing .cursor-dot.is-visible{opacity:0;transform:translate(-50%, -50%) scale(0);}
 
   /* ---------- Follow ---------- */
   .follow{
@@ -479,6 +548,7 @@
 <body>
 
 <canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
 <div class="nav-bar" id="navBar">
   <div class="wrap nav">
@@ -589,8 +659,12 @@
 </section>
 
 <section class="voyage">
-  <a class="voyage__btn" href="http://localhost:3001">Bon Voyage</a>
+  <a class="voyage__btn" id="voyageBtn" href="/bon-voyage/">Bon Voyage</a>
 </section>
+
+<div class="voyage-portal" id="voyagePortal" aria-hidden="true">
+  <video id="voyageVideo" src="assets/wormhole.mp4" muted playsinline preload="none"></video>
+</div>
 
 <script>
   (function(){
@@ -656,6 +730,63 @@
       }).catch(function(){
         say('Couldn’t reach the signup service. Check your connection and try again.', true);
       }).then(function(){ busy(false); });
+    });
+  })();
+
+  (function(){
+    var btn = document.getElementById('voyageBtn');
+    var portal = document.getElementById('voyagePortal');
+    var video = document.getElementById('voyageVideo');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var departing = false;
+    var VIDEO_FALLBACK_MS = 7500;
+
+    function destination(){
+      var url = new URL(btn.href);
+      url.searchParams.set('voyage', '1'); /* the store plays its intro every time it is reached this way */
+      return url.href;
+    }
+    function warm(){ if(video.preload !== 'auto'){ video.preload = 'auto'; video.load(); } }
+    btn.addEventListener('pointerenter', warm);
+    btn.addEventListener('focus', warm);
+    btn.addEventListener('touchstart', warm, { passive: true });
+
+    function breakDown(){
+      var b = btn.getBoundingClientRect();
+      var cx = b.left + b.width / 2, cy = b.top + b.height / 2;
+      var blocks = document.querySelectorAll('.nav-bar, .hero, .follow, .perks, .voyage');
+      document.body.classList.add('is-departing');
+      Array.prototype.forEach.call(blocks, function(el, i){
+        var r = el.getBoundingClientRect();
+        var dx = cx - (r.left + r.width / 2), dy = cy - (r.top + r.height / 2);
+        var rot = (Math.random() - 0.5) * 60;
+        el.style.transitionDelay = (i * 70) + 'ms';
+        el.style.transformOrigin = '50% 50%';
+        el.style.transform = 'translate(' + dx.toFixed(0) + 'px,' + dy.toFixed(0) + 'px) rotate(' + rot.toFixed(1) + 'deg) scale(0.04)';
+        el.style.opacity = '0';
+      });
+    }
+
+    btn.addEventListener('click', function(e){
+      if(departing) { e.preventDefault(); return; }
+      if(reduceMotion || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      departing = true;
+      var target = destination();
+      var gone = false;
+      function go(){ if(gone) return; gone = true; window.location.href = target; }
+
+      breakDown();
+      warm();
+      setTimeout(function(){
+        portal.classList.add('is-open');
+        portal.removeAttribute('aria-hidden');
+        var played = video.play();
+        if(played && played.catch){ played.catch(function(){ setTimeout(go, 600); }); }
+      }, 420);
+      video.addEventListener('ended', go);
+      video.addEventListener('error', function(){ setTimeout(go, 600); });
+      setTimeout(go, VIDEO_FALLBACK_MS);
     });
   })();
 
@@ -738,6 +869,56 @@
     });
     resize();
     requestAnimationFrame(loop);
+  })();
+
+  (function(){
+    var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if(!finePointer.matches) return;
+    var dot = document.getElementById('cursorDot');
+    var root = document.documentElement;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var targetX = -100, targetY = -100, x = -100, y = -100;
+    var ease = reduceMotion ? 1 : 0.28;
+    var shown = false;
+    var interactive = 'a, button, [role="button"], label, summary, select';
+    var textual = 'input:not([type="radio"]):not([type="checkbox"]), textarea, [contenteditable="true"]';
+
+    root.classList.add('has-dot-cursor');
+
+    function render(){
+      x += (targetX - x) * ease;
+      y += (targetY - y) * ease;
+      dot.style.left = x + 'px';
+      dot.style.top = y + 'px';
+      requestAnimationFrame(render);
+    }
+
+    document.addEventListener('mousemove', function(e){
+      targetX = e.clientX;
+      targetY = e.clientY;
+      if(!shown){
+        shown = true;
+        x = targetX; y = targetY;
+        dot.classList.add('is-visible');
+      }
+      var el = e.target;
+      dot.classList.toggle('is-hover', !!(el.closest && el.closest(interactive)));
+      dot.classList.toggle('is-text', !!(el.closest && el.closest(textual)));
+    }, { passive: true });
+
+    document.addEventListener('mousedown', function(){ dot.classList.add('is-down'); });
+    document.addEventListener('mouseup', function(){ dot.classList.remove('is-down'); });
+    document.addEventListener('mouseleave', function(){ dot.classList.remove('is-visible'); });
+    document.addEventListener('mouseenter', function(){ if(shown) dot.classList.add('is-visible'); });
+    window.addEventListener('blur', function(){ dot.classList.remove('is-visible'); });
+
+    // if the pointer situation changes (e.g. a mouse is unplugged), fall back to the native cursor
+    finePointer.addEventListener && finePointer.addEventListener('change', function(ev){
+      root.classList.toggle('has-dot-cursor', ev.matches);
+      if(!ev.matches) dot.classList.remove('is-visible');
+    });
+
+    requestAnimationFrame(render);
   })();
 </script>
 
