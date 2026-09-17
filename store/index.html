@@ -240,6 +240,8 @@
 
   /* ---------- footer ---------- */
   footer{position:relative;padding:clamp(64px, 9vw, 128px) var(--gutter) 28px;z-index:6;background:var(--void);}
+  .foot{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;flex-wrap:wrap;}
+  .foot__links{display:flex;gap:10px;flex-wrap:wrap;padding-bottom:16px;opacity:0;transform:translateY(12px);}
   .wordmark{margin:0;font-size:100px;white-space:nowrap;clip-path:inset(100% 0 0 0);color:var(--red);}
   .meta{display:flex;justify-content:space-between;gap:16px;margin-top:24px;color:var(--pebble);flex-wrap:wrap;}
   .meta a{position:relative;}
@@ -297,6 +299,7 @@
     .hero__stage,.chapter__stage{position:sticky;top:0;}
     .plane{clip-path:polygon(0 18%, 100% 5%, 100% 100%, 0 100%) !important;}
     .wordmark{clip-path:none !important;}
+    .foot__links{opacity:1 !important;transform:none !important;}
     .brand,.menu,.pill,#stars{opacity:1 !important;}
     #bloom,.hole{--reveal:1;}
     .card:hover::after{animation:none;}
@@ -475,7 +478,13 @@
   </section>
 
   <footer>
-    <p class="wordmark display" id="wordmark">Force of Nature</p>
+    <div class="foot">
+      <p class="wordmark display" id="wordmark">Force of Nature</p>
+      <nav class="foot__links" aria-label="Elsewhere">
+        <a class="btn" href="https://forceofnature.org.in/#follow">Newsletter</a>
+        <a class="btn btn--solid" href="https://forceofnature.org.in/bon-voyage/">Bon Voyage</a>
+      </nav>
+    </div>
     <div class="meta mono">
       <span>Made in Mauritius</span>
       <span>© 2026 Force of Nature</span>
@@ -864,6 +873,7 @@
     });
 
     gsap.to('.wordmark', { clipPath: 'inset(0% 0 0 0)', duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: 'footer', start: 'top 85%', once: true } });
+    gsap.to('.foot__links', { opacity: 1, y: 0, duration: 1.2, delay: .5, ease: 'expo.out', scrollTrigger: { trigger: 'footer', start: 'top 85%', once: true } });
   });
 
   /* ---------- panels ---------- */
