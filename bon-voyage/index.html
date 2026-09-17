@@ -114,15 +114,15 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .theme-toggle .icon-moon{display:none}
 :root[data-theme="light"] .theme-toggle .icon-moon{display:block}
 :root[data-theme="light"] .theme-toggle .icon-sun{display:none}
-/* sound toggle: the same circle beside the theme button (owner asked 17 Sep). Speaker with a slash while off; speaker with two waves that pulse while the song plays */
+/* sound toggle: the same circle beside the theme button (owner asked 17 Sep). Speaker with a slash while off; speaker with a small dot-matrix wave that ripples while the song plays (owner asked for a wave like the reference screenshot, 17 Sep) */
 .sound-toggle .icon-on{display:none}
 .sound-toggle.is-on .icon-on{display:block}
 .sound-toggle.is-on .icon-off{display:none}
 .sound-toggle[aria-disabled="true"]{opacity:.5;cursor:default}
-@keyframes wave{0%,100%{opacity:.3}50%{opacity:1}}
-.sound-toggle.is-on .w1{animation:wave 1.6s ease-in-out infinite}
-.sound-toggle.is-on .w2{animation:wave 1.6s ease-in-out infinite .4s}
-@media (prefers-reduced-motion:reduce){.sound-toggle .w1,.sound-toggle .w2{animation:none}}
+.icon-on .wd{fill:currentColor;stroke:none;opacity:.25;transform-box:fill-box;transform-origin:center}
+@keyframes dotWave{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:1;transform:scale(1.3)}}
+.sound-toggle.is-on .icon-on .wd{animation:dotWave 1.3s ease-in-out infinite;animation-delay:calc(var(--i) * 110ms)}
+@media (prefers-reduced-motion:reduce){.sound-toggle.is-on .icon-on .wd{animation:none;opacity:1;transform:none}}
 /* ---------- Brush-stroke arrow pointing at the sound button (owner asked 17 Sep): the newsletter site's toggle-hint, same ink ----------
    Same SVG (tapered body, chunky chevron head, bristle streaks, dry-brush edges), same paint-on and pull-back nudge. On the store
    the cart pill sits to the sound button's left, so instead of arriving from the bottom-left the arrow is rotated about its own
@@ -540,7 +540,12 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
       </svg>
       <button class="theme-toggle sound-toggle" id="sound-toggle" type="button" aria-label="Turn sound on" aria-pressed="false" data-cursor="Sound on">
         <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/></svg>
-        <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path class="w1" d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path class="w2" d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M11 5 6 9H2v6h4l5 4V5z"/>
+          <circle class="wd" style="--i:0" cx="15" cy="7" r="1.1"/><circle class="wd" style="--i:1" cx="18.25" cy="7" r="1.1"/><circle class="wd" style="--i:2" cx="21.5" cy="7" r="1.1"/>
+          <circle class="wd" style="--i:1" cx="15" cy="11.5" r="1.1"/><circle class="wd" style="--i:2" cx="18.25" cy="11.5" r="1.1"/><circle class="wd" style="--i:3" cx="21.5" cy="11.5" r="1.1"/>
+          <circle class="wd" style="--i:2" cx="15" cy="16" r="1.1"/><circle class="wd" style="--i:3" cx="18.25" cy="16" r="1.1"/><circle class="wd" style="--i:4" cx="21.5" cy="16" r="1.1"/>
+        </svg>
       </button>
     </span>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false" data-cursor="Go light">
@@ -1419,23 +1424,38 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var stars = [];
   var resizeTimer;
+  /* Stars live in CSS pixels and keep their places for the life of the page. On phones the viewport height changes
+     every time the address bar hides or shows while scrolling, so a resize must never reseed (that made the whole sky
+     jump, owner reported 17 Sep): only a width change (rotation, window resize) starts a new sky, and a taller viewport
+     just gets extra stars for the new band. */
+  var seededW = 0, seededH = 0;
+
+  function makeStar(w, y0, y1){
+    var glow = Math.random() < 0.05;
+    return {
+      x: Math.random() * w,
+      y: y0 + Math.random() * (y1 - y0),
+      r: glow ? (1.6 + Math.random() * 1.4) : (0.5 + Math.random() * 1.1),
+      base: 0.25 + Math.random() * 0.5,
+      amp: 0.25 + Math.random() * 0.35,
+      speed: 0.4 + Math.random() * 0.8,
+      phase: Math.random() * Math.PI * 2,
+      glow: glow
+    };
+  }
+  function countFor(w, h){ return Math.max(60, Math.min(Math.round((w * h) / 9000), 180)); }
 
   function seedStars(){
-    var count = Math.round((window.innerWidth * window.innerHeight) / 9000);
-    count = Math.max(60, Math.min(count, 180));
-    stars = [];
-    for(var i = 0; i < count; i++){
-      var glow = Math.random() < 0.05;
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: (glow ? (1.6 + Math.random() * 1.4) : (0.5 + Math.random() * 1.1)) * dpr,
-        base: 0.25 + Math.random() * 0.5,
-        amp: 0.25 + Math.random() * 0.35,
-        speed: 0.4 + Math.random() * 0.8,
-        phase: Math.random() * Math.PI * 2,
-        glow: glow
-      });
+    var w = window.innerWidth, h = window.innerHeight;
+    if(w !== seededW || !stars.length){
+      stars = [];
+      var n = countFor(w, h);
+      for(var i = 0; i < n; i++) stars.push(makeStar(w, 0, h));
+      seededW = w; seededH = h;
+    } else if(h > seededH){
+      var extra = countFor(w, h) - stars.length;
+      for(var j = 0; j < extra; j++) stars.push(makeStar(w, seededH, h));
+      seededH = h;
     }
   }
 
@@ -1444,13 +1464,14 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     canvas.height = window.innerHeight * dpr;
     canvas.style.width = window.innerWidth + 'px';
     canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     seedStars();
   }
 
   function loop(t){
     requestAnimationFrame(loop);
     if(document.hidden) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     if(document.documentElement.getAttribute('data-theme') === 'light') return;
     for(var i = 0; i < stars.length; i++){
       var s = stars[i];

@@ -810,23 +810,38 @@
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var stars = [];
     var resizeTimer;
+    /* Stars live in CSS pixels and keep their places for the life of the page. On phones the viewport height changes
+       every time the address bar hides or shows while scrolling, so a resize must never reseed (that made the whole
+       sky jump): only a width change (rotation, window resize) starts a new sky, and a taller viewport just gets
+       extra stars for the new band. */
+    var seededW = 0, seededH = 0;
+
+    function makeStar(w, y0, y1){
+      var glow = Math.random() < 0.05;
+      return {
+        x: Math.random() * w,
+        y: y0 + Math.random() * (y1 - y0),
+        r: glow ? (1.6 + Math.random() * 1.4) : (0.5 + Math.random() * 1.1),
+        base: 0.25 + Math.random() * 0.5,
+        amp: 0.25 + Math.random() * 0.35,
+        speed: 0.4 + Math.random() * 0.8,
+        phase: Math.random() * Math.PI * 2,
+        glow: glow
+      };
+    }
+    function countFor(w, h){ return Math.max(60, Math.min(Math.round((w * h) / 9000), 180)); }
 
     function seedStars(){
-      var count = Math.round((window.innerWidth * window.innerHeight) / 9000);
-      count = Math.max(60, Math.min(count, 180));
-      stars = [];
-      for(var i = 0; i < count; i++){
-        var glow = Math.random() < 0.05;
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: (glow ? (1.6 + Math.random() * 1.4) : (0.5 + Math.random() * 1.1)) * dpr,
-          base: 0.25 + Math.random() * 0.5,
-          amp: 0.25 + Math.random() * 0.35,
-          speed: 0.4 + Math.random() * 0.8,
-          phase: Math.random() * Math.PI * 2,
-          glow: glow
-        });
+      var w = window.innerWidth, h = window.innerHeight;
+      if(w !== seededW || !stars.length){
+        stars = [];
+        var n = countFor(w, h);
+        for(var i = 0; i < n; i++) stars.push(makeStar(w, 0, h));
+        seededW = w; seededH = h;
+      } else if(h > seededH){
+        var extra = countFor(w, h) - stars.length;
+        for(var j = 0; j < extra; j++) stars.push(makeStar(w, seededH, h));
+        seededH = h;
       }
     }
 
@@ -835,13 +850,14 @@
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = window.innerWidth + 'px';
       canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       seedStars();
     }
 
     function loop(t){
       requestAnimationFrame(loop);
       if(document.hidden) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       if(document.documentElement.getAttribute('data-theme') !== 'dark') return;
       for(var i = 0; i < stars.length; i++){
         var s = stars[i];
