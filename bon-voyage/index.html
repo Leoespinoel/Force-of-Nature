@@ -133,7 +133,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
    One click on the sound button and the arrow fades for good (remembered for the session, like the sound itself). */
 .sound-wrap{position:relative;display:inline-flex;width:38px;height:38px}
 .sound-hint{
-  position:absolute;top:9.5px;left:-93px;width:120px;height:100px;overflow:visible;pointer-events:none;
+  position:absolute;top:9.5px;left:-89px;width:120px;height:100px;overflow:visible;pointer-events:none;
   color:var(--red);transform-origin:112px 31px;rotate:-55deg;transition:opacity 220ms ease;
 }
 .sound-hint.is-gone{opacity:0}
@@ -164,6 +164,14 @@ html.intro-done .sound-hint .reveal-head{animation:inkDraw 320ms ease-out 2150ms
 .intro .display{color:var(--red);font-size:100px;text-align:left;line-height:.84;opacity:0;width:100%}
 .intro .display span{display:block;white-space:nowrap;width:max-content;letter-spacing:-.04em}
 html.intro-done .intro{display:none}
+/* wormhole on a direct visit (owner asked 17 Sep): the same tunnel the newsletter's Bon Voyage button plays, over the
+   intro's void, so reaching /bon-voyage/ by its address is the same trip as clicking the button. Skipped when the
+   address carries ?voyage=1 (the tunnel already ran on the newsletter site), once the session has seen the intro,
+   and under reduced motion. Hidden until the script decides to play it. */
+.warp{position:fixed;inset:0;z-index:90;background:#000;display:none}
+.warp.is-on{display:block}
+.warp video{width:100%;height:100%;object-fit:cover;display:block}
+html.intro-done .warp{display:none}
 
 /* ---------- sections ---------- */
 section{position:relative}
@@ -414,7 +422,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   .chrome.top .nav a{padding:10px 0}
   .cart-pill{padding:10px 12px}
   /* phones: the arrow at 60% (72×60), tip still 1px under the button's centre: (112,31)×.6 = (67.2,18.6) → left 19−67.2, top 40.5−18.6 */
-  .sound-hint{width:72px;height:60px;left:-48px;top:22px;transform-origin:67.2px 18.6px}
+  .sound-hint{width:72px;height:60px;left:-46px;top:21.3px;transform-origin:67.2px 18.6px}
   .hero{padding-top:150px}
   .grid{grid-template-columns:repeat(2,1fr)}
   body.on-clay .chrome.top{background:var(--red)}
@@ -481,6 +489,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 
 <div class="intro" id="intro" aria-hidden="true">
   <p class="display" id="intro-text"><span data-text="NOT JUST">&nbsp;</span><span data-text="A TEE.">&nbsp;</span></p>
+</div>
+<div class="warp" id="warp" aria-hidden="true">
+  <video id="warp-video" src="assets/wormhole.mp4" muted playsinline preload="auto"></video>
 </div>
 
 <header class="chrome top" id="chrome-top">
@@ -1211,7 +1222,22 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
       };
       /* 0–0.7s void only; 0.7–3.5s decode in red; holds; then the string lifts out and the hero reveals underneath */
       const tl = gsap.timeline({ paused: true, delay: 0.7, onComplete: () => { html.classList.add('intro-done'); sessionStorage.setItem('fon-intro', '1'); } });
-      document.fonts.ready.then(() => { sizeIntro(); tl.play(); });
+      /* direct visit: the wormhole runs first (its last frame is black, the intro's void beat follows it). If the video
+         cannot start within 4s or fails, the trip is skipped rather than holding a black screen */
+      const warp = () => new Promise((resolve) => {
+        const box = $('#warp'), v = $('#warp-video');
+        if (viaVoyage || !box || !v || !v.canPlayType('video/mp4')) return resolve();
+        let done = false, started = false;
+        const finish = () => { if (done) return; done = true; box.classList.remove('is-on'); v.pause(); resolve(); };
+        box.classList.add('is-on');
+        v.addEventListener('playing', () => { started = true; }, { once: true });
+        v.addEventListener('ended', finish, { once: true });
+        v.addEventListener('error', finish, { once: true });
+        setTimeout(() => { if (!started) finish(); }, 4000);
+        setTimeout(finish, 12000);
+        const p = v.play(); if (p && p.catch) p.catch(finish);
+      });
+      Promise.all([document.fonts.ready, warp()]).then(() => { sizeIntro(); tl.play(); });
       tl.to('#intro-text', { opacity: 1, duration: 0.4, ease: 'power1.out' }, 0);
       spans.forEach((s, i) => {
         tl.to(s, { duration: 2.4, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.3, revealDelay: 0.5, tweenLength: false } }, i * 0.35);
