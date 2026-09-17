@@ -74,15 +74,18 @@
   .brand img{height:26px;width:auto;}
   .menu{position:absolute;left:50%;top:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;}
   /* the five clothing lines */
-  .lines{position:relative;display:flex;align-items:center;column-gap:22px;white-space:nowrap;font-size:11px;letter-spacing:.1em;color:var(--pebble);}
-  .lines a{position:relative;display:inline-flex;align-items:baseline;gap:6px;padding:3px 0;line-height:16px;transition:color 400ms cubic-bezier(.19,1,.22,1);}
-  .lines i{font-style:normal;font-size:9px;color:var(--pebble);opacity:.7;transition:color 400ms cubic-bezier(.19,1,.22,1),opacity 400ms;}
-  .lines a:hover{color:var(--bone);}
+  .lines{position:relative;height:26px;display:flex;align-items:center;column-gap:26px;white-space:nowrap;color:var(--ash);}
+  .lines a{position:relative;display:inline-flex;align-items:baseline;gap:7px;padding:4px 0;line-height:18px;transition:color 400ms cubic-bezier(.19,1,.22,1);}
+  .lines i{font-style:normal;font-size:10px;color:var(--pebble);opacity:.8;transition:color 400ms cubic-bezier(.19,1,.22,1),opacity 400ms;}
+  .lines a:hover{color:#fff;}
   .lines a:hover i{opacity:1;}
   .lines a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform 500ms cubic-bezier(.19,1,.22,1);}
   .lines a:hover::after,.lines a:focus-visible::after,.lines a[aria-current]::after{transform:scaleX(1);}
   .lines a[aria-current]{color:var(--bone);}
   .lines a[aria-current] i{color:#E8392F;opacity:1;}
+  /* Originals is called out in red, always */
+  .lines a.lines__hot,.lines a.lines__hot:hover,.lines a.lines__hot[aria-current]{color:#E8392F;font-weight:700;}
+  .lines a.lines__hot i{color:#E8392F;opacity:1;font-weight:700;}
   @media (max-width:1180px){
     .menu{left:var(--gutter);right:var(--gutter);top:60px;transform:none;align-items:flex-start;gap:6px;}
     .lines{flex-wrap:wrap;white-space:normal;row-gap:2px;column-gap:16px;}
@@ -295,7 +298,7 @@
   <div class="menu">
     <nav class="lines mono" aria-label="Clothing lines" id="lines">
       <a href="#classic" data-line-link="classic"><i>01</i>Classic</a>
-      <a href="#originals" data-line-link="originals"><i>02</i>Originals</a>
+      <a href="#originals" data-line-link="originals" class="lines__hot"><i>02</i>Originals</a>
       <a href="#collective" data-line-link="collective"><i>03</i>Collective</a>
       <a href="#mer" data-line-link="mer"><i>04</i>Mer</a>
       <a href="#terre" data-line-link="terre"><i>05</i>Terre</a>
