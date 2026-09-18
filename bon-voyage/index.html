@@ -149,6 +149,14 @@ html.intro-done .intro{display:none}
 .warp.is-on{display:block}
 .warp video{width:100%;height:100%;object-fit:cover;display:block}
 html.intro-done .warp{display:none}
+/* black hole to the store: a Store click spirals everything on screen into the centre while the black hole clip grows
+   over the page (screen blend, so its black is see-through), the veil closes to black under it, then the browser lands
+   on the store, whose heart loader opens on the same black. Modifier clicks and reduced motion keep the plain link. */
+.hole-veil{position:fixed;inset:0;z-index:94;background:#000;opacity:0;visibility:hidden;pointer-events:none}
+.hole-video{position:fixed;inset:0;z-index:95;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:0;visibility:hidden;pointer-events:none}
+html.is-sinking .hole-veil,html.is-sinking .hole-video{visibility:visible}
+html.is-sinking .hole-veil{pointer-events:auto}
+html.is-sinking .cursor-dot,html.is-sinking .cursor{opacity:0!important}
 
 /* ---------- sections ---------- */
 section{position:relative}
@@ -474,6 +482,8 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 <div class="warp" id="warp" aria-hidden="true">
   <video id="warp-video" src="assets/wormhole.mp4" muted playsinline preload="auto"></video>
 </div>
+<div class="hole-veil" id="hole-veil" aria-hidden="true"></div>
+<video class="hole-video" id="hole-video" src="assets/blackhole.mp4" muted playsinline preload="none" aria-hidden="true"></video>
 
 <header class="chrome top" id="chrome-top">
   <a class="brand" href="#top" data-anchor="#top" aria-label="Force of Nature, back to top">
@@ -872,8 +882,89 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   const CONTACT_EMAIL = '';
   /* MUSIC_SRCS: the song the sound toggle plays (loops), tried in order. Drop the file in assets/ as music.mp3 or music.mp4 (the audio track of an MP4 plays fine), or add a path here. None found = the toggle stays off and reads "Song to come". */
   const MUSIC_SRCS = ['assets/music.mp3', 'assets/music.mp4', 'assets/music.m4a'];
+  /* black hole: the clip is played from HOLE_FROM (skips its slow opening) to HOLE_TO (the frame is fully black from there)
+     at HOLE_RATE, so the trip is ~1.4s (the wormhole is ~2.5s); the fallback covers a stalled play.
+     On localhost the trip lands on the local store so the whole journey can be tested offline. */
+  const HOLE_RATE = 2.4, HOLE_FROM = 0.9, HOLE_TO = 4.2, HOLE_FALLBACK_MS = 2400;
+  const holeVideo = $('#hole-video'), holeVeil = $('#hole-veil');
+  const storeHref = () => {
+    const local = ['localhost', '127.0.0.1'].includes(location.hostname);
+    const url = new URL(local ? 'http://localhost:3002/' : STORE_URL);
+    url.searchParams.set('hole', '1'); /* the store plays its heart loader every time it is reached this way */
+    return url.href;
+  };
+  const warmHole = () => { if (holeVideo.preload !== 'auto') { holeVideo.preload = 'auto'; holeVideo.load(); } };
+  let sinking = false;
+  function sink() {
+    sinking = true;
+    const target = storeHref();
+    let gone = false;
+    const go = () => { if (gone) return; gone = true; location.href = target; };
+    if (lenis) lenis.stop();
+    document.documentElement.classList.add('is-sinking');
+
+    /* everything on screen becomes a piece: big containers are opened up, text blocks break into their lines at most */
+    const vw = innerWidth, vh = innerHeight, cx = vw / 2, cy = vh / 2, reach = Math.hypot(cx, cy);
+    const pieces = [], TEXT = /^(H[1-6]|P|LI|A|BUTTON|DT|DD|LABEL)$/;
+    (function walk(el, inText) {
+      for (const c of el.children) {
+        const r = c.getBoundingClientRect();
+        if (!r.width || !r.height || r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) continue;
+        if (pieces.length < 260 && c.children.length && !inText && r.width * r.height > vw * vh * 0.1) walk(c, TEXT.test(c.tagName));
+        else pieces.push({ el: c, px: r.left + r.width / 2, py: r.top + r.height / 2 });
+      }
+    })(document.body.querySelector('main'), false);
+    $$('.chrome').forEach(c => (function walk(el) {
+      for (const k of el.children) {
+        const r = k.getBoundingClientRect();
+        if (!r.width || !r.height) continue;
+        if (k.children.length && r.width > 260) walk(k); else pieces.push({ el: k, px: r.left + r.width / 2, py: r.top + r.height / 2 });
+      }
+    })(c));
+
+    pieces.forEach(p => {
+      if (getComputedStyle(p.el).display === 'inline') p.el.style.display = 'inline-block';
+      const bx = gsap.getProperty(p.el, 'x'), by = gsap.getProperty(p.el, 'y'), bs = gsap.getProperty(p.el, 'scaleX') || 1;
+      const dx = p.px - cx, dy = p.py - cy, r0 = Math.hypot(dx, dy), a0 = Math.atan2(dy, dx);
+      const swirl = Math.PI * (1.1 + Math.random() * 0.5), spin = 200 + Math.random() * 160;
+      const setX = gsap.quickSetter(p.el, 'x', 'px'), setY = gsap.quickSetter(p.el, 'y', 'px');
+      const state = { e: 0 };
+      gsap.to(state, {
+        e: 1, duration: 0.8, delay: (r0 / reach) * 0.22, ease: 'power2.in',
+        onUpdate() {
+          const e = state.e, r = r0 * (1 - e), a = a0 + swirl * e;
+          setX(bx + cx + Math.cos(a) * r - p.px); setY(by + cy + Math.sin(a) * r - p.py);
+          gsap.set(p.el, { rotation: spin * e, scale: bs * (1 - 0.97 * e), opacity: e < 0.7 ? 1 : (1 - e) / 0.3 });
+        }
+      });
+    });
+
+    warmHole();
+    try { holeVideo.currentTime = HOLE_FROM; } catch (e) {}
+    holeVideo.playbackRate = HOLE_RATE;
+    const played = holeVideo.play();
+    if (played && played.catch) played.catch(() => setTimeout(go, 900));
+    (function watch() { if (holeVideo.currentTime >= HOLE_TO) go(); else if (!gone) requestAnimationFrame(watch); })();
+    holeVideo.addEventListener('ended', go);
+    holeVideo.addEventListener('error', () => setTimeout(go, 900));
+    gsap.to(holeVideo, { opacity: 1, duration: 0.3, ease: 'power1.out' });
+    gsap.to(holeVeil, { opacity: 1, duration: 0.65, delay: 0.2, ease: 'power1.in' });
+    setTimeout(go, HOLE_FALLBACK_MS);
+  }
+  /* back from the store: the browser may restore this page frozen mid-collapse */
+  addEventListener('pageshow', (e) => { if (e.persisted && sinking) location.reload(); });
   $$('[data-store]').forEach(storeLink => {
-    if (STORE_URL) storeLink.href = STORE_URL; else storeLink.addEventListener('click', (e) => e.preventDefault());
+    if (!STORE_URL) { storeLink.addEventListener('click', (e) => e.preventDefault()); return; }
+    storeLink.href = STORE_URL;
+    storeLink.addEventListener('pointerenter', warmHole);
+    storeLink.addEventListener('focus', warmHole);
+    storeLink.addEventListener('touchstart', warmHole, { passive: true });
+    storeLink.addEventListener('click', (e) => {
+      if (sinking) { e.preventDefault(); return; }
+      if (reduce || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      sink();
+    });
   });
   $$('[data-contact]').forEach(a => {
     if (CONTACT_EMAIL) { a.href = 'mailto:' + CONTACT_EMAIL; $('.txt', a).textContent = CONTACT_EMAIL; }
