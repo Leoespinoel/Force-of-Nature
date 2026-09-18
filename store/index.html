@@ -80,7 +80,9 @@
   /* ---------- loader ---------- */
   #loader{position:fixed;inset:0;z-index:40;background:var(--void);display:grid;place-items:center;}
   #loader canvas{width:340px;height:330px;transform-origin:50% 46%;}
-  .loader__count{position:absolute;left:50%;top:calc(50% + 150px);transform:translateX(-50%);font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--bone);}
+  .loader__count{position:absolute;left:50%;top:calc(50% + 150px);transform:translateX(-50%);font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--bone);opacity:0;}
+  /* on a direct visit the trip plays here instead of on bon-voyage: same clip, ends on the same black the loader already sits on */
+  #blackhole-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;}
 
   /* ---------- chrome ---------- */
   .chrome{position:fixed;inset:0;z-index:10;pointer-events:none;}
@@ -366,6 +368,7 @@
 </div>
 
 <div id="loader" aria-hidden="true">
+  <video id="blackhole-video" src="assets/blackhole.mp4" muted playsinline preload="auto"></video>
   <canvas id="glyph" width="340" height="330"></canvas>
   <div class="loader__count">/00</div>
 </div>
@@ -888,11 +891,36 @@
     if (!intro) tl.progress(1);
     return tl;
   }
+  /* on a direct visit (not arriving through bon-voyage's own trip via ?hole=1), play the same clip here first, so
+     the entrance always opens on it; the clip ends on pure black, same as the loader underneath, so the cut into
+     the heart loader is invisible. Timing mirrors bon-voyage's own trip (half speed while it spins up, bumped to
+     normal once a frame lands, a fallback in case play() or 'ended' never fire). */
+  const HOLE_FALLBACK_MS = 2400;
+  function playBlackHole() {
+    const v = $('#blackhole-video');
+    if (!v) return Promise.resolve();
+    return new Promise((resolve) => {
+      let done = false;
+      const finish = () => { if (done) return; done = true; gsap.to(v, { opacity: 0, duration: .25, onComplete: () => { v.remove(); resolve(); } }); };
+      v.playbackRate = .5;
+      gsap.set(v, { opacity: 1 });
+      const played = v.play();
+      if (played && played.catch) played.catch(finish);
+      const bump = () => { v.playbackRate = 1; };
+      if (v.requestVideoFrameCallback) v.requestVideoFrameCallback(bump); else v.addEventListener('timeupdate', bump, { once: true });
+      setTimeout(bump, 450);
+      v.addEventListener('ended', finish, { once: true });
+      v.addEventListener('error', finish, { once: true });
+      setTimeout(finish, HOLE_FALLBACK_MS);
+    });
+  }
   async function intro() {
     await document.fonts.ready;
     if (RM || seen) { loader.remove(); revealChrome(false); return; }
     sessionStorage.setItem('fon-store-intro', '1');
+    if (!viaHole) await playBlackHole();
     const g = buildGlyph(), state = { p: 0 };
+    gsap.set(countEl, { opacity: 1 });
     gsap.timeline()
       .to(state, { p: 1, duration: 1.8, ease: 'power1.inOut', delay: .3, onUpdate() { drawGlyph(g, state.p); countEl.textContent = '/' + String(Math.round(state.p * 100)).padStart(2, '0'); } })
       .to({}, { duration: .5, onUpdate() { drawGlyph(g, 1); } })
