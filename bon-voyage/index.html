@@ -295,10 +295,11 @@ section{position:relative}
 /* contact: one big question and three doors */
 .contact .h-section{font-size:clamp(3rem,9.5vw,9.5rem);max-width:none}
 /* the heart: what the mark means, the last chapter before the wordmark */
+.heart{position:relative;z-index:2} /* its words fly over the neighbouring sections while they draw the heart */
 .heart-grid{display:grid;grid-template-columns:minmax(200px,560px) auto;gap:clamp(32px,6vw,96px);align-items:start;justify-content:center}
 .heart-mark{width:min(100%,560px);will-change:transform}
 .heart-mark img{width:100%;height:auto;will-change:transform}
-.heart-text{font-size:clamp(1.7rem,3.6vw,3.8rem);line-height:1.02;max-width:20ch}
+.heart-text{font-size:clamp(1.7rem,3.6vw,3.8rem);line-height:1.02;max-width:20ch;position:relative;z-index:1}
 .heart-text .red{color:var(--red)}
 .hero-object a{display:block}
 .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hairline);border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
@@ -818,7 +819,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
         <img src="assets/logo-1200.png" alt="The Force of Nature heart, illustrated in red with black drips" width="560" height="773" decoding="async">
       </div>
       <div>
-        <p class="eyebrow mono" data-reveal><span data-scramble>08 — The heart</span></p>
+        <p class="eyebrow mono" id="heart-eyebrow"><span data-scramble>08 — The heart</span></p>
         <h2 class="display heart-text" id="heart-title">It is not a logo. It is everything that <span class="red">drives</span> us: <span class="red">passion</span>, <span class="red">despair</span>, <span class="red">love</span> with passion, <span class="red">jealousy</span> with grief — and the <span class="red">creativity</span> they leave behind, turned toward a <span class="red">positive impact</span> on the world.</h2>
       </div>
     </div>
@@ -1495,13 +1496,115 @@ const boot = () => {
     /* production: the red line draws down the steps as you scroll past them */
     if ($('#steps-line')) gsap.fromTo('#steps-line', { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: '#steps', start: 'top 70%', end: 'bottom 60%', scrub: 1 } });
 
-    /* the heart: the mark grows in and then keeps a slow beat; the statement rises line by line out of a mask */
+    /* the heart: a timed moment as the section arrives. The statement's own words pour out of the notch and run round
+       the outline of a heart in the middle of the screen until the sentence bites its tail; the mark blooms inside it
+       on a heartbeat; then every word flies to its place in the headline while the mark glides to its own. Scroll is
+       held for the five seconds it takes and a click hurries it. Arriving any other way (a reload further down, a drag
+       straight past) gets a plain entrance instead. */
     const heartMark = $('#heart-mark');
     if (heartMark) {
-      gsap.from(heartMark, { scale: 0.7, rotation: -8, autoAlpha: 0, duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: heartMark, start: 'top 75%', once: true },
-        onComplete: () => gsap.to($('img', heartMark), { scale: 1.04, duration: 0.55, ease: 'power1.inOut', yoyo: true, repeat: -1, repeatDelay: 0.6 }) });
+      const heartSec = $('#heart'), heartImg = $('img', heartMark), heartEye = $('#heart-eyebrow'), eyeTxt = $('[data-scramble]', heartEye), eyeOriginal = eyeTxt.textContent;
+      const born = performance.now();
+      const slowBeat = () => gsap.to(heartImg, { scale: 1.04, duration: 0.55, ease: 'power1.inOut', yoyo: true, repeat: -1, repeatDelay: 0.6 });
+      const eyebrowIn = () => { gsap.to(heartEye, { autoAlpha: 1, duration: 0.5 }); gsap.to(eyeTxt, { duration: 0.9, scrambleText: { text: eyeOriginal, chars: 'upperCase', speed: 0.5 } }); };
+      gsap.set([heartMark, heartEye], { autoAlpha: 0 });
+
+      /* the outline: the classic heart curve, clockwise from the notch, W px wide, centred on its own bounding box */
+      const heartPath = (W) => {
+        const N = 720, raw = [];
+        for (let i = 0; i <= N; i++) { const t = i / N * Math.PI * 2; raw.push([16 * Math.pow(Math.sin(t), 3), -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))]); }
+        const ys = raw.map(p => p[1]), midY = (Math.min(...ys) + Math.max(...ys)) / 2, k = W / 32;
+        const pts = raw.map(([x, y]) => [x * k, (y - midY) * k]), cum = [0];
+        for (let i = 1; i <= N; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+        const L = cum[N];
+        const at = (d) => { /* the point d px along the outline */
+          d = Math.min(L, Math.max(0, d));
+          let lo = 0, hi = N;
+          while (hi - lo > 1) { const m = (lo + hi) >> 1; if (cum[m] <= d) lo = m; else hi = m; }
+          const u = (d - cum[lo]) / ((cum[hi] - cum[lo]) || 1);
+          return [pts[lo][0] + (pts[hi][0] - pts[lo][0]) * u, pts[lo][1] + (pts[hi][1] - pts[lo][1]) * u];
+        };
+        return { L, at };
+      };
+
       document.fonts.ready.then(() => {
-        SplitText.create('#heart-title', { type: 'lines', mask: 'lines', autoSplit: true, onSplit: (self) => gsap.from(self.lines, { yPercent: 110, duration: 1.2, stagger: 0.1, ease: 'expo.out', scrollTrigger: { trigger: '#heart-title', start: 'top 80%', once: true } }) });
+        const title = $('#heart-title'), words = SplitText.create(title, { type: 'words' }).words;
+        gsap.set(words, { autoAlpha: 0 });
+
+        const plain = () => {
+          gsap.fromTo(heartMark, { scale: 0.7, rotation: -8, autoAlpha: 0 }, { scale: 1, rotation: 0, autoAlpha: 1, duration: 1.6, ease: 'expo.out', onComplete: slowBeat });
+          gsap.fromTo(words, { yPercent: 60, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 1, stagger: 0.02, ease: 'expo.out' });
+          eyebrowIn();
+        };
+
+        const moment = () => {
+          /* everything is worked out in page coordinates for where the scroll will come to rest, so the words can start
+             while the page is still gliding there */
+          const vw = html.clientWidth, vh = window.innerHeight, grid = $('.heart-grid').getBoundingClientRect(), gridTop = grid.top + window.scrollY;
+          /* on a phone the menu wraps to several lines: the heart is drawn in the clear space under it, and if the section
+             is taller than that space the page rests where the whole statement is on screen for the words to land in */
+          const nav = $('#chrome-top').getBoundingClientRect().bottom, tall = nav > 120, clear = vh - (tall ? nav : 0);
+          const rest = Math.max(0, Math.min(ScrollTrigger.maxScroll(window), grid.height <= clear - 60 ? gridTop + grid.height / 2 - (vh + (tall ? nav : 0)) / 2 : gridTop + grid.height - vh + 32));
+          const cx = vw / 2, cy = rest + (vh + (tall ? nav : 0)) / 2, W = Math.min(vw * 0.86, clear * 0.74 * 1.107), { L, at } = heartPath(W);
+          const fs = parseFloat(getComputedStyle(title).fontSize), gap = fs * 0.26, pad = L * 0.018;
+          const homes = words.map(w => { const r = w.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + window.scrollY + r.height / 2, w: w.offsetWidth }; });
+          /* the sentence is set in two justified halves, notch to tip and tip to notch, so no word lies across the point of
+             the heart; one size for every word, the largest at which both halves fit. Punctuation that the split left on
+             its own (the commas after the red words) hugs the word before it */
+          const glue = words.map(w => /^[,.:;!?]+$/.test(w.textContent.trim())), nat = homes.map((h, i) => h.w + (glue[i] ? 0 : gap)), sum = (a, b) => nat.slice(a, b).reduce((x, y) => x + y, 0);
+          let j = 1, acc = 0, best = Infinity;
+          nat.forEach((n, i) => { if (i && !glue[i] && Math.abs(acc - sum() / 2) < best) { best = Math.abs(acc - sum() / 2); j = i; } acc += n; });
+          const tipGap = W * 0.012, halves = [[0, j, pad, L / 2 - tipGap], [j, words.length, L / 2 + tipGap, L - pad]];
+          const s = Math.min(1, ...halves.map(([a, b, from, to]) => (to - from) / sum(a, b)));
+          halves.forEach(([a, b, from, to]) => {
+            const spare = ((to - from) - sum(a, b) * s) / glue.slice(a, b).filter(g => !g).length;
+            let run = from;
+            for (let i = a; i < b; i++) { if (!glue[i]) run += gap * s + spare; homes[i].c = run + homes[i].w * s / 2; run += homes[i].w * s; }
+          });
+
+          /* d: how far the sentence still has to travel (it enters at the far end of the outline and runs backwards along
+             it, first word leading, so it ends up reading clockwise from the notch); f: the swell of the heartbeat */
+          const st = { d: L, f: 1 };
+          const draw = () => words.forEach((w, i) => {
+            const h = homes[i], p = h.c + st.d, half = h.w * s / 2, a = at(p - half), b = at(p + half); /* each word is a chord of the curve */
+            const out = Math.min(1, Math.max(0, (L - (p - half)) / (half * 2))); /* 0 to 1 as the word comes out of the notch */
+            gsap.set(w, { x: cx + (a[0] + b[0]) / 2 * st.f - h.x, y: cy + (a[1] + b[1]) / 2 * st.f - h.y, rotation: Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI, scale: s * st.f * (0.4 + 0.6 * out), autoAlpha: out });
+          });
+
+          /* the mark blooms inside the ring of words: scaled about the middle of its heart (the drips hang below it) */
+          /* (the mark's sides run straighter to the point than the curve does, so it sits smaller and a touch high to stay clear of the words) */
+          const mr = heartMark.getBoundingClientRect(), inner = (W - 2 * fs * 0.88 * s) * 0.7, k = inner / mr.width;
+          const from = { x: cx - (mr.left + mr.width / 2), y: cy - W * 0.03 - (mr.top + window.scrollY + mr.height * 0.33) };
+          gsap.set(heartMark, { transformOrigin: '50% 33%', x: from.x, y: from.y, scale: k * 0.55, rotation: -10 });
+          gsap.set(words, { willChange: 'transform' });
+
+          lenis.scrollTo(rest, { duration: 1, easing: (t) => 1 - Math.pow(1 - t, 3), lock: true, force: true, onComplete: () => { if (tl.isActive()) lenis.stop(); } });
+          const tl = gsap.timeline({ onComplete() {
+            gsap.set(words, { clearProps: 'transform,willChange' }); gsap.set(heartMark, { clearProps: 'transform,transformOrigin' });
+            heartSec.onclick = null; lenis.start(); slowBeat();
+          } });
+          heartSec.onclick = () => tl.timeScale(4);
+          window.__fon = Object.assign(window.__fon || {}, { heart: tl }); /* capture tools pause and step this */
+          tl.to(st, { d: 0, duration: 2.6, ease: 'power2.inOut', onUpdate: draw }, 0.1)
+            /* lub-dub: the ring swells twice and the mark arrives on the first swell */
+            .addLabel('beat', '>+0.1')
+            .to(st, { f: 1.07, duration: 0.16, ease: 'power2.out', onUpdate: draw }, 'beat')
+            .to(st, { f: 1, duration: 0.22, ease: 'power2.in', onUpdate: draw })
+            .to(st, { f: 1.045, duration: 0.14, ease: 'power2.out', onUpdate: draw }, '>+0.04')
+            .to(st, { f: 1, duration: 0.5, ease: 'power2.inOut', onUpdate: draw })
+            .to(heartMark, { scale: k, rotation: 0, autoAlpha: 1, duration: 0.75, ease: 'back.out(1.7)' }, 'beat')
+            /* a breath to take it in, then the words peel off in reading order and the mark goes home */
+            .addLabel('home', 'beat+=1.4')
+            .to(words, { x: 0, y: 0, rotation: 0, scale: 1, duration: 1.3, ease: 'expo.inOut', stagger: 0.016 }, 'home')
+            .to(heartMark, { x: 0, y: 0, scale: 1, duration: 1.5, ease: 'expo.inOut' }, 'home')
+            .add(eyebrowIn, 'home+=1.2');
+        };
+
+        ScrollTrigger.create({ trigger: heartSec, start: 'top 62%', once: true,
+          onEnter(self) {
+            const calm = lenis && html.classList.contains('intro-done') && performance.now() - born > 1200 && lenis.scroll < self.start + window.innerHeight * 0.7;
+            if (calm) moment(); else plain();
+          } });
       });
     }
 
