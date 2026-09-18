@@ -300,6 +300,23 @@
   .bag__foot{border-top:1px solid var(--hair);padding-top:18px;display:grid;gap:18px;}
   .bag__total{display:flex;justify-content:space-between;}
 
+  /* ---------- collide: the timed beat between the orbit and the Classic ----------
+     A black cover comes up as the orbit is left, MISSION and STYLE fly in from either side and smash in the centre,
+     their letters burst and settle into the full phrase while the other words decode, then it lifts off the Classic.
+     Every letter is its own fixed-width box so the decode never shoves its neighbours around. */
+  .collide{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--void);opacity:0;visibility:hidden;pointer-events:none;overflow:hidden;touch-action:none;}
+  .collide.is-on{pointer-events:auto;}
+  .collide__text{text-align:center;color:var(--red);line-height:.9;letter-spacing:-.005em;white-space:nowrap;will-change:transform,opacity;}
+  .collide__text .ln{display:block;}
+  .collide__text .w{display:inline-block;}
+  .collide__text .ch{display:inline-block;text-align:center;will-change:transform,opacity;}
+  .collide__text .hit{color:var(--bone);}
+  .collide__flash{
+    position:absolute;left:50%;top:50%;width:110vmax;height:110vmax;margin:-55vmax 0 0 -55vmax;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle, rgba(244,241,236,.95) 0%, rgba(193,27,21,.6) 14%, rgba(193,27,21,0) 58%);opacity:0;transform:scale(0);
+  }
+  @media (hover: none){ html.is-collide-locked{overflow:hidden;} }
+
   @media (prefers-reduced-motion: reduce){
     .hero__stage,.chapter__stage{position:sticky;top:0;}
     .plane{clip-path:polygon(0 18%, 100% 5%, 100% 100%, 0 100%) !important;}
@@ -340,6 +357,10 @@
 <body>
 <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 <a class="skip" href="#classic">Skip to the clothes</a>
+<div class="collide" id="collide" aria-hidden="true">
+  <div class="collide__flash" id="collide-flash"></div>
+  <p class="display collide__text" id="collide-text"></p>
+</div>
 
 <div id="loader" aria-hidden="true">
   <canvas id="glyph" width="340" height="330"></canvas>
@@ -576,6 +597,7 @@
   addEventListener('pointermove', (e) => { ptr.x = e.clientX / innerWidth; ptr.y = e.clientY / innerHeight; }, { passive: true });
 
   let lenis = null;
+  let jumping = false; // true while a menu / window click is gliding to its chapter, so the collide beat stays out of the way
   if (!RM) {
     // lower lerp = longer glide after each wheel notch; wheelMultiplier tames the
     // big per-notch jumps of desktop mice so the pinned chapters never lurch
@@ -909,6 +931,103 @@
         .to({}, { duration: .6 });
     });
 
+    /* collide: leaving the orbit plays a ~2.5s timed beat (same pace as the bon-voyage site's NOT JUST A TEE decode).
+       Scroll is held while it runs; under the black cover the page jumps to the Classic fully wiped in, so the phrase
+       lifts straight off the first line. Once per page load; menu and window jumps skip it. */
+    (() => {
+      const box = $('#collide'), text = $('#collide-text'), flash = $('#collide-flash'), classic = $('#classic');
+      if (!box || !classic || !lenis) return;
+      // phone: four lines so the type stays big, and the two words meet top to bottom instead of side to side
+      const LINES = PHONE ? [['WHERE'], ['MISSION'], ['AND', 'STYLE'], ['COLLIDE.']] : [['WHERE', 'MISSION'], ['AND', 'STYLE'], ['COLLIDE.']], HIT = { MISSION: 'l', STYLE: 'r' };
+      const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', rnd = (a, b) => a + Math.random() * (b - a);
+      const hitL = [], hitR = [], rest = [];
+      LINES.forEach((words) => {
+        const ln = document.createElement('span'); ln.className = 'ln';
+        words.forEach((word, wi) => {
+          if (wi) ln.append(' ');
+          const w = document.createElement('span'); w.className = 'w';
+          [...word].forEach((c) => {
+            const ch = document.createElement('span'); ch.className = 'ch' + (HIT[word] ? ' hit' : ''); ch.textContent = c; ch.dataset.c = c;
+            (HIT[word] === 'l' ? hitL : HIT[word] === 'r' ? hitR : rest).push(ch); w.append(ch);
+          });
+          ln.append(w);
+        });
+        text.append(ln);
+      });
+      const chars = [...hitL, ...hitR, ...rest];
+      let fs = 100;
+      // the longest line runs edge to edge (88% of the width), and the block stays inside 80% of the height
+      function fit() {
+        gsap.set([text, ...chars], { clearProps: 'all' });
+        chars.forEach((ch) => { ch.textContent = ch.dataset.c; });
+        text.style.fontSize = '100px';
+        const w = Math.max(...$$('.ln', text).map((l) => l.getBoundingClientRect().width));
+        fs = 100 * innerWidth * .88 / w; text.style.fontSize = fs + 'px';
+        const h = text.getBoundingClientRect().height, maxH = innerHeight * .8;
+        if (h > maxH) { fs *= maxH / h; text.style.fontSize = fs + 'px'; }
+        chars.forEach((ch) => { ch.style.width = ch.getBoundingClientRect().width.toFixed(2) + 'px'; });
+      }
+      const union = (els) => { const r = els.map((e) => e.getBoundingClientRect()); return { l: Math.min(...r.map((x) => x.left)), r: Math.max(...r.map((x) => x.right)), t: Math.min(...r.map((x) => x.top)), b: Math.max(...r.map((x) => x.bottom)) }; };
+
+      let played = false, busy = false;
+      function play(st) {
+        played = busy = true;
+        lenis.stop(); document.documentElement.classList.add('is-collide-locked'); box.classList.add('is-on');
+        fit();
+        // collision pose: MISSION's right edge and STYLE's left edge meet at the centre of the screen, at mid-height
+        // (phone: MISSION's foot and STYLE's head meet there instead, both centred across the width)
+        const m = union(hitL), s = union(hitR), cx = innerWidth / 2, cy = innerHeight / 2, gap = fs * .03;
+        const mDx = PHONE ? cx - (m.l + m.r) / 2 : cx - gap - m.r, mDy = PHONE ? cy - gap - m.b : cy - (m.t + m.b) / 2;
+        const sDx = PHONE ? cx - (s.l + s.r) / 2 : cx + gap - s.l, sDy = PHONE ? cy + gap - s.t : cy - (s.t + s.b) / 2;
+        const ax = PHONE ? 'y' : 'x', far = PHONE ? innerHeight : innerWidth; // the axis the words travel along
+        const from = (d, sign) => (PHONE ? { x: d.x, y: d.y + sign * far } : { x: d.x + sign * far, y: d.y });
+        const burst = (d, sign) => { const along = sign * rnd(.1, PHONE ? 1.3 : .7) * fs, across = rnd(-1, 1) * fs * (PHONE ? 1.4 : 1); return PHONE ? { x: d.x + across, y: d.y + along } : { x: d.x + along, y: d.y + across }; };
+        const M = { x: mDx, y: mDy }, S = { x: sDx, y: sDy };
+        const landing = () => st.start + (st.end - st.start) * (.95 / 3); // wipe done, heading up, slide not yet started
+        const land = () => { if (Math.abs(lenis.scroll - landing()) > 2) lenis.scrollTo(landing(), { immediate: true, force: true }); };
+        const T = .6; // the moment of impact
+        const tl = gsap.timeline({ onComplete() {
+          box.classList.remove('is-on'); document.documentElement.classList.remove('is-collide-locked');
+          lenis.start(); busy = false; box.onclick = null;
+        } });
+        box.onclick = () => tl.timeScale(4); // a click hurries it along
+        window.__fon.collide = tl; // capture tools pause and step this
+        tl.set(rest, { opacity: 0 })
+          .set(hitL, from(M, -1))
+          .set(hitR, from(S, 1))
+          .to(box, { autoAlpha: 1, duration: .2, ease: 'power1.out' }, 0)
+          .to(hitL, { [ax]: M[ax], duration: T - .15, ease: 'power3.in' }, .15)
+          .to(hitR, { [ax]: S[ax], duration: T - .15, ease: 'power3.in' }, .15)
+          .add(land, .3)
+          // impact: flash, shake, and every letter is thrown back the way it came
+          .fromTo(flash, { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: .9, ease: 'power3.out' }, T)
+          .to(text, { keyframes: { x: [0, -fs * .09, fs * .07, -fs * .04, fs * .02, 0] }, duration: .34, ease: 'none' }, T);
+        hitL.forEach((ch) => tl.to(ch, { ...burst(M, -1), rotation: rnd(-80, 80), duration: .3, ease: 'expo.out' }, T));
+        hitR.forEach((ch) => tl.to(ch, { ...burst(S, 1), rotation: rnd(-80, 80), duration: .3, ease: 'expo.out' }, T));
+        // the letters fall into their places in the phrase while the other words decode around them
+        tl.to([...hitL, ...hitR], { x: 0, y: 0, rotation: 0, duration: .55, ease: 'expo.inOut', stagger: .012 }, T + .28);
+        rest.forEach((ch, i) => {
+          const at = T + .4 + i * .02, final = ch.dataset.c;
+          tl.set(ch, { opacity: 1 }, at)
+            .to({}, { duration: .45, onUpdate() { ch.textContent = this.progress() < 1 && final !== '.' ? ABC[Math.floor(Math.random() * 26)] : final; } }, at);
+        });
+        // short hold, then the phrase lifts out and the Classic is underneath
+        tl.add(land, T + 1.4)
+          .to(text, { yPercent: -12, autoAlpha: 0, duration: .4, ease: 'power3.in' }, T + 1.55)
+          .add(() => glitch($('.chapter__head .gl', classic), 900), '>-0.25')
+          .to(box, { autoAlpha: 0, duration: .25 }, '<');
+      }
+      const born = performance.now();
+      ScrollTrigger.create({ trigger: classic, start: 'top top', end: 'bottom top',
+        onEnter(st) {
+          // only a real scroll down out of the orbit: not a reload further down the page, not a menu jump
+          if (played || busy || jumping || $('#loader') || performance.now() - born < 1200 || lenis.scroll > st.start + innerHeight * .6) return;
+          play(st);
+        } });
+      let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (!busy) fit(); }, 200); });
+      document.fonts.ready.then(fit);
+    })();
+
     gsap.to('.wordmark', { clipPath: 'inset(0% 0 0 0)', duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: 'footer', start: 'top 85%', once: true } });
     gsap.to('.foot__links', { opacity: 1, y: 0, duration: 1.2, delay: .5, ease: 'expo.out', scrollTrigger: { trigger: 'footer', start: 'top 85%', once: true } });
   });
@@ -993,7 +1112,7 @@
   function goTo(href, e) {
     const target = $(href); if (!target) return;
     e?.preventDefault();
-    if (lenis) lenis.scrollTo(target, { offset: target.classList.contains('chapter') ? innerHeight : 0, duration: 1.6, easing: (t) => 1 - Math.pow(1 - t, 4) });
+    if (lenis) { jumping = true; lenis.scrollTo(target, { offset: target.classList.contains('chapter') ? innerHeight : 0, duration: 1.6, easing: (t) => 1 - Math.pow(1 - t, 4), onComplete: () => { jumping = false; } }); }
     else target.scrollIntoView();
   }
   $$('a[href^="#"]:not([data-window])').forEach((a) => a.addEventListener('click', (e) => goTo(a.getAttribute('href'), e)));
