@@ -297,7 +297,7 @@ section{position:relative}
 /* the heart: what the mark means, the last chapter before the wordmark */
 .heart{position:relative;z-index:2} /* its words fly over the neighbouring sections while they draw the heart */
 .heart-grid{display:grid;grid-template-columns:minmax(200px,560px) auto;gap:clamp(32px,6vw,96px);align-items:start;justify-content:center}
-.heart-mark{width:min(100%,560px,62vh);will-change:transform} /* on a short window the mark would otherwise render taller than the screen, so no scroll position could ever show all of it */
+.heart-mark{width:min(100%,560px);will-change:transform}
 .heart-mark img{width:100%;height:auto;will-change:transform}
 .heart-text{font-size:clamp(1.7rem,3.6vw,3.8rem);line-height:1.02;max-width:20ch;position:relative;z-index:1}
 .heart-text .red{color:var(--red)}
@@ -493,9 +493,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
    of layout, 2s of image decoding and the main script, with the tunnel starting 10-13s in and freezing. Now the order is
    reversed: the tunnel plays first, on an otherwise idle page, and the main script waits for window.__fonWarp (it runs in
    the black beat between the tunnel's last frame and the decode, where a busy page cannot be seen).
-   Same conditions as the intro's own: no trip with reduced motion, when arriving through the newsletter's Bon Voyage
-   (?voyage, the tunnel already ran there) or once this session has seen the intro. __fonWarp is left undefined then and
-   the main script runs at once, exactly as before.
+   Same conditions as the intro's own: no trip with reduced motion, or when arriving through the newsletter's Bon Voyage
+   (?voyage, the tunnel already ran there). Every other visit, including a plain reload, replays it in full so the
+   trip and decode always reset together. __fonWarp is left undefined when skipped and the main script runs at once.
    When: once the window has loaded and the fonts are in (cap: 5.5s after the page started; a fast device is ready at ~2s
    and never sees the cap. With a 3s cap a processor slowed 4x was cut off mid-burst and the ~1s font re-layout froze the
    tunnel; left to get ready, at ~5.2s, it played all 145 frames with no gap over 33ms), i.e. after the browser's own first burst (first
@@ -515,7 +515,6 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     if (!box || !v || !v.canPlayType || !v.canPlayType('video/mp4')) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (new URLSearchParams(location.search).has('voyage')) return;
-    if (sessionStorage.getItem('fon-intro') === '1') return;
     window.__fonWarp = new Promise(function(resolve){
       var done = false, started = false, asked = false;
       function finish(){ if (done) return; done = true; box.classList.remove('is-on'); try { v.pause(); } catch (e) {} resolve(); }
@@ -1335,12 +1334,11 @@ const boot = () => {
   });
 
   mm.add('(prefers-reduced-motion: no-preference)', () => {
-    /* arriving through the newsletter site's Bon Voyage wormhole (?voyage=1) always plays the decode, even if this
-       session has seen it: the wormhole ends on black and the intro's void beat is its landing. The flag is then
-       dropped from the address so a reload behaves normally */
+    /* the decode always plays, on every visit including a plain reload: arriving through the newsletter site's
+       Bon Voyage wormhole (?voyage=1), the wormhole ends on black and the intro's void beat is its landing, so the
+       flag is dropped from the address once read */
     const viaVoyage = new URLSearchParams(location.search).has('voyage');
     if (viaVoyage) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
-    const introSeen = !viaVoyage && sessionStorage.getItem('fon-intro') === '1';
     const reveals = $$('[data-reveal]');
     gsap.set(reveals, { autoAlpha: 0, y: 40 });
 
@@ -1356,41 +1354,38 @@ const boot = () => {
     gsap.set(['#chrome-top', '.chrome.bottom'], { autoAlpha: 0, y: -12 });
     gsap.set('.chrome.bottom', { y: 12 });
 
-    if (introSeen) { html.classList.add('intro-done'); heroReveal(); }
-    else {
-      const spans = $$('#intro-text span');
-      const rnd = (n) => Array.from({ length: n }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]).join('');
+    const spans = $$('#intro-text span');
+    const rnd = (n) => Array.from({ length: n }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]).join('');
+    spans.forEach(s => { s.textContent = rnd(s.dataset.text.length); });
+    /* size each line edge to edge once the display font is in: fit on the real words, then scramble at that size */
+    const sizeIntro = () => {
+      const it = $('#intro-text');
+      spans.forEach(s => { s.textContent = s.dataset.text; });
+      fitLines(it);
+      /* one size for every line: the longest line sets it, and the block must stay inside 84% of the viewport height */
+      let fs = Math.min(...spans.map(s => parseFloat(s.style.fontSize)));
+      spans.forEach(s => { s.style.fontSize = fs.toFixed(2) + 'px'; });
+      const maxH = window.innerHeight * 0.84, h = it.getBoundingClientRect().height;
+      if (h > maxH) { fs = fs * maxH / h; spans.forEach(s => { s.style.fontSize = fs.toFixed(2) + 'px'; }); }
       spans.forEach(s => { s.textContent = rnd(s.dataset.text.length); });
-      /* size each line edge to edge once the display font is in: fit on the real words, then scramble at that size */
-      const sizeIntro = () => {
-        const it = $('#intro-text');
-        spans.forEach(s => { s.textContent = s.dataset.text; });
-        fitLines(it);
-        /* one size for every line: the longest line sets it, and the block must stay inside 84% of the viewport height */
-        let fs = Math.min(...spans.map(s => parseFloat(s.style.fontSize)));
-        spans.forEach(s => { s.style.fontSize = fs.toFixed(2) + 'px'; });
-        const maxH = window.innerHeight * 0.84, h = it.getBoundingClientRect().height;
-        if (h > maxH) { fs = fs * maxH / h; spans.forEach(s => { s.style.fontSize = fs.toFixed(2) + 'px'; }); }
-        spans.forEach(s => { s.textContent = rnd(s.dataset.text.length); });
-      };
-      /* 0–0.45s void only; 0.45–2.5s decode in red (owner, 18 Sep: a little slower than the 1.9s cut); barely a hold; then the
-         string lifts out fast and the hero reveals underneath */
-      const tl = gsap.timeline({ paused: true, delay: 0.45, onComplete: () => { html.classList.add('intro-done'); sessionStorage.setItem('fon-intro', '1'); } });
-      /* direct visit: the wormhole has already run by now (script under #warp; this whole start-up waited for it). Its last
-         frame is black and the intro's void beat follows it */
-      document.fonts.ready.then(() => { sizeIntro(); tl.play(); });
-      tl.to('#intro-text', { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0);
-      spans.forEach((s, i) => {
-        tl.to(s, { duration: 1.8, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.4, revealDelay: 0.35, tweenLength: false } }, i * 0.28);
-      });
-      /* the switch to the hero headline is kept quick (owner asked for faster again on 18 Sep): almost no hold, a short
-         lift that starts moving at once, and the hero comes in while the string is still leaving */
-      /* '>-0.13': ScrambleText shows the finished string ~0.28s before its tween ends (traced: resolved at ~1.8s, tween
-         ends 2.08s), so waiting for '>' plus a hold reads as dead time. This leaves ~0.15s on the resolved line. */
-      tl.to('#intro-text', { yPercent: -12, autoAlpha: 0, duration: 0.3, ease: 'power3.in' }, '>-0.13')
-        .add(heroReveal, '>-0.25')
-        .to('#intro', { autoAlpha: 0, duration: 0.2 }, '<');
-    }
+    };
+    /* 0–0.45s void only; 0.45–2.5s decode in red (owner, 18 Sep: a little slower than the 1.9s cut); barely a hold; then the
+       string lifts out fast and the hero reveals underneath */
+    const tl = gsap.timeline({ paused: true, delay: 0.45, onComplete: () => { html.classList.add('intro-done'); } });
+    /* direct visit: the wormhole has already run by now (script under #warp; this whole start-up waited for it). Its last
+       frame is black and the intro's void beat follows it */
+    document.fonts.ready.then(() => { sizeIntro(); tl.play(); });
+    tl.to('#intro-text', { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0);
+    spans.forEach((s, i) => {
+      tl.to(s, { duration: 1.8, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.4, revealDelay: 0.35, tweenLength: false } }, i * 0.28);
+    });
+    /* the switch to the hero headline is kept quick (owner asked for faster again on 18 Sep): almost no hold, a short
+       lift that starts moving at once, and the hero comes in while the string is still leaving */
+    /* '>-0.13': ScrambleText shows the finished string ~0.28s before its tween ends (traced: resolved at ~1.8s, tween
+       ends 2.08s), so waiting for '>' plus a hold reads as dead time. This leaves ~0.15s on the resolved line. */
+    tl.to('#intro-text', { yPercent: -12, autoAlpha: 0, duration: 0.3, ease: 'power3.in' }, '>-0.13')
+      .add(heroReveal, '>-0.25')
+      .to('#intro', { autoAlpha: 0, duration: 0.2 }, '<');
 
     /* generic reveals on scroll (everything outside the hero) */
     $$('[data-reveal]').filter(el => !el.closest('.hero')).forEach(el => {
