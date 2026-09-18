@@ -823,11 +823,11 @@
 
   /* ---------- loader ---------- */
   const loader = $('#loader'), glyph = $('#glyph'), gctx = glyph.getContext('2d'), countEl = $('.loader__count');
-  /* arriving through the bon-voyage site's black hole (?hole=1) always plays the heart loader, even if this session
-     has seen it; the flag is then dropped from the address so a reload behaves like a normal visit */
+  /* the heart loader (and the black hole trip ahead of it on a direct visit) always plays, on every visit
+     including a plain reload; arriving through the bon-voyage site's black hole (?hole=1) is the same trip, so the
+     flag is just dropped from the address once read */
   const viaHole = new URLSearchParams(location.search).has('hole');
   if (viaHole) history.replaceState(null, '', location.pathname + location.hash);
-  const seen = !viaHole && sessionStorage.getItem('fon-store-intro');
   function buildGlyph() {
     const cols = 34, rows = 24, cw = 10, ch = 13.5, cells = [], byRow = new Map();
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
@@ -916,8 +916,7 @@
   }
   async function intro() {
     await document.fonts.ready;
-    if (RM || seen) { loader.remove(); revealChrome(false); return; }
-    sessionStorage.setItem('fon-store-intro', '1');
+    if (RM) { loader.remove(); revealChrome(false); return; }
     if (!viaHole) await playBlackHole();
     const g = buildGlyph(), state = { p: 0 };
     gsap.set(countEl, { opacity: 1 });
