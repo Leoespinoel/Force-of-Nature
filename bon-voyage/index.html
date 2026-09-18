@@ -1154,9 +1154,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     const heroReveal = () => {
       const heroEls = $$('.hero [data-reveal]');
       gsap.timeline()
-        .to(heroEls, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.08, ease: 'expo.out' }, 0)
-        .to('#chrome-top', { autoAlpha: 1, y: 0, duration: 1.2 }, 0.3)
-        .to('.chrome.bottom', { autoAlpha: 1, y: 0, duration: 1.2 }, 0.45)
+        .to(heroEls, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.06, ease: 'expo.out' }, 0)
+        .to('#chrome-top', { autoAlpha: 1, y: 0, duration: 1 }, 0.2)
+        .to('.chrome.bottom', { autoAlpha: 1, y: 0, duration: 1 }, 0.3)
         .from('#hero-object img', { scale: 0.9, rotation: -6, duration: 1.8, ease: 'expo.out' }, 0.4);
     };
     gsap.set(['#chrome-top', '.chrome.bottom'], { autoAlpha: 0, y: -12 });
@@ -1179,8 +1179,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
         if (h > maxH) { fs = fs * maxH / h; spans.forEach(s => { s.style.fontSize = fs.toFixed(2) + 'px'; }); }
         spans.forEach(s => { s.textContent = rnd(s.dataset.text.length); });
       };
-      /* 0–0.35s void only; 0.35–1.9s decode in red; short hold; then the string lifts out and the hero reveals underneath */
-      const tl = gsap.timeline({ paused: true, delay: 0.35, onComplete: () => { html.classList.add('intro-done'); sessionStorage.setItem('fon-intro', '1'); } });
+      /* 0–0.45s void only; 0.45–2.5s decode in red (owner, 18 Sep: a little slower than the 1.9s cut); barely a hold; then the
+         string lifts out fast and the hero reveals underneath */
+      const tl = gsap.timeline({ paused: true, delay: 0.45, onComplete: () => { html.classList.add('intro-done'); sessionStorage.setItem('fon-intro', '1'); } });
       /* direct visit: the wormhole runs first (its last frame is black, the intro's void beat follows it). If the video
          cannot start within 4s or fails, the trip is skipped rather than holding a black screen */
       const warp = () => new Promise((resolve) => {
@@ -1198,15 +1199,17 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
         const p = v.play(); if (p && p.catch) p.catch(finish);
       });
       Promise.all([document.fonts.ready, warp()]).then(() => { sizeIntro(); tl.play(); });
-      tl.to('#intro-text', { opacity: 1, duration: 0.25, ease: 'power1.out' }, 0);
+      tl.to('#intro-text', { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0);
       spans.forEach((s, i) => {
-        tl.to(s, { duration: 1.3, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.5, revealDelay: 0.25, tweenLength: false } }, i * 0.2);
+        tl.to(s, { duration: 1.8, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.4, revealDelay: 0.35, tweenLength: false } }, i * 0.28);
       });
-      /* the switch to the hero headline is kept quick: a softer ease-in so the lift starts moving at once, and the hero
-         comes in while the string is still leaving */
-      tl.to('#intro-text', { yPercent: -12, autoAlpha: 0, duration: 0.4, ease: 'power3.in' }, '>+0.2')
+      /* the switch to the hero headline is kept quick (owner asked for faster again on 18 Sep): almost no hold, a short
+         lift that starts moving at once, and the hero comes in while the string is still leaving */
+      /* '>-0.13': ScrambleText shows the finished string ~0.28s before its tween ends (traced: resolved at ~1.8s, tween
+         ends 2.08s), so waiting for '>' plus a hold reads as dead time. This leaves ~0.15s on the resolved line. */
+      tl.to('#intro-text', { yPercent: -12, autoAlpha: 0, duration: 0.3, ease: 'power3.in' }, '>-0.13')
         .add(heroReveal, '>-0.25')
-        .to('#intro', { autoAlpha: 0, duration: 0.25 }, '<');
+        .to('#intro', { autoAlpha: 0, duration: 0.2 }, '<');
     }
 
     /* generic reveals on scroll (everything outside the hero) */
