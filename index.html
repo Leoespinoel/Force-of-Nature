@@ -741,7 +741,7 @@
 </section>
 
 <div class="voyage-portal" id="voyagePortal" aria-hidden="true">
-  <video id="voyageVideo" src="assets/wormhole.mp4" muted playsinline preload="none"></video>
+  <video id="voyageVideo" src="assets/wormhole-fast.mp4" muted playsinline preload="none"></video>
 </div>
 
 <script>
@@ -817,9 +817,13 @@
     var video = document.getElementById('voyageVideo');
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var departing = false;
-    /* the tunnel clip is 6s; it runs at VIDEO_RATE so the whole trip is ~2.5s, and the fallback covers a stalled play */
-    var VIDEO_RATE = 2.5;
-    var VIDEO_FALLBACK_MS = 3500;
+    /* the tunnel is assets/wormhole-fast.mp4: the 6s Seedance clip (assets/wormhole.mp4, kept as the master) with the 2.5x
+       speed baked in, so it plays at normal rate in ~2.4s. 18 Sep: the old way (the HEVC 1080p master at playbackRate 2.5,
+       fetched on hover, page leaving 3.5s after the click whatever happened) was measured on the live site with a cold
+       cache: cut off at 27-63% of the clip, 3-6 stalls, freezes up to 0.9s. Checked with: node tools/voyage-check.cjs */
+    var READY_WAIT_MS = 1500;  /* after the click: longest wait for the clip to be able to play through; then it plays anyway */
+    var STUCK_MS = 1500;       /* during the trip: leave if the picture has not advanced for this long */
+    var TRIP_CAP_MS = 9000;    /* whatever happens, the visitor is on the store by then */
 
     /* the brush arrow paints on the first time the button is on screen */
     (function(){
@@ -841,6 +845,21 @@
     btn.addEventListener('pointerenter', warm);
     btn.addEventListener('focus', warm);
     btn.addEventListener('touchstart', warm, { passive: true });
+    /* the clip (1 MB) is fetched ahead of the click: a phone never hovers, so waiting for a hover meant the download and
+       the tunnel started together. It starts at whichever comes first: the page's load event, 2.5s after the script runs
+       (on a slow line "load" itself is late: measured, the clip had not begun after 6s), or the visitor scrolling to
+       within a screen and a half of the button. Skipped for visitors who asked to save data */
+    (function(){
+      if(reduceMotion || (navigator.connection && navigator.connection.saveData)) return;
+      if(document.readyState === 'complete') warm(); else window.addEventListener('load', warm);
+      setTimeout(warm, 2500);
+      if('IntersectionObserver' in window){
+        var near = new IntersectionObserver(function(entries){
+          if(entries[0].isIntersecting){ warm(); near.disconnect(); }
+        }, { rootMargin: '150% 0px' });
+        near.observe(btn);
+      }
+    })();
 
     function breakDown(){
       var b = btn.getBoundingClientRect();
@@ -869,16 +888,35 @@
 
       breakDown();
       warm();
-      setTimeout(function(){
+      var clicked = Date.now(), started = false;
+      function start(){
+        if(started || gone) return;
+        started = true;
         portal.classList.add('is-open');
         portal.removeAttribute('aria-hidden');
-        video.playbackRate = VIDEO_RATE;
         var played = video.play();
         if(played && played.catch){ played.catch(function(){ setTimeout(go, 600); }); }
-      }, 160);
+        /* the trip ends when the clip does. A clip that stops advancing is left behind, but one that is moving is
+           never cut short by a clock */
+        var seen = -1, since = Date.now();
+        var watch = setInterval(function(){
+          if(gone){ clearInterval(watch); return; }
+          if(video.currentTime !== seen){ seen = video.currentTime; since = Date.now(); }
+          else if(Date.now() - since > STUCK_MS){ clearInterval(watch); go(); }
+        }, 100);
+      }
+      /* the tunnel only starts once the browser says it can play it through, so it never starts and then starves.
+         Usually that is already true (fetched when the page settled): then it starts as the page finishes folding */
+      function whenReady(){
+        /* past the wait it plays anyway rather than skipping the trip: iPhones tend not to buffer a video until play()
+           is called, so "ready" may never come there. If it then cannot move, the watch in start() leaves */
+        if(video.readyState >= 4 || Date.now() - clicked > READY_WAIT_MS) return start();
+        setTimeout(whenReady, 50);
+      }
+      setTimeout(whenReady, 160);
       video.addEventListener('ended', go);
       video.addEventListener('error', function(){ setTimeout(go, 600); });
-      setTimeout(go, VIDEO_FALLBACK_MS);
+      setTimeout(go, TRIP_CAP_MS);
     });
   })();
 
@@ -949,6 +987,9 @@
     function loop(t){
       requestAnimationFrame(loop);
       if(document.hidden) return;
+      /* the sky holds still once the Bon Voyage trip starts: the page is folding away and then the tunnel covers it, and
+         redrawing a full-screen canvas every frame under the video costs a phone frames it needs for the tunnel */
+      if(document.body.classList.contains('is-departing')) return;
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       if(document.documentElement.getAttribute('data-theme') !== 'dark') return;
       for(var i = 0; i < stars.length; i++){

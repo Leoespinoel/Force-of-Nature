@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0A0908">
 <script>/* theme before first paint: every load opens dark (owner, 17 Sep: the page must load dark first). The toggle still
    switches to light for the visit, and the stored 'fon-theme' choice is deliberately not restored here. */(function(){try{localStorage.removeItem('fon-theme');}catch(e){}})();</script>
-<link rel="icon" href="assets/logo.png" type="image/png">
+<link rel="icon" href="assets/logo-480.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -484,14 +484,78 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   <p class="display" id="intro-text"><span data-text="NOT JUST">&nbsp;</span><span data-text="A TEE.">&nbsp;</span></p>
 </div>
 <div class="warp" id="warp" aria-hidden="true">
-  <video id="warp-video" src="assets/wormhole.mp4" muted playsinline preload="auto"></video>
+  <video id="warp-video" src="assets/wormhole-fast.mp4" muted playsinline preload="auto"></video>
 </div>
+<script>
+/* The direct-visit wormhole starts HERE, not in the main script (18 Sep). Before, it could not begin until six libraries had
+   downloaded and the ~700-line start-up below had run, and then it played THROUGH that start-up: profiled as a phone, 5.8s
+   of layout, 2s of image decoding and the main script, with the tunnel starting 10-13s in and freezing. Now the order is
+   reversed: the tunnel plays first, on an otherwise idle page, and the main script waits for window.__fonWarp (it runs in
+   the black beat between the tunnel's last frame and the decode, where a busy page cannot be seen).
+   Same conditions as the intro's own: no trip with reduced motion, when arriving through the newsletter's Bon Voyage
+   (?voyage, the tunnel already ran there) or once this session has seen the intro. __fonWarp is left undefined then and
+   the main script runs at once, exactly as before.
+   When: once the window has loaded and the fonts are in (cap: 5.5s after the page started; a fast device is ready at ~2s
+   and never sees the cap. With a 3s cap a processor slowed 4x was cut off mid-burst and the ~1s font re-layout froze the
+   tunnel; left to get ready, at ~5.2s, it played all 145 frames with no gap over 33ms), i.e. after the browser's own first burst (first
+   layout, the libraries evaluating, fonts, images) and before this page's start-up, which waits. Started any earlier it
+   overlapped that burst (measured: freezes of 0.25-1.2s) and the clip had hardly begun to download (at 8 Mbit/s the trip
+   was skipped as unplayable). For the same reason the page no longer draws assets/logo.png itself: it is
+   2970x4096 (49 MB decoded; traced as a phone, 0.6-2s of image decoding on the main thread, landing inside the tunnel on
+   a slower line) for pictures shown at 26, 132 and 560px. logo-480.png and logo-1200.png are resized copies of it (the
+   original is kept as the master); decoding="async" alone did not move the decode.
+   Playable = can play through, or within 1.2s of asking: most of it here (60%, the rest arrives while it plays) -> play;
+   nothing at all -> play anyway (an iPhone that will not buffer before play()); in between = a slow line -> no trip,
+   because a broken tunnel is worse than none. A clip asked to play that has not started within 2.5s is skipped; 9s is
+   the hard limit. Check: node Website/tools/warp-check.cjs (PHONE=1 for a phone) */
+(function(){
+  try {
+    var box = document.getElementById('warp'), v = document.getElementById('warp-video');
+    if (!box || !v || !v.canPlayType || !v.canPlayType('video/mp4')) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (new URLSearchParams(location.search).has('voyage')) return;
+    if (sessionStorage.getItem('fon-intro') === '1') return;
+    window.__fonWarp = new Promise(function(resolve){
+      var done = false, started = false, asked = false;
+      function finish(){ if (done) return; done = true; box.classList.remove('is-on'); try { v.pause(); } catch (e) {} resolve(); }
+      box.classList.add('is-on');
+      v.addEventListener('playing', function(){ started = true; });
+      v.addEventListener('ended', finish);
+      v.addEventListener('error', finish);
+      setTimeout(finish, 9000);
+      function go(){
+        if (done || asked) return; asked = true;
+        setTimeout(function(){ if (!started) finish(); }, 2500);
+        var p = v.play(); if (p && p.catch) p.catch(finish);
+      }
+      function ask(){
+      if (done) return;
+      if (v.readyState >= 4) return go();
+      var t = setTimeout(function(){
+        v.removeEventListener('canplaythrough', yes);
+        var got = v.buffered.length && v.duration ? v.buffered.end(v.buffered.length - 1) / v.duration : 0;
+        if (got >= .6 || v.readyState <= 1) go(); else finish();
+      }, 1200);
+      function yes(){ clearTimeout(t); go(); }
+      v.addEventListener('canplaythrough', yes);
+      }
+      /* loaded AND fonts in (their arrival re-lays-out the whole page: measured as a ~350ms task landing on the tunnel's
+         first half second), then two frames and 120ms for that layout to flush */
+      var asked0 = false, once = function(){ if (asked0) return; asked0 = true; ask(); };
+      var loaded = new Promise(function(ok){ if (document.readyState === 'complete') ok(); else window.addEventListener('load', ok); });
+      var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      Promise.all([loaded, fonts]).then(function(){ requestAnimationFrame(function(){ requestAnimationFrame(function(){ setTimeout(once, 120); }); }); });
+      setTimeout(once, Math.max(0, 5500 - performance.now()));
+    });
+  } catch (e) { window.__fonWarp = undefined; }
+})();
+</script>
 <div class="hole-veil" id="hole-veil" aria-hidden="true"></div>
 <video class="hole-video" id="hole-video" src="assets/blackhole.mp4" muted playsinline preload="none" aria-hidden="true"></video>
 
 <header class="chrome top" id="chrome-top">
   <a class="brand" href="#top" data-anchor="#top" aria-label="Force of Nature, back to top">
-    <img src="assets/logo.png" alt="" width="26" height="36">
+    <img src="assets/logo-480.png" alt="" width="26" height="36" decoding="async">
     <span class="mono" data-scramble>Force of Nature</span>
   </a>
   <nav class="nav mono" aria-label="Sections">
@@ -541,7 +605,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     <img class="hero-sky" src="assets/milky-way.jpg" srcset="assets/milky-way-sm.jpg 1200w, assets/milky-way.jpg 2400w" sizes="100vw" alt="" aria-hidden="true" decoding="async" fetchpriority="low">
     <div class="hero-copy">
       <div class="hero-object" id="hero-object" data-reveal>
-        <a href="#heart" data-anchor="#heart" data-cursor="The heart" aria-label="What the heart means"><img src="assets/logo.png" alt="Force of Nature heart logo, illustrated in red with black drips" width="132" height="182"></a>
+        <a href="#heart" data-anchor="#heart" data-cursor="The heart" aria-label="What the heart means"><img src="assets/logo-480.png" alt="Force of Nature heart logo, illustrated in red with black drips" width="132" height="182" decoding="async"></a>
         <span class="mono" data-scramble>Est. Mauritius</span>
       </div>
       <p class="eyebrow mono" data-reveal><span data-scramble>Not just a tee</span></p>
@@ -751,7 +815,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   <section class="sec heart" id="heart" aria-labelledby="heart-title">
     <div class="heart-grid">
       <div class="heart-mark" id="heart-mark">
-        <img src="assets/logo.png" alt="The Force of Nature heart, illustrated in red with black drips" width="560" height="773">
+        <img src="assets/logo-1200.png" alt="The Force of Nature heart, illustrated in red with black drips" width="560" height="773" decoding="async">
       </div>
       <div>
         <p class="eyebrow mono" data-reveal><span data-scramble>08 — The heart</span></p>
@@ -835,7 +899,10 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
 <script>
-(() => {
+/* boot = the whole page start-up. On a direct first visit it runs after the wormhole (see the script under #warp) */
+const boot = () => {
+  /* boot can run after the window's load event, so "on load" means "now" by then */
+  const onLoad = (f) => { if (document.readyState === 'complete') setTimeout(f, 0); else addEventListener('load', f); };
   gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin, CustomEase);
   CustomEase.create('main', '0.65, 0.01, 0.05, 0.99');
   gsap.defaults({ ease: 'main', duration: 0.9 });
@@ -859,7 +926,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   const teeSvg = (p, side = 'front') => {
     const [fill, stroke, inkc] = fills[p.way];
     const flt = p.way === 'ink' ? 'grayscale(1) invert(1) contrast(1.6) brightness(1.2)' : 'grayscale(1) contrast(1.2)';
-    const logo = (x, y, w) => `<image href="assets/logo.png" x="${x}" y="${y}" width="${w}" height="${(w * 1.38).toFixed(0)}" style="filter:${flt}"/>`;
+    const logo = (x, y, w) => `<image href="assets/logo-480.png" x="${x}" y="${y}" width="${w}" height="${(w * 1.38).toFixed(0)}" style="filter:${flt}"/>`;
     const txt = (lines, y, size) => lines.map((l, i) => `<text x="128" y="${y + i * size * 0.9}" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="700" font-size="${size}" fill="${inkc}" style="font-variation-settings:'wdth' 75,'opsz' 96;letter-spacing:-0.03em;text-transform:uppercase">${l}</text>`).join('');
     const prints = {
       reef:      { front: logo(112, 106, 32),                     back: txt(['REEF', 'FUND'], 132, 40) },
@@ -908,7 +975,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     holeVideo.preload = 'auto'; holeVideo.load();
     const pre = document.createElement('link'); pre.rel = 'prefetch'; pre.href = storeHref(); document.head.append(pre); /* the store page is already in the cache when the trip ends */
   };
-  if (STORE_URL && !reduce) addEventListener('load', () => {
+  if (STORE_URL && !reduce) onLoad(() => {
     if (window.requestIdleCallback) requestIdleCallback(warmHole, { timeout: 5000 }); else setTimeout(warmHole, 3000);
   });
   function sink() {
@@ -1308,23 +1375,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
       /* 0–0.45s void only; 0.45–2.5s decode in red (owner, 18 Sep: a little slower than the 1.9s cut); barely a hold; then the
          string lifts out fast and the hero reveals underneath */
       const tl = gsap.timeline({ paused: true, delay: 0.45, onComplete: () => { html.classList.add('intro-done'); sessionStorage.setItem('fon-intro', '1'); } });
-      /* direct visit: the wormhole runs first (its last frame is black, the intro's void beat follows it). If the video
-         cannot start within 4s or fails, the trip is skipped rather than holding a black screen */
-      const warp = () => new Promise((resolve) => {
-        const box = $('#warp'), v = $('#warp-video');
-        if (viaVoyage || !box || !v || !v.canPlayType('video/mp4')) return resolve();
-        let done = false, started = false;
-        const finish = () => { if (done) return; done = true; box.classList.remove('is-on'); v.pause(); resolve(); };
-        box.classList.add('is-on');
-        v.addEventListener('playing', () => { started = true; }, { once: true });
-        v.addEventListener('ended', finish, { once: true });
-        v.addEventListener('error', finish, { once: true });
-        setTimeout(() => { if (!started) finish(); }, 4000);
-        setTimeout(finish, 8000);
-        v.playbackRate = 2.5; /* same speed as the newsletter's Bon Voyage tunnel: the 6s clip runs in ~2.4s */
-        const p = v.play(); if (p && p.catch) p.catch(finish);
-      });
-      Promise.all([document.fonts.ready, warp()]).then(() => { sizeIntro(); tl.play(); });
+      /* direct visit: the wormhole has already run by now (script under #warp; this whole start-up waited for it). Its last
+         frame is black and the intro's void beat follows it */
+      document.fonts.ready.then(() => { sizeIntro(); tl.play(); });
       tl.to('#intro-text', { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0);
       spans.forEach((s, i) => {
         tl.to(s, { duration: 1.8, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.4, revealDelay: 0.35, tweenLength: false } }, i * 0.28);
@@ -1495,8 +1548,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   document.fonts.ready.then(() => { fitAll(); placeHeart(); ScrollTrigger.refresh(); });
   let fz; window.addEventListener('resize', () => { clearTimeout(fz); fz = setTimeout(() => { fitAll(); placeHeart(); ScrollTrigger.refresh(); }, 150); });
 
-  window.addEventListener('load', () => ScrollTrigger.refresh());
-})();
+  onLoad(() => ScrollTrigger.refresh());
+};
+if (window.__fonWarp) window.__fonWarp.then(boot); else boot();
 
 /* ---------- starfield: the newsletter site's twinkle, verbatim (owner asked 17 Sep) ----------
    60 to 180 stars seeded by viewport area, 5% with a soft red halo. Each star only breathes in opacity on its own
@@ -1505,6 +1559,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 (function(){
   var canvas = document.getElementById('starfield');
   if (!canvas) return;
+  var warpBox = document.getElementById('warp');
   var ctx = canvas.getContext('2d');
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1557,6 +1612,10 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   function loop(t){
     requestAnimationFrame(loop);
     if(document.hidden || document.documentElement.classList.contains('is-sinking-prep')) return; /* the sky holds still while the black hole trip runs */
+    /* and while the direct-visit wormhole runs: its black overlay covers the whole sky, and on a phone this loop was the
+       single biggest cost on the main thread during the tunnel (profiled 18 Sep: 2.5s of 4.6s of script in the first 10s),
+       which froze the video for up to 1.1s */
+    if(warpBox && warpBox.classList.contains('is-on')) return;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     if(document.documentElement.getAttribute('data-theme') === 'light') return;
     for(var i = 0; i < stars.length; i++){
