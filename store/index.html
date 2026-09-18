@@ -883,18 +883,21 @@
   function revealChrome(intro) {
     const tl = gsap.timeline();
     tl.to('#stars', { opacity: 1, duration: 1.4, ease: 'power2.out' }, 0)
-      .to('#bloom', { '--reveal': 1, duration: 1.4, ease: 'power2.out' }, 0)
-      .add(holeStart, 0)
-      .to('#hole', { '--reveal': 1, duration: 1.6, ease: 'power2.out' }, .2)
-      .to(orbit, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, .1)
+      .to('#bloom', { '--reveal': 1, duration: 1.4, ease: 'power2.out' }, 0);
+    /* arriving through the bon-voyage black hole already showed that reveal, so the portal here just appears
+       open instead of fading in from black a second time; a direct visit still eases it in */
+    if (viaHole) tl.add(() => { holeStart(); gsap.set(hole, { '--reveal': 1 }); }, .2);
+    else tl.add(holeStart, 0).to('#hole', { '--reveal': 1, duration: 1.6, ease: 'power2.out' }, .2);
+    tl.to(orbit, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, .1)
       .to(['.brand', '.menu', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
     if (!intro) tl.progress(1);
     return tl;
   }
-  /* the entrance always opens on this clip, whether arriving through bon-voyage's own trip (?hole=1) or straight
-     to the store: it ends on pure black, same as the loader underneath, so the cut into the heart loader is
-     invisible. Timing mirrors bon-voyage's own trip (half speed while it spins up, bumped to normal once a frame
-     lands, a fallback in case play() or 'ended' never fire). */
+  /* this clip only opens the entrance on a direct visit to the store: arriving through bon-voyage's own trip
+     (?hole=1) already played it there, so playing it again here would be the same black hole twice. On a direct
+     visit it ends on pure black, same as the loader underneath, so the cut into the heart loader is invisible.
+     Timing mirrors bon-voyage's own trip (half speed while it spins up, bumped to normal once a frame lands, a
+     fallback in case play() or 'ended' never fire). */
   const HOLE_FALLBACK_MS = 2400;
   function playBlackHole() {
     const v = $('#blackhole-video');
@@ -917,7 +920,7 @@
   async function intro() {
     await document.fonts.ready;
     if (RM) { loader.remove(); revealChrome(false); return; }
-    await playBlackHole();
+    if (viaHole) $('#blackhole-video')?.remove(); else await playBlackHole();
     const g = buildGlyph(), state = { p: 0 };
     gsap.set(countEl, { opacity: 1 });
     gsap.timeline()
