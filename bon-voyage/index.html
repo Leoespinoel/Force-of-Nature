@@ -297,7 +297,7 @@ section{position:relative}
 /* the heart: what the mark means, the last chapter before the wordmark */
 .heart{position:relative;z-index:2} /* its words fly over the neighbouring sections while they draw the heart */
 .heart-grid{display:grid;grid-template-columns:minmax(200px,560px) auto;gap:clamp(32px,6vw,96px);align-items:start;justify-content:center}
-.heart-mark{width:min(100%,560px);will-change:transform}
+.heart-mark{width:min(100%,560px,62vh);will-change:transform} /* on a short window the mark would otherwise render taller than the screen, so no scroll position could ever show all of it */
 .heart-mark img{width:100%;height:auto;will-change:transform}
 .heart-text{font-size:clamp(1.7rem,3.6vw,3.8rem);line-height:1.02;max-width:20ch;position:relative;z-index:1}
 .heart-text .red{color:var(--red)}
