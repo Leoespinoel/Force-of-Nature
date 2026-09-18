@@ -152,11 +152,15 @@ html.intro-done .warp{display:none}
 /* black hole to the store: a Store click spirals everything on screen into the centre while the black hole clip grows
    over the page (screen blend, so its black is see-through), the veil closes to black under it, then the browser lands
    on the store, whose heart loader opens on the same black. Modifier clicks and reduced motion keep the plain link. */
-.hole-veil{position:fixed;inset:0;z-index:94;background:#000;opacity:0;visibility:hidden;pointer-events:none}
-.hole-video{position:fixed;inset:0;z-index:95;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:0;visibility:hidden;pointer-events:none}
-html.is-sinking .hole-veil,html.is-sinking .hole-video{visibility:visible}
-html.is-sinking .hole-veil{pointer-events:auto}
-html.is-sinking .cursor-dot,html.is-sinking .cursor{opacity:0!important}
+.hole-veil{position:fixed;inset:0;z-index:94;background:#000;opacity:0;visibility:hidden;pointer-events:none;will-change:opacity}
+.hole-video{position:fixed;inset:0;z-index:95;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:0;visibility:hidden;pointer-events:none;will-change:opacity}
+html.is-sinking-prep .hole-veil,html.is-sinking-prep .hole-video{visibility:visible}
+html.is-sinking-prep .hole-video{opacity:.01}
+html.is-sinking-prep .hole-veil{pointer-events:auto}
+html.is-sinking .hole-veil,html.is-sinking .hole-video{opacity:1}
+html.is-sinking .hole-veil{transition:opacity 700ms cubic-bezier(.45,0,.75,.6) 150ms}
+html.is-sinking .hole-video{transition:opacity 350ms ease-out}
+html.is-sinking-prep .cursor-dot,html.is-sinking-prep .cursor{opacity:0!important}
 
 /* ---------- sections ---------- */
 section{position:relative}
@@ -882,73 +886,102 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   const CONTACT_EMAIL = '';
   /* MUSIC_SRCS: the song the sound toggle plays (loops), tried in order. Drop the file in assets/ as music.mp3 or music.mp4 (the audio track of an MP4 plays fine), or add a path here. None found = the toggle stays off and reads "Song to come". */
   const MUSIC_SRCS = ['assets/music.mp3', 'assets/music.mp4', 'assets/music.m4a'];
-  /* black hole: the clip is played from HOLE_FROM (skips its slow opening) to HOLE_TO (the frame is fully black from there)
-     at HOLE_RATE, so the trip is ~1.4s (the wormhole is ~2.5s); the fallback covers a stalled play.
+  /* black hole: assets/blackhole.mp4 is a 1.47s cut made for this trip (the wormhole is ~2.5s), ending on pure black; the
+     fallback covers a stalled play.
+     Smoothness (owner, 18 Sep: "a bit glitchy"): the clip is pre-cut, pre-sped and motion-interpolated with ffmpeg (540p, 30fps: light to decode), so the
+     browser plays it from its first frame at normal speed instead of seeking into a 5s file and decoding at 2.4x; it is
+     fetched while the page idles, so the click only has to press play; the pieces are measured in one pass,
+     promoted to their own layers, and only start moving two frames later, driven by a single loop that writes transforms
+     directly; every other animation on the page is frozen for the trip.
      On localhost the trip lands on the local store so the whole journey can be tested offline. */
-  const HOLE_RATE = 2.4, HOLE_FROM = 0.9, HOLE_TO = 4.2, HOLE_FALLBACK_MS = 2400;
-  const holeVideo = $('#hole-video'), holeVeil = $('#hole-veil');
+  const HOLE_FALLBACK_MS = 2400, HOLE_MAX_PIECES = 90;
+  const holeVideo = $('#hole-video');
   const storeHref = () => {
     const local = ['localhost', '127.0.0.1'].includes(location.hostname);
     const url = new URL(local ? 'http://localhost:3002/' : STORE_URL);
     url.searchParams.set('hole', '1'); /* the store plays its heart loader every time it is reached this way */
     return url.href;
   };
-  const warmHole = () => { if (holeVideo.preload !== 'auto') { holeVideo.preload = 'auto'; holeVideo.load(); } };
-  let sinking = false;
+  let sinking = false, holeWarm = false;
+  const warmHole = () => {
+    if (holeWarm) return; holeWarm = true;
+    holeVideo.preload = 'auto'; holeVideo.load();
+    const pre = document.createElement('link'); pre.rel = 'prefetch'; pre.href = storeHref(); document.head.append(pre); /* the store page is already in the cache when the trip ends */
+  };
+  if (STORE_URL && !reduce) addEventListener('load', () => {
+    if (window.requestIdleCallback) requestIdleCallback(warmHole, { timeout: 5000 }); else setTimeout(warmHole, 3000);
+  });
   function sink() {
     sinking = true;
     const target = storeHref();
     let gone = false;
     const go = () => { if (gone) return; gone = true; location.href = target; };
     if (lenis) lenis.stop();
-    document.documentElement.classList.add('is-sinking');
+    gsap.globalTimeline.pause();
 
-    /* everything on screen becomes a piece: big containers are opened up, text blocks break into their lines at most */
+    /* read pass: everything on screen becomes a piece. Big containers are opened up, big text blocks break into their
+       lines at most, and past HOLE_MAX_PIECES whatever is left travels whole. */
     const vw = innerWidth, vh = innerHeight, cx = vw / 2, cy = vh / 2, reach = Math.hypot(cx, cy);
     const pieces = [], TEXT = /^(H[1-6]|P|LI|A|BUTTON|DT|DD|LABEL)$/;
+    const add = (el, r) => pieces.push({ el, px: r.left + r.width / 2, py: r.top + r.height / 2 });
     (function walk(el, inText) {
       for (const c of el.children) {
         const r = c.getBoundingClientRect();
         if (!r.width || !r.height || r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) continue;
-        if (pieces.length < 260 && c.children.length && !inText && r.width * r.height > vw * vh * 0.1) walk(c, TEXT.test(c.tagName));
-        else pieces.push({ el: c, px: r.left + r.width / 2, py: r.top + r.height / 2 });
+        if (pieces.length < HOLE_MAX_PIECES && c.children.length && !inText && r.width * r.height > vw * vh * 0.12) walk(c, TEXT.test(c.tagName));
+        else add(c, r);
       }
     })(document.body.querySelector('main'), false);
     $$('.chrome').forEach(c => (function walk(el) {
       for (const k of el.children) {
         const r = k.getBoundingClientRect();
         if (!r.width || !r.height) continue;
-        if (k.children.length && r.width > 260) walk(k); else pieces.push({ el: k, px: r.left + r.width / 2, py: r.top + r.height / 2 });
+        if (k.children.length && r.width > 260) walk(k); else add(k, r);
       }
     })(c));
-
     pieces.forEach(p => {
-      if (getComputedStyle(p.el).display === 'inline') p.el.style.display = 'inline-block';
-      const bx = gsap.getProperty(p.el, 'x'), by = gsap.getProperty(p.el, 'y'), bs = gsap.getProperty(p.el, 'scaleX') || 1;
-      const dx = p.px - cx, dy = p.py - cy, r0 = Math.hypot(dx, dy), a0 = Math.atan2(dy, dx);
-      const swirl = Math.PI * (1.1 + Math.random() * 0.5), spin = 200 + Math.random() * 160;
-      const setX = gsap.quickSetter(p.el, 'x', 'px'), setY = gsap.quickSetter(p.el, 'y', 'px');
-      const state = { e: 0 };
-      gsap.to(state, {
-        e: 1, duration: 0.8, delay: (r0 / reach) * 0.22, ease: 'power2.in',
-        onUpdate() {
-          const e = state.e, r = r0 * (1 - e), a = a0 + swirl * e;
-          setX(bx + cx + Math.cos(a) * r - p.px); setY(by + cy + Math.sin(a) * r - p.py);
-          gsap.set(p.el, { rotation: spin * e, scale: bs * (1 - 0.97 * e), opacity: e < 0.7 ? 1 : (1 - e) / 0.3 });
-        }
-      });
+      const cs = getComputedStyle(p.el);
+      p.inline = cs.display === 'inline';
+      p.base = cs.transform === 'none' ? '' : cs.transform + ' ';
+      p.alpha = parseFloat(cs.opacity);
+      const dx = p.px - cx, dy = p.py - cy;
+      p.r0 = Math.hypot(dx, dy); p.a0 = Math.atan2(dy, dx);
+      p.delay = (p.r0 / reach) * 200;
+      p.swirl = Math.PI * (1.1 + Math.random() * 0.5); p.spin = 200 + Math.random() * 160;
     });
 
+    /* write pass: layers first and the clip set rolling (all but invisible). Nothing moves yet: whatever it costs the
+       browser to promote the layers and spin the video up lands on a still page, as a pause too short to notice. */
+    pieces.forEach(p => { if (p.inline) p.el.style.display = 'inline-block'; p.el.style.willChange = 'transform, opacity'; });
+    document.documentElement.classList.add('is-sinking-prep');
+    const D = 850;
+    let moving = false;
+    const move = () => { if (moving) return; moving = true; requestAnimationFrame(() => requestAnimationFrame((t0) => {
+      document.documentElement.classList.add('is-sinking');
+      (function frame(now) {
+        const t = now - t0; let live = false;
+        for (const p of pieces) {
+          const k = (t - p.delay) / D;
+          if (k <= 0) { live = true; continue; }
+          if (k >= 1) { if (!p.done) { p.done = true; p.el.style.opacity = '0'; } continue; }
+          live = true;
+          const e = k * k, r = p.r0 * (1 - e), a = p.a0 + p.swirl * e;
+          p.el.style.transform = 'translate(' + (cx + Math.cos(a) * r - p.px).toFixed(1) + 'px,' + (cy + Math.sin(a) * r - p.py).toFixed(1) + 'px) ' + p.base + 'rotate(' + (p.spin * e).toFixed(1) + 'deg) scale(' + (1 - 0.97 * e).toFixed(3) + ')';
+          if (e > 0.7) p.el.style.opacity = (p.alpha * (1 - e) / 0.3).toFixed(3);
+        }
+        if (live) requestAnimationFrame(frame);
+      })(t0);
+    })); };
+
     warmHole();
-    try { holeVideo.currentTime = HOLE_FROM; } catch (e) {}
-    holeVideo.playbackRate = HOLE_RATE;
     const played = holeVideo.play();
     if (played && played.catch) played.catch(() => setTimeout(go, 900));
-    (function watch() { if (holeVideo.currentTime >= HOLE_TO) go(); else if (!gone) requestAnimationFrame(watch); })();
+    /* the trip starts once the clip is really delivering frames (its second presented frame), or after 450ms at the latest */
+    if (holeVideo.requestVideoFrameCallback) holeVideo.requestVideoFrameCallback(() => holeVideo.requestVideoFrameCallback(move));
+    else holeVideo.addEventListener('timeupdate', move, { once: true });
+    setTimeout(move, 450);
     holeVideo.addEventListener('ended', go);
     holeVideo.addEventListener('error', () => setTimeout(go, 900));
-    gsap.to(holeVideo, { opacity: 1, duration: 0.3, ease: 'power1.out' });
-    gsap.to(holeVeil, { opacity: 1, duration: 0.65, delay: 0.2, ease: 'power1.in' });
     setTimeout(go, HOLE_FALLBACK_MS);
   }
   /* back from the store: the browser may restore this page frozen mid-collapse */
@@ -1521,7 +1554,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 
   function loop(t){
     requestAnimationFrame(loop);
-    if(document.hidden) return;
+    if(document.hidden || document.documentElement.classList.contains('is-sinking-prep')) return; /* the sky holds still while the black hole trip runs */
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     if(document.documentElement.getAttribute('data-theme') === 'light') return;
     for(var i = 0; i < stars.length; i++){
