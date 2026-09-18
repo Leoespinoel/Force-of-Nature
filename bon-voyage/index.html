@@ -958,6 +958,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     let moving = false;
     const move = () => { if (moving) return; moving = true; requestAnimationFrame(() => requestAnimationFrame((t0) => {
       document.documentElement.classList.add('is-sinking');
+      holeVideo.playbackRate = 1;
       (function frame(now) {
         const t = now - t0; let live = false;
         for (const p of pieces) {
@@ -974,10 +975,11 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
     })); };
 
     warmHole();
+    holeVideo.playbackRate = 0.5; /* half speed while the browser spins it up: its next frame comes soon enough to signal that it is rolling, and little of the clip is spent before the trip shows */
     const played = holeVideo.play();
     if (played && played.catch) played.catch(() => setTimeout(go, 900));
-    /* the trip starts once the clip is really delivering frames (its second presented frame), or after 450ms at the latest */
-    if (holeVideo.requestVideoFrameCallback) holeVideo.requestVideoFrameCallback(() => holeVideo.requestVideoFrameCallback(move));
+    /* the trip starts once the clip has delivered a frame, or after 450ms at the latest */
+    if (holeVideo.requestVideoFrameCallback) holeVideo.requestVideoFrameCallback(move);
     else holeVideo.addEventListener('timeupdate', move, { once: true });
     setTimeout(move, 450);
     holeVideo.addEventListener('ended', go);
