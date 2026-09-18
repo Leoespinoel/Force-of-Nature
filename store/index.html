@@ -243,12 +243,15 @@
     .card{width:min(76vw, calc((100svh - 320px) * .75));will-change:transform;}
   }
 
-  /* ---------- footer ---------- */
-  footer{position:relative;padding:clamp(64px, 9vw, 128px) var(--gutter) 28px;z-index:6;background:var(--void);}
-  .foot{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;flex-wrap:wrap;}
-  .foot__links{display:flex;gap:10px;flex-wrap:wrap;padding-bottom:16px;opacity:0;transform:translateY(12px);}
+  /* ---------- footer ----------
+     A full closing screen: the wordmark and the two links sit centred in the middle of the viewport, the meta row
+     stays pinned to the bottom edge. min-height uses 100vh with a 100svh upgrade so mobile browser chrome doesn't
+     leave the meta row stranded off-screen (this section isn't pinned, so svh's resize during scroll is harmless). */
+  footer{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:clamp(32px, 5vw, 56px) var(--gutter) 28px;z-index:6;background:var(--void);}
+  .foot{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(24px, 4vw, 40px);text-align:center;}
+  .foot__links{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;opacity:0;transform:translateY(12px);}
   .wordmark{margin:0;font-size:100px;white-space:nowrap;clip-path:inset(100% 0 0 0);color:var(--red);}
-  .meta{display:flex;justify-content:space-between;gap:16px;margin-top:24px;color:var(--pebble);flex-wrap:wrap;}
+  .meta{display:flex;justify-content:space-between;gap:16px;color:var(--pebble);flex-wrap:wrap;}
   .meta a{position:relative;}
   .meta a::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform 500ms cubic-bezier(.19,1,.22,1);}
   .meta a:hover::after{transform:scaleX(1);}
