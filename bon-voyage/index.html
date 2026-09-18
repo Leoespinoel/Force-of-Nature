@@ -1179,7 +1179,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
         if (h > maxH) { fs = fs * maxH / h; spans.forEach(s => { s.style.fontSize = fs.toFixed(2) + 'px'; }); }
         spans.forEach(s => { s.textContent = rnd(s.dataset.text.length); });
       };
-      /* 0–0.35s void only; 0.35–1.9s decode in red; short hold; then the string lifts out and the hero reveals underneath */
+      /* 0–0.35s void only; 0.35–1.65s decode in red; short hold; then the string lifts out and the hero reveals underneath */
       const tl = gsap.timeline({ paused: true, delay: 0.35, onComplete: () => { html.classList.add('intro-done'); sessionStorage.setItem('fon-intro', '1'); } });
       /* direct visit: the wormhole runs first (its last frame is black, the intro's void beat follows it). If the video
          cannot start within 4s or fails, the trip is skipped rather than holding a black screen */
@@ -1200,9 +1200,9 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
       Promise.all([document.fonts.ready, warp()]).then(() => { sizeIntro(); tl.play(); });
       tl.to('#intro-text', { opacity: 1, duration: 0.25, ease: 'power1.out' }, 0);
       spans.forEach((s, i) => {
-        tl.to(s, { duration: 1.3, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.5, revealDelay: 0.25, tweenLength: false } }, i * 0.2);
+        tl.to(s, { duration: 1.1, scrambleText: { text: s.dataset.text, chars: 'upperCase', speed: 0.5, revealDelay: 0.2, tweenLength: false } }, i * 0.17);
       });
-      tl.to('#intro-text', { yPercent: -12, autoAlpha: 0, duration: 0.7, ease: 'expo.in' }, '>+0.3')
+      tl.to('#intro-text', { yPercent: -12, autoAlpha: 0, duration: 0.6, ease: 'expo.in' }, '>+0.22')
         .add(heroReveal, '>-0.3')
         .to('#intro', { autoAlpha: 0, duration: 0.4 }, '<');
     }
