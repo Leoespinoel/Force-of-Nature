@@ -891,10 +891,10 @@
     if (!intro) tl.progress(1);
     return tl;
   }
-  /* on a direct visit (not arriving through bon-voyage's own trip via ?hole=1), play the same clip here first, so
-     the entrance always opens on it; the clip ends on pure black, same as the loader underneath, so the cut into
-     the heart loader is invisible. Timing mirrors bon-voyage's own trip (half speed while it spins up, bumped to
-     normal once a frame lands, a fallback in case play() or 'ended' never fire). */
+  /* the entrance always opens on this clip, whether arriving through bon-voyage's own trip (?hole=1) or straight
+     to the store: it ends on pure black, same as the loader underneath, so the cut into the heart loader is
+     invisible. Timing mirrors bon-voyage's own trip (half speed while it spins up, bumped to normal once a frame
+     lands, a fallback in case play() or 'ended' never fire). */
   const HOLE_FALLBACK_MS = 2400;
   function playBlackHole() {
     const v = $('#blackhole-video');
@@ -917,7 +917,7 @@
   async function intro() {
     await document.fonts.ready;
     if (RM) { loader.remove(); revealChrome(false); return; }
-    if (!viaHole) await playBlackHole();
+    await playBlackHole();
     const g = buildGlyph(), state = { p: 0 };
     gsap.set(countEl, { opacity: 1 });
     gsap.timeline()
