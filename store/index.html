@@ -132,7 +132,8 @@
 
   /* ---------- hero: windows orbit the heart ---------- */
   .hero{position:relative;height:200vh;z-index:0;}
-  .hero__stage{position:relative;height:100svh;overflow:hidden;}
+  /* pinned stages use vh (the large viewport on phones) so no strip of sky shows under them once the browser bar collapses */
+  .hero__stage{position:relative;height:100vh;overflow:hidden;}
   .orbit{
     position:absolute;inset:0;perspective:1200px;perspective-origin:50% 40%;
     touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;
@@ -187,7 +188,7 @@
   .window__idx{position:absolute;left:14px;top:12px;z-index:1;color:var(--ash);}
   .window:focus-visible{outline:2px solid var(--bone);outline-offset:3px;}
   @media (max-width:900px){
-    :root{--R:min(36vw, 150px);--win-w:108px;}
+    :root{--R:min(33vw, 150px);--win-w:104px;}
     .orbit{perspective:700px;}
     .window{border-radius:8px;}
     .window__name{font-size:1.1rem;left:9px;right:9px;bottom:8px;}
@@ -196,7 +197,7 @@
 
   /* ---------- chapters ---------- */
   .chapter{position:relative;height:300vh;margin-top:-100vh;}
-  .chapter__stage{position:relative;height:100svh;overflow:hidden;}
+  .chapter__stage{position:relative;height:100vh;overflow:hidden;}
   .plane{
     position:absolute;inset:0;background:var(--void);
     clip-path:polygon(0 118%, 100% 105%, 100% 200%, 0 200%);
@@ -233,9 +234,13 @@
   .card__price{color:var(--ash);white-space:nowrap;}
   .track__end{flex:0 0 auto;width:var(--gutter);}
   @media (max-width:900px){
-    .chapter__head{width:78vw;}
-    .chapter__head .display{font-size:clamp(2.8rem, 15vw, 5rem);}
-    .card{width:72vw;}
+    /* phone: the heading stays put under the menu and only the cards slide (see the chapter timeline) */
+    .chapter{height:240vh;}
+    .chapter__head{position:absolute;left:var(--gutter);right:var(--gutter);top:138px;width:auto;padding-right:0;}
+    .chapter__head .mono{margin-bottom:10px;}
+    .chapter__head .display{font-size:clamp(2.6rem, 14vw, 4.5rem);}
+    .track{align-items:flex-start;padding-top:270px;gap:16px;will-change:auto;}
+    .card{width:min(76vw, calc((100svh - 320px) * .75));will-change:transform;}
   }
 
   /* ---------- footer ---------- */
@@ -305,9 +310,35 @@
     .card:hover::after{animation:none;}
     .card img,.card__name{transition:none;}
   }
+
+  /* ---------- Red dot cursor ---------- */
+  .cursor-dot{
+    position:fixed;
+    top:0;
+    left:0;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--red);
+    pointer-events:none;
+    z-index:9999;
+    opacity:0;
+    transform:translate(-50%, -50%) scale(1);
+    transition:opacity 200ms ease, transform 220ms cubic-bezier(.2,.8,.2,1);
+    will-change:transform, opacity;
+  }
+  @media (hover: hover) and (pointer: fine){
+    html.has-dot-cursor, html.has-dot-cursor *{cursor:none !important;}
+    html.has-dot-cursor input:not([type="radio"]):not([type="checkbox"]), html.has-dot-cursor textarea{cursor:text !important;}
+    html.has-dot-cursor .cursor-dot.is-visible{opacity:1;}
+    html.has-dot-cursor .cursor-dot.is-hover{transform:translate(-50%, -50%) scale(2.2);}
+    html.has-dot-cursor .cursor-dot.is-down{transform:translate(-50%, -50%) scale(0.75);}
+    html.has-dot-cursor .cursor-dot.is-text{transform:translate(-50%, -50%) scale(0);}
+  }
 </style>
 </head>
 <body>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 <a class="skip" href="#classic">Skip to the clothes</a>
 
 <div id="loader" aria-hidden="true">
@@ -861,6 +892,8 @@
       const stage = $('.chapter__stage', ch), plane = $('.plane', ch), track = $('.track', ch), head = $('.chapter__head .gl', ch);
       let glitched = false;
       const dist = () => Math.max(0, track.scrollWidth - innerWidth);
+      // on phone the heading is absolute inside the track, so slide the cards and leave the track (and heading) still
+      const slide = PHONE ? $$('.card', track) : track;
       // range = the whole 300vh section (end 'bottom top'), so this stage stays pinned while the next chapter wipes over it
       // a short scrub lets the wipe and the slide glide over dropped frames instead of stepping with them
       gsap.timeline({ scrollTrigger: { trigger: ch, start: 'top top', end: 'bottom top', pin: stage, pinSpacing: false, scrub: .35, invalidateOnRefresh: true,
@@ -868,7 +901,7 @@
         onUpdate(st) { if (!glitched && st.progress > .22) { glitched = true; glitch(head, 900); } if (st.progress < .05) glitched = false; } } })
         .fromTo(plane, { clipPath: 'polygon(0 118%, 100% 105%, 100% 200%, 0 200%)' }, { clipPath: 'polygon(0 18%, 100% 5%, 100% 100%, 0 100%)', ease: 'none', duration: .7 }, 0)
         .fromTo(plane, { clipPath: 'polygon(0 18%, 100% 5%, 100% 100%, 0 100%)' }, { clipPath: 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)', ease: 'none', duration: .2 }, .7)
-        .fromTo(track, { x: 0 }, { x: () => -dist(), ease: 'none', duration: 1.4 }, 1)
+        .fromTo(slide, { x: 0 }, { x: () => -dist(), ease: 'none', duration: 1.4 }, 1)
         .to({}, { duration: .6 });
     });
 
@@ -963,6 +996,56 @@
 
   document.fonts.ready.then(() => { fitWordmark(); ScrollTrigger.refresh(); });
 })();
+</script>
+<script>
+  (function(){
+    var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if(!finePointer.matches) return;
+    var dot = document.getElementById('cursorDot');
+    var root = document.documentElement;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var targetX = -100, targetY = -100, x = -100, y = -100;
+    var ease = reduceMotion ? 1 : 0.28;
+    var shown = false;
+    var interactive = 'a, button, [role="button"], label, summary, select';
+    var textual = 'input:not([type="radio"]):not([type="checkbox"]), textarea, [contenteditable="true"]';
+
+    root.classList.add('has-dot-cursor');
+
+    function render(){
+      x += (targetX - x) * ease;
+      y += (targetY - y) * ease;
+      dot.style.left = x + 'px';
+      dot.style.top = y + 'px';
+      requestAnimationFrame(render);
+    }
+
+    document.addEventListener('mousemove', function(e){
+      targetX = e.clientX;
+      targetY = e.clientY;
+      if(!shown){
+        shown = true;
+        x = targetX; y = targetY;
+        dot.classList.add('is-visible');
+      }
+      var el = e.target;
+      dot.classList.toggle('is-hover', !!(el.closest && el.closest(interactive)));
+      dot.classList.toggle('is-text', !!(el.closest && el.closest(textual)));
+    }, { passive: true });
+
+    document.addEventListener('mousedown', function(){ dot.classList.add('is-down'); });
+    document.addEventListener('mouseup', function(){ dot.classList.remove('is-down'); });
+    document.addEventListener('mouseleave', function(){ dot.classList.remove('is-visible'); });
+    document.addEventListener('mouseenter', function(){ if(shown) dot.classList.add('is-visible'); });
+    window.addEventListener('blur', function(){ dot.classList.remove('is-visible'); });
+
+    finePointer.addEventListener && finePointer.addEventListener('change', function(ev){
+      root.classList.toggle('has-dot-cursor', ev.matches);
+      if(!ev.matches) dot.classList.remove('is-visible');
+    });
+
+    requestAnimationFrame(render);
+  })();
 </script>
 </body>
 </html>
