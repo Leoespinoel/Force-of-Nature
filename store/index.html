@@ -934,7 +934,7 @@
         .to({}, { duration: .6 });
     });
 
-    /* collide: leaving the orbit plays a 2.55s timed beat (same pace as the bon-voyage site's NOT JUST A TEE decode).
+    /* collide: leaving the orbit plays a 2.75s timed beat (same pace as the bon-voyage site's NOT JUST A TEE decode).
        Scroll is held while it runs; under the black cover the page jumps to the Classic fully wiped in, so the phrase
        lifts straight off the first line. Once per page load; menu and window jumps skip it. */
     (() => {
@@ -1014,9 +1014,10 @@
           tl.set(ch, { opacity: 1 }, at)
             .to({}, { duration: .45, onUpdate() { ch.textContent = this.progress() < 1 && final !== '.' ? ABC[Math.floor(Math.random() * 26)] : final; } }, at);
         });
-        // the finished phrase (complete at ~T + 1.15) holds for .4s (2.55s in all; the owner is comparing this with 2.75s = T + 1.75), then lifts out and the Classic is underneath
-        tl.add(land, T + 1.4)
-          .to(text, { yPercent: -12, autoAlpha: 0, duration: .4, ease: 'power3.in' }, T + 1.55)
+        // the finished phrase (complete at ~T + 1.15) holds for .6s (2.75s in all; owner asked 18 Sep for the pause .2s
+        // longer than the original 2.55s), then lifts out and the Classic is underneath
+        tl.add(land, T + 1.6)
+          .to(text, { yPercent: -12, autoAlpha: 0, duration: .4, ease: 'power3.in' }, T + 1.75)
           .add(() => glitch($('.chapter__head .gl', classic), 900), '>-0.25')
           .to(box, { autoAlpha: 0, duration: .25 }, '<');
       }
