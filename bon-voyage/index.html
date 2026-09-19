@@ -1601,6 +1601,28 @@ const boot = () => {
             const calm = lenis && html.classList.contains('intro-done') && performance.now() - born > 1200 && lenis.scroll < self.start + window.innerHeight * 0.7;
             if (calm) moment(); else plain();
           } });
+
+        /* a resize mid-moment leaves the mark and words cut off: every position above is worked out once, in that
+           instant's viewport size, and a reflow (window resize, not a phone's address bar) invalidates all of it.
+           Bail cleanly to the plain, natural layout and land the section back at the top of the viewport instead of
+           leaving things stranded. */
+        let hrz;
+        window.addEventListener('resize', () => {
+          clearTimeout(hrz);
+          hrz = setTimeout(() => {
+            const tl = window.__fon && window.__fon.heart;
+            if (!tl || !tl.isActive()) return;
+            tl.kill();
+            gsap.set(words, { clearProps: 'transform,willChange,opacity,visibility' });
+            gsap.set(heartMark, { clearProps: 'transform,transformOrigin,opacity,visibility' });
+            heartSec.onclick = null;
+            lenis.start();
+            slowBeat();
+            eyebrowIn();
+            lenis.scrollTo(heartSec, { immediate: true, force: true });
+            ScrollTrigger.refresh();
+          }, 200);
+        });
       });
     }
 
