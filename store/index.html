@@ -64,7 +64,8 @@
   /* ---------- black hole: a Seedance 2.5 clip screened over the sky in the top band ----------
      Two copies of the same clip; the loop is a .7s crossfade between them. The clip's own black
      keeps the event horizon black; an elliptical mask melts its edges into the sky. It sits
-     under the star canvas so stars and meteors pass in front of it. */
+     over the star canvas (DOM order, same z-index) so stars and meteors passing behind it are
+     occluded within its masked ellipse instead of drawing over it, a black hole absorbs light. */
   .hole{
     position:fixed;left:50%;top:21vh;z-index:1;width:min(680px, 50vw);aspect-ratio:16/9;
     transform:translate(-50%,-50%);pointer-events:none;
@@ -377,11 +378,11 @@
 
 <div class="nebula" aria-hidden="true"></div>
 <canvas id="bloom" aria-hidden="true"></canvas>
+<canvas id="stars" aria-hidden="true"></canvas>
 <div class="hole" id="hole" aria-hidden="true">
   <video src="assets/hole.mp4" muted playsinline preload="auto"></video>
   <video src="assets/hole.mp4" muted playsinline preload="auto"></video>
 </div>
-<canvas id="stars" aria-hidden="true"></canvas>
 
 <div class="chrome">
   <a class="brand mono" href="#top" aria-label="Force of Nature, back to the top">
