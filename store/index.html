@@ -84,6 +84,10 @@
 
   /* ---------- loader ---------- */
   #loader{position:fixed;inset:0;z-index:40;background:var(--void);display:grid;place-items:center;}
+  /* arriving via the bon-voyage black hole: the loader goes transparent so the hole (already open behind it,
+     see the via-hole branch in the loader script) shows through while the heart counts up over it, instead of
+     the heart forming over a few seconds of plain black first. */
+  body.via-hole #loader{background:transparent;}
   #loader canvas{width:340px;height:330px;transform-origin:50% 46%;}
   .loader__count{position:absolute;left:50%;top:calc(50% + 150px);transform:translateX(-50%);font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--bone);}
 
@@ -841,9 +845,19 @@
   /* ---------- loader ---------- */
   const loader = $('#loader'), glyph = $('#glyph'), gctx = glyph.getContext('2d'), countEl = $('.loader__count');
   /* the heart loader always plays, on every visit including a plain reload; arriving through the bon-voyage site's
-     black hole (?hole=1) is the same trip, so the flag is just dropped from the address once read */
+     black hole (?hole=1) is the same trip, so the flag is just dropped from the address once read. The black hole
+     itself is already mid-shot from that trip, so it doesn't wait behind the loader for its turn: sky and hole
+     snap straight to revealed (no fade, matching a shot already in progress) and the loader turns transparent
+     (see body.via-hole above) so the heart counts up over the hole instead of over plain black first. */
   const viaHole = new URLSearchParams(location.search).has('hole');
-  if (viaHole) history.replaceState(null, '', location.pathname + location.hash);
+  if (viaHole) {
+    history.replaceState(null, '', location.pathname + location.hash);
+    document.body.classList.add('via-hole');
+    gsap.set('#stars', { opacity: 1 });
+    gsap.set('#bloom', { '--reveal': 1 });
+    holeStart();
+    gsap.set(hole, { '--reveal': 1 });
+  }
   function buildGlyph() {
     const cols = 34, rows = 24, cw = 10, ch = 13.5, cells = [], byRow = new Map();
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
@@ -900,10 +914,9 @@
     const tl = gsap.timeline();
     tl.to('#stars', { opacity: 1, duration: 1.4, ease: 'power2.out' }, 0)
       .to('#bloom', { '--reveal': 1, duration: 1.4, ease: 'power2.out' }, 0);
-    /* arriving through the bon-voyage black hole already showed that reveal, so the portal here just appears
-       open instead of fading in from black a second time; everywhere else (a plain visit or reload) it still eases in */
-    if (viaHole) tl.add(() => { holeStart(); gsap.set(hole, { '--reveal': 1 }); }, .2);
-    else tl.add(holeStart, 0).to('#hole', { '--reveal': 1, duration: 1.6, ease: 'power2.out' }, .2);
+    /* arriving through the bon-voyage black hole: it's already open behind the loader (see the via-hole branch
+       above), nothing to do here. Everywhere else (a plain visit or reload) it eases in now. */
+    if (!viaHole) tl.add(holeStart, 0).to('#hole', { '--reveal': 1, duration: 1.6, ease: 'power2.out' }, .2);
     tl.to(orbit, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, .1)
       .to(['.brand', '.menu', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
     if (!intro) tl.progress(1);
