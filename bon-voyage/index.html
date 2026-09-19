@@ -297,7 +297,11 @@ section{position:relative}
 /* the heart: what the mark means, the last chapter before the wordmark */
 .heart{position:relative;z-index:2} /* its words fly over the neighbouring sections while they draw the heart */
 .heart-grid{display:grid;grid-template-columns:minmax(200px,560px) auto;gap:clamp(32px,6vw,96px);align-items:start;justify-content:center}
-.heart-mark{width:min(100%,560px);will-change:transform}
+/* the mark's own 560x773 aspect has no height ceiling by default, so on a short desktop window (1366x768, 1280x720:
+   both common) it's taller than the viewport itself and nothing can scroll it clear of the fixed nav. Cap its width
+   by the viewport height too (560/773 the mark's own ratio, 130px the nav plus breathing room) so it always fits;
+   at ordinary heights the two caps land within a px of each other and nothing visibly changes. */
+.heart-mark{width:min(100%,560px,calc((100svh - 130px) * 0.7244));will-change:transform}
 .heart-mark img{width:100%;height:auto;will-change:transform}
 .heart-text{font-size:clamp(1.7rem,3.6vw,3.8rem);line-height:1.02;max-width:20ch;position:relative;z-index:1}
 .heart-text .red{color:var(--red)}
