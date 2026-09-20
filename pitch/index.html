@@ -131,6 +131,13 @@ ul,ol{padding:0;list-style:none}
 .index-list a:hover,.index-list a.is-active{color:var(--red-lift);padding-left:10px}
 .index-list a.is-active .n{color:var(--red-lift)}
 
+/* ---------- takeover: the Bon Voyage intro, once per section ---------- */
+.takeover{position:fixed;inset:0;z-index:58;background:var(--void);display:grid;grid-template-columns:minmax(0,1fr);align-content:center;padding:var(--gutter);opacity:0;visibility:hidden;overflow:hidden;cursor:pointer}
+html.pre .takeover{opacity:1;visibility:visible}
+.takeover .k{position:absolute;left:var(--gutter);top:24px;color:var(--pebble)}
+.takeover .display{color:var(--red);font-size:100px;line-height:.86;width:100%;min-width:0;opacity:0}
+.takeover .tl{display:block;white-space:nowrap;width:max-content;letter-spacing:-.04em;transform-origin:0 50%}
+
 /* ---------- 01 cover ---------- */
 .hero{padding-top:calc(var(--gap) + 56px)}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.7fr);gap:clamp(24px,4vw,72px);align-items:center}
@@ -380,6 +387,8 @@ ul,ol{padding:0;list-style:none}
   .frame img{transition:none}
 }
 </style>
+<script>/* black before first paint when motion is allowed, so the page never flashes ahead of its opening takeover; the 8s timer is only a failsafe if the main script never runs */
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('pre');setTimeout(function(){document.documentElement.classList.remove('pre')},8000);}</script>
 </head>
 <body>
 <a class="skip mono" href="#origins">Skip to the pitch</a>
@@ -451,6 +460,12 @@ ul,ol{padding:0;list-style:none}
     <button class="chip-btn mono" id="index-close"><svg aria-hidden="true"><use href="#i-x"/></svg>Close</button>
   </div>
   <nav class="index-list" id="index-list" aria-label="Sections"></nav>
+</div>
+
+<!-- the takeover: full-screen headline decode before each section (see the script). Black from first paint via html.pre -->
+<div class="takeover" id="takeover" aria-hidden="true" data-state="idle">
+  <span class="k mono" id="takeover-k"></span>
+  <p class="display" id="takeover-text"></p>
 </div>
 
 <main id="main">
@@ -903,11 +918,17 @@ ul,ol{padding:0;list-style:none}
   } else if (HAS_GSAP) { gsap.registerPlugin(ScrollTrigger); }
 
   let active = 0;
+  /* the takeover (motion only) hooks in here: before() may take a navigation over, skip() ends a running one */
+  const tk = { playing: false, before: null, skip: () => {}, travel: 0 };
   const topOf = (el) => el.getBoundingClientRect().top + window.scrollY;
-  const go = (i, immediate) => {
+  const go = (i, immediate, direct) => {
     i = Math.max(0, Math.min(secs.length - 1, i));
+    if (!direct && tk.before && tk.before(i)) return;
     const y = i === 0 ? 0 : topOf(secs[i]);
-    if (lenis) lenis.scrollTo(y, immediate ? { immediate: true, force: true } : { duration: 1.15, easing: (t) => 1 - Math.pow(1 - t, 4), force: true });
+    /* a programmatic move may pass straight through sections nobody has seen yet: they must not raise their takeover
+       and hijack the trip, so scroll-raised takeovers stand down until it has landed */
+    tk.travel = performance.now() + (immediate ? 320 : 1500);
+    if (lenis) lenis.scrollTo(y, immediate ? { immediate: true, force: true } : { duration: 1.15, easing: (t) => 1 - Math.pow(1 - t, 4), force: true, onComplete: () => { tk.travel = performance.now() + 160; } });
     else window.scrollTo({ top: y, behavior: immediate || RM ? 'auto' : 'smooth' });
   };
   const setActive = (i) => {
@@ -961,6 +982,10 @@ ul,ol{padding:0;list-style:none}
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
     if (typing) return;
+    if (tk.playing) {
+      if (['ArrowRight', 'ArrowLeft', 'PageDown', 'PageUp', 'Enter', ' ', 'Escape'].includes(e.key)) { e.preventDefault(); tk.skip(); }
+      return;
+    }
     const open = indexEl.classList.contains('is-open');
     if (e.key === 'Escape' && open) return openIndex(false);
     if ((e.key === 'i' || e.key === 'I') && !open) return openIndex(true);
@@ -996,30 +1021,49 @@ ul,ol{padding:0;list-style:none}
 
   /* deep link: land on the hashed section before anything animates */
   const startAt = secs.findIndex((s) => '#' + s.id === location.hash);
-  window.__fon = { go, scrollTo: (y) => (lenis ? lenis.scrollTo(y, { immediate: true, force: true }) : window.scrollTo(0, y)), count: secs.length };
+  window.__fon = { go, tk, scrollTo: (y) => (lenis ? lenis.scrollTo(y, { immediate: true, force: true }) : window.scrollTo(0, y)), count: secs.length };
 
-  if (!MOTION) { if (startAt > 0) go(startAt, true); onScroll(); return; }
+  if (!MOTION) { html.classList.remove('pre'); if (startAt > 0) go(startAt, true); onScroll(); return; }
 
   /* =====================================================================
      Motion. Everything below only runs with GSAP present and motion allowed.
      ===================================================================== */
   gsap.registerPlugin(ScrambleTextPlugin);
   html.classList.add('js-motion');
-  const once = (trigger, start = 'top 86%') => ({ trigger, start, once: true });
 
-  /* the headline decodes first and leads: everything else in a section waits LEAD seconds behind it */
-  const LEAD = 0.3;
+  /* ---------- gates: a section's own animations wait until its takeover has lifted ----------
+     Every scroll-triggered animation is created paused and played through inView(): when its trigger enters, it waits for
+     the section's gate. The takeover opens the gate as it leaves, so nothing plays unseen under the black. */
+  const gates = new Map();
+  const gate = (sec) => {
+    if (!gates.has(sec)) { let open; const p = new Promise((r) => { open = r; }); gates.set(sec, { p, open }); }
+    return gates.get(sec);
+  };
+  const inView = (trigger, start, anim) => {
+    const el = typeof trigger === 'string' ? $(trigger) : trigger;
+    anim.pause();
+    ScrollTrigger.create({ trigger: el, start, once: true, onEnter: () => gate(el.closest('.sec')).p.then(() => anim.play()) });
+    return anim;
+  };
+  /* the section headline rises first once the takeover lifts; everything else follows LEAD seconds behind it */
+  const LEAD = 0.18;
 
   /* generic fade-ups: batched so neighbours that enter together stagger naturally */
   gsap.set('[data-reveal]', { autoAlpha: 0, y: 36 });
-  ScrollTrigger.batch('[data-reveal]', { start: 'top 97%', once: true, onEnter: (b) => gsap.to(b, { autoAlpha: 1, y: 0, duration: 1.15, ease: 'expo.out', stagger: 0.08, delay: LEAD }) });
+  ScrollTrigger.batch('[data-reveal]', {
+    start: 'top 97%', once: true,
+    onEnter: (batch) => {
+      const bySec = new Map();
+      batch.forEach((el) => { const s = el.closest('.sec'); if (!bySec.has(s)) bySec.set(s, []); bySec.get(s).push(el); });
+      bySec.forEach((els, s) => gate(s).p.then(() => gsap.to(els, { autoAlpha: 1, y: 0, duration: 1.15, ease: 'expo.out', stagger: 0.08, delay: LEAD })));
+    },
+  });
 
   /* groups of cards / rows: children rise one after another */
   $$('[data-stagger]').forEach((g) => {
     const kids = [...g.children];
     gsap.set(kids, { autoAlpha: 0, y: 44 });
-    gsap.timeline({ scrollTrigger: once(g, 'top 88%') })
-      .to(kids, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.09, clearProps: 'transform,opacity,visibility' }, LEAD);
+    inView(g, 'top 88%', gsap.timeline().to(kids, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.09, clearProps: 'transform,opacity,visibility' }, LEAD));
   });
 
   /* photographs: the frame wipes open from the bottom while the image settles back */
@@ -1028,84 +1072,42 @@ ul,ol{padding:0;list-style:none}
     gsap.set(frames, { clipPath: 'inset(100% 0% 0% 0%)' });
     gsap.set($$('.frame img', g), { scale: 1.28 });
     gsap.set($$('figcaption', g), { autoAlpha: 0, y: 16 });
-    const tl = gsap.timeline({ scrollTrigger: once(g, 'top 82%') });
-    tl.to(frames, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'expo.inOut', stagger: 0.1 }, 0)
+    inView(g, 'top 82%', gsap.timeline()
+      .to(frames, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'expo.inOut', stagger: 0.1 }, 0)
       .to($$('.frame img', g), { scale: 1, duration: 1.9, ease: 'expo.out', stagger: 0.1, clearProps: 'transform' }, 0.15)
-      .to($$('figcaption', g), { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.1 }, 0.7);
+      .to($$('figcaption', g), { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.1 }, 0.7));
   });
 
   /* bracketed figures decode into place: a placeholder that visibly resolves to a placeholder */
   $$('[data-fig]').forEach((el) => {
     const text = el.textContent;
     gsap.set(el, { autoAlpha: 0 });
-    gsap.timeline({ scrollTrigger: once(el, 'top 88%') })
+    inView(el, 'top 88%', gsap.timeline()
       .to(el, { autoAlpha: 1, duration: 0.3 }, 0)
-      .to(el, { duration: 1.3, scrambleText: { text, chars: 'X0123456789', speed: 0.45, revealDelay: 0.25 } }, 0);
+      .to(el, { duration: 1.3, scrambleText: { text, chars: 'X0123456789', speed: 0.45, revealDelay: 0.25 } }, 0));
   });
 
-  /* headings: the Bon Voyage "NOT JUST A TEE" decode, in place. Each headline fades in as random letters in the section's
-     accent, resolves left to right into the real words, then settles to ink. It is split per word (not per line) so spaces,
-     and with them the word shapes, hold still while the letters churn, and so the small italic <em> words survive: they
-     scramble in lowercase inside their own tag. Returns a timeline; pass a scrollTrigger, or nest it (the cover does). */
-  const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', abc = 'abcdefghijklmnopqrstuvwxyz';
-  const rnd = (text, set) => [...text].map((c) => (/[A-Za-z0-9]/.test(c) ? set[Math.floor(Math.random() * set.length)] : c)).join('');
-  const decode = (h, scrollTrigger) => {
-    if (!h.hasAttribute('aria-label')) h.setAttribute('aria-label', $$('.ln > span', h).map((l) => l.textContent.trim()).join(' '));
-    const ink = getComputedStyle(h).color;
-    h.style.color = 'var(--c-accent)';
-    const accent = getComputedStyle(h).color;
-    const lines = $$('.ln > span', h), words = [];
-    lines.forEach((line, li) => {
-      /* a line that fits on one row is pinned there while it scrambles, so wider random glyphs cannot wrap it and jolt the page */
-      if (line.offsetHeight < (parseFloat(getComputedStyle(line).lineHeight) || line.offsetHeight) * 1.6) line.style.whiteSpace = 'nowrap';
-      const mine = [];
-      const walk = (node, lower) => [...node.childNodes].forEach((n) => {
-        if (n.nodeType === 1) return walk(n, n.tagName === 'EM');
-        if (n.nodeType !== 3) return;
-        const frag = document.createDocumentFragment();
-        n.textContent.split(/(\s+)/).forEach((part) => {
-          if (!part) return;
-          if (/^\s+$/.test(part)) return frag.appendChild(document.createTextNode(part));
-          const el = document.createElement('span');
-          el.textContent = rnd(part, lower ? abc : ABC);
-          frag.appendChild(el); mine.push({ el, text: part, lower });
-        });
-        n.replaceWith(frag);
-      });
-      walk(line, false);
-      const total = mine.reduce((a, w) => a + w.text.length, 0) || 1;
-      let seen = 0;
-      mine.forEach((w) => { w.at = li * 0.22 + (seen / total) * 0.55; seen += w.text.length; words.push(w); });
-    });
-    gsap.set(h, { autoAlpha: 0 });
-    const tl = gsap.timeline(scrollTrigger ? { scrollTrigger } : {});
-    tl.to(h, { autoAlpha: 1, duration: 0.3, ease: 'power1.out' }, 0);
-    words.forEach((w) => tl.to(w.el, { duration: 0.95, scrambleText: { text: w.text, chars: w.lower ? 'lowerCase' : 'upperCase', speed: 0.45, revealDelay: 0.3, tweenLength: false } }, w.at));
-    tl.fromTo(h, { color: accent }, { color: ink, duration: 0.55, ease: 'power2.out', immediateRender: false }, tl.duration() - 0.35)
-      .add(() => { h.style.color = ''; lines.forEach((l) => { l.style.whiteSpace = ''; }); });
-    return tl;
-  };
-  /* headlines are prepared only once the webfonts have landed: the one-row pin and the word widths are measured on the
-     real face, and nothing flashes in the fallback first (2.5s cap so a stalled font never holds the page hidden) */
-  gsap.set('[data-lines], .h-hero', { autoAlpha: 0 });
-  const fontsIn = Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 2500))]);
-  fontsIn.then(() => { $$('[data-lines]').forEach((h) => decode(h, once(h, 'top 90%'))); ScrollTrigger.refresh(); });
+  /* section headlines: the takeover has just spelled them out full-screen, so in place they simply rise out of their masks */
+  $$('[data-lines]').forEach((h) => {
+    const lines = $$('.ln > span', h);
+    gsap.set(lines, { yPercent: 112 });
+    inView(h, 'top 92%', gsap.timeline().to(lines, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.09 }, 0));
+  });
 
-  /* 01 cover: plays on load, no scroll involved */
+  /* 01 cover: plays when the cover's takeover lifts */
+  const chrome = ['#chrome-top', '#chrome-bottom'];
+  gsap.set(chrome, { autoAlpha: 0 });
   (() => {
-    const bits = $$('[data-hero]'), mark = $('#hero-mark');
-    gsap.set(bits, { autoAlpha: 0, y: 26 });
+    const lines = $$('.h-hero .ln > span'), bits = $$('[data-hero]'), mark = $('#hero-mark');
+    gsap.set(lines, { yPercent: 108 }); gsap.set(bits, { autoAlpha: 0, y: 26 });
     gsap.set(mark, { autoAlpha: 0, scale: 0.86, rotation: -7 });
-    gsap.set(['#chrome-top', '#chrome-bottom'], { autoAlpha: 0 });
-    /* the page opens the way Bon Voyage does: the name decodes first, everything else arrives as it resolves */
-    const tl = gsap.timeline({ paused: true, delay: 0.25 });
-    fontsIn.then(() => { tl.add(decode($('.h-hero')), 0); tl.play(); });
-    tl
-      .to(mark, { autoAlpha: 1, scale: 1, rotation: 0, duration: 1.9, ease: 'expo.out' }, 0.45)
-      .to(bits, { autoAlpha: 1, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1 }, 1.05)
-      .to(['#chrome-top', '#chrome-bottom'], { autoAlpha: 1, duration: 1 }, 1.3);
+    const tl = gsap.timeline({ paused: true });
+    tl.to(lines, { yPercent: 0, duration: 1.3, ease: 'expo.out', stagger: 0.1 }, 0)
+      .to(mark, { autoAlpha: 1, scale: 1, rotation: 0, duration: 1.9, ease: 'expo.out' }, 0.15)
+      .to(bits, { autoAlpha: 1, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1 }, 0.4);
     const s = $('[data-scramble]');
-    if (s) tl.to(s, { duration: 1.4, scrambleText: { text: s.textContent, chars: 'upperCase', speed: 0.4 } }, 1.05);
+    if (s) tl.to(s, { duration: 1.4, scrambleText: { text: s.textContent, chars: 'upperCase', speed: 0.4 } }, 0.4);
+    gate(secs[0]).p.then(() => tl.play());
     /* the heart drifts a touch slower than the page as the cover scrolls away */
     gsap.to(mark.firstElementChild, { yPercent: 14, ease: 'none', scrollTrigger: { trigger: '#cover', start: 'top top', end: 'bottom top', scrub: true } });
   })();
@@ -1127,16 +1129,16 @@ ul,ol{padding:0;list-style:none}
   (() => {
     const n = $('#ten-num'); if (!n) return;
     const v = { n: 0 }; n.textContent = '0';
-    gsap.to(v, { n: 10, duration: 1.8, ease: 'expo.out', snap: { n: 1 }, onUpdate: () => { n.textContent = v.n; }, scrollTrigger: once(n, 'top 85%') });
+    inView(n, 'top 85%', gsap.to(v, { n: 10, duration: 1.8, ease: 'expo.out', snap: { n: 1 }, onUpdate: () => { n.textContent = v.n; } }));
   })();
 
   /* 08 bars grow from the baseline, values follow */
   (() => {
     const bars = $('#bars'); if (!bars) return;
     gsap.set($$('i', bars), { scaleY: 0 }); gsap.set($$('.val', bars), { autoAlpha: 0, y: 10 });
-    gsap.timeline({ scrollTrigger: once(bars, 'top 80%') })
-      .to($$('i', bars), { scaleY: 1, duration: 1.5, ease: 'expo.out', stagger: 0.16 }, 0)
-      .to($$('.val', bars), { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.16 }, 0.55);
+    inView(bars, 'top 80%', gsap.timeline()
+      .to($$('i', bars), { scaleY: 1, duration: 1.5, ease: 'expo.out', stagger: 0.16 }, LEAD)
+      .to($$('.val', bars), { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.16 }, LEAD + 0.55));
   })();
 
   /* 09 the curve draws itself, points land as it passes them */
@@ -1145,9 +1147,9 @@ ul,ol{padding:0;list-style:none}
     const len = p.getTotalLength(), pts = $$('#linechart .pt');
     gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
     gsap.set(pts, { autoAlpha: 0, scale: 0.4, transformOrigin: '50% 50%' });
-    gsap.timeline({ scrollTrigger: once('#linechart', 'top 80%') })
-      .to(p, { strokeDashoffset: 0, duration: 1.9, ease: 'power2.inOut' }, 0)
-      .to(pts, { autoAlpha: 1, scale: 1, duration: 0.7, ease: 'back.out(2)', stagger: 0.36 }, 0.15);
+    inView('#linechart', 'top 80%', gsap.timeline()
+      .to(p, { strokeDashoffset: 0, duration: 1.9, ease: 'power2.inOut' }, LEAD)
+      .to(pts, { autoAlpha: 1, scale: 1, duration: 0.7, ease: 'back.out(2)', stagger: 0.36 }, LEAD + 0.15));
   })();
 
   /* 13 the roadmap line runs left to right, then the stages arrive in order */
@@ -1155,9 +1157,9 @@ ul,ol{padding:0;list-style:none}
     const r = $('#road'); if (!r) return;
     const fill = $('.road-line i', r), stages = $$('.stage', r);
     gsap.set(stages, { autoAlpha: 0, y: 40 });
-    gsap.timeline({ scrollTrigger: once(r, 'top 80%') })
-      .to(fill, { [PHONE ? 'scaleY' : 'scaleX']: 1, duration: 1.8, ease: 'expo.inOut' }, 0)
-      .to(stages, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.18 }, 0.2);
+    inView(r, 'top 80%', gsap.timeline()
+      .to(fill, { [PHONE ? 'scaleY' : 'scaleX']: 1, duration: 1.8, ease: 'expo.inOut' }, LEAD)
+      .to(stages, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.18 }, LEAD + 0.2));
   })();
 
   /* 16 the doughnut sweeps open clockwise */
@@ -1171,11 +1173,121 @@ ul,ol{padding:0;list-style:none}
       d.style.background = `conic-gradient(${stops.join(',')})`;
     };
     const v = { p: 0 }; paint(0);
-    gsap.to(v, { p: 1, duration: 2, ease: 'expo.inOut', onUpdate: () => paint(v.p), scrollTrigger: once(d, 'top 78%') });
+    inView(d, 'top 78%', gsap.to(v, { p: 1, duration: 2, ease: 'expo.inOut', onUpdate: () => paint(v.p) }));
   })();
 
-  if (startAt > 0) go(startAt, true);
-  onScroll();
+  /* =====================================================================
+     The takeover: the Bon Voyage "NOT JUST A TEE." intro, once per section.
+     The page goes black, the section's headline fills the width in red as random letters and resolves left to right into
+     the real words, then the string lifts out and the section is revealed underneath, already scrolled to its top.
+     It plays the first time a section is reached (scrolling in, stepping with the keys, the index, a #hash link) and never
+     again on that visit. Scrolling is held while it runs; a click, Enter, Space, Escape or a step key skips to its end.
+     Split per word (not per line) so spaces hold still while the letters churn, and so the small italic <em> words survive:
+     they scramble in lowercase inside their own tag.
+     ===================================================================== */
+  const tkEl = $('#takeover'), tkText = $('#takeover-text'), tkKick = $('#takeover-k');
+  const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', abc = 'abcdefghijklmnopqrstuvwxyz';
+  const rnd = (text, set) => [...text].map((c) => (/[A-Za-z0-9]/.test(c) ? set[Math.floor(Math.random() * set.length)] : c)).join('');
+  const seen = new Set();
+  let armed = false, firstDone = false;
+
+  /* fill the takeover with section i's hand-set headline lines, size them to the width, then swap every word for noise */
+  const dress = (i) => {
+    const h = $('h1, h2', secs[i]);
+    tkKick.textContent = `${secs[i].dataset.slide} / ${String(secs.length).padStart(2, '0')}  ·  ${secs[i].dataset.label}`;
+    tkText.innerHTML = $$('.ln > span', h).map((l) => `<span class="tl">${l.innerHTML}</span>`).join('');
+    const rows = $$('.tl', tkText);
+    /* like the Bon Voyage intro the widest line fills the width; measured on the real words at 100px, capped by height */
+    tkText.style.fontSize = '100px';
+    const widest = Math.max(...rows.map((r) => r.getBoundingClientRect().width)) || 1;
+    const size = Math.min((100 * tkText.clientWidth * 0.94) / widest, (innerHeight * 0.6) / (rows.length * 0.86));
+    tkText.style.fontSize = size.toFixed(2) + 'px';
+    const words = [];
+    rows.forEach((row, ri) => {
+      const mine = [];
+      const walk = (node, lower) => [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 1) return walk(n, n.tagName === 'EM');
+        if (n.nodeType !== 3) return;
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) return frag.appendChild(document.createTextNode(part));
+          const el = document.createElement('span');
+          el.dataset.t = part; el.textContent = rnd(part, lower ? abc : ABC);
+          frag.appendChild(el); mine.push({ el, text: part, lower });
+        });
+        n.replaceWith(frag);
+      });
+      walk(row, false);
+      const total = mine.reduce((a, w) => a + w.text.length, 0) || 1;
+      let done = 0;
+      mine.forEach((w) => { w.at = ri * 0.2 + (done / total) * 0.5; done += w.text.length; words.push(w); });
+    });
+    return words;
+  };
+
+  const hold = (on) => { if (lenis) on ? lenis.stop() : lenis.start(); else html.style.overflow = on ? 'hidden' : ''; };
+
+  /* instant: the black is already up (first paint), so there is no fade-in to wait for */
+  const playTakeover = (i, instant) => {
+    tk.playing = true; seen.add(i); hold(true);
+    const words = dress(i);
+    /* random letters run wider than the real words the size was fitted to, so while a row is noise it is squeezed
+       sideways to stay inside the width, and relaxes to full size as its words resolve */
+    const rows = $$('.tl', tkText), room = tkText.clientWidth * 0.985;
+    const squeeze = () => rows.forEach((r) => { const w = r.offsetWidth; r.style.transform = w > room ? `scaleX(${(room / w).toFixed(4)})` : ''; });
+    squeeze(); gsap.ticker.add(squeeze);
+    gsap.set(tkText, { opacity: 0, yPercent: 0 }); gsap.set(tkKick, { opacity: 0 });
+    const tl = gsap.timeline({ onComplete: () => { gsap.ticker.remove(squeeze); tk.playing = false; tk.skip = () => {}; hold(false); tkEl.setAttribute('data-state', 'idle'); } });
+    tkEl.setAttribute('data-state', 'playing');
+    if (instant) gsap.set(tkEl, { autoAlpha: 1 }); else tl.to(tkEl, { autoAlpha: 1, duration: 0.22, ease: 'power2.out' }, 0);
+    const t0 = instant ? 0.1 : 0.22;
+    /* under cover: jump to the section's top so it is already in place when the black lifts */
+    tl.call(() => { go(i, true, true); ScrollTrigger.update(); onScroll(); }, null, t0)
+      .to(tkText, { opacity: 1, duration: 0.25, ease: 'power1.out' }, t0)
+      .to(tkKick, { opacity: 1, duration: 0.4 }, t0);
+    words.forEach((w) => tl.to(w.el, { duration: 0.9, scrambleText: { text: w.text, chars: w.lower ? 'lowerCase' : 'upperCase', speed: 0.45, revealDelay: 0.28, tweenLength: false } }, t0 + w.at));
+    /* a short beat on the resolved headline, then the hand-off is quick: the string lifts, the section starts arriving
+       while the black is still clearing */
+    const lift = tl.duration() + 0.12;
+    tl.to([tkText, tkKick], { yPercent: -12, opacity: 0, duration: 0.3, ease: 'power3.in' }, lift)
+      .call(() => {
+        gate(secs[i]).open();
+        if (!firstDone) { firstDone = true; gsap.to(chrome, { autoAlpha: 1, duration: 1, delay: 0.35 }); }
+      }, null, lift + 0.14)
+      .to(tkEl, { autoAlpha: 0, duration: 0.38, ease: 'power2.inOut' }, lift + 0.14);
+    tk.skip = () => tl.progress(1);
+    return tl;
+  };
+  tkEl.addEventListener('click', () => tk.skip());
+
+  /* stepping or jumping to a section that has not been seen yet: the takeover handles the move itself */
+  tk.before = (i) => {
+    if (tk.playing) return true;          /* one at a time: swallow navigation while a takeover is up */
+    if (seen.has(i)) return false;        /* seen already: ordinary smooth scroll */
+    playTakeover(i, false); return true;
+  };
+  /* scrolling into an unseen section, from above or from below */
+  secs.forEach((s, i) => {
+    const want = () => {
+      if (!armed || tk.playing || seen.has(i) || performance.now() < tk.travel) return;
+      /* only for a section the reader is really standing in: a refresh or a jump can fire these callbacks for sections far away */
+      const r = s.getBoundingClientRect();
+      if (r.top > innerHeight * 0.62 || r.bottom < innerHeight * 0.38) return;
+      playTakeover(i, false);
+    };
+    ScrollTrigger.create({ trigger: s, start: 'top 62%', end: 'bottom 38%', onEnter: want, onEnterBack: want });
+  });
+
+  /* first paint is already black (html.pre). Once the webfonts are in, so the fit is measured on the real face, the opening
+     takeover plays for the cover, or for the #hash section on a deep link (2.5s cap so a stalled font never holds the black) */
+  gsap.set(tkEl, { autoAlpha: 1 });
+  html.classList.remove('pre');
+  Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 2500))]).then(() => {
+    ScrollTrigger.refresh();
+    playTakeover(startAt > 0 ? startAt : 0, true);
+    armed = true;
+  });
   addEventListener('load', () => { ScrollTrigger.refresh(); onScroll(); });
 })();
 </script>
