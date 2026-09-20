@@ -56,8 +56,10 @@ const puppeteer = require(require('path').join(__dirname, '..', 'node_modules', 
   // a stall only matters if it shows: either as a gap between two painted frames, or as time the clip cannot account for
   // (left the page later than start + clip length / rate), which is how a freeze after the last painted frame would appear
   const slack = s.ended && s.playStartMs != null ? Math.round(left - s.playStartMs - s.dur / (s.rate || 1) * 1000) : null;
-  console.log(`  ON SCREEN: ${s.presented} of ~145 frames presented; real freezes: [${(s.freezes || []).join(', ') || 'none'}]; gaps with frames still shown: [${(s.blind || []).join(', ') || 'none'}]`);
+  // the clip's own frame count is what the decoder reported (the supernova is 30fps: 72 frames; the wormhole was 60fps: ~145)
+  const expect = s.total || 145;
+  console.log(`  ON SCREEN: ${s.presented} of ~${expect} frames presented; real freezes: [${(s.freezes || []).join(', ') || 'none'}]; gaps with frames still shown: [${(s.blind || []).join(', ') || 'none'}]`);
   console.log(`  unaccounted time (left - start - clip length): ${slack} ms`);
-  console.log('  VERDICT:', s.ended ? 'finished' : 'CUT OFF before the end', '|', ((s.freezes || []).length || (slack !== null && slack > 250) || !s.frames || s.presented < 110) ? 'BROKE UP' : 'smooth', '(judged on frames presented)');
+  console.log('  VERDICT:', s.ended ? 'finished' : 'CUT OFF before the end', '|', ((s.freezes || []).length || (slack !== null && slack > 250) || !s.frames || s.presented < expect * 0.76) ? 'BROKE UP' : 'smooth', '(judged on frames presented)');
   await browser.close();
 })();

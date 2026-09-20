@@ -118,16 +118,29 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .theme-toggle .icon-moon{display:none}
 :root[data-theme="light"] .theme-toggle .icon-moon{display:block}
 :root[data-theme="light"] .theme-toggle .icon-sun{display:none}
-/* sound toggle: the same circle beside the theme button (owner asked 17 Sep). Speaker with a slash while off; speaker with a small dot-matrix wave that ripples while the song plays (owner asked for a wave like the reference screenshot, 17 Sep) */
-.sound-toggle .icon-on{display:none}
-.sound-toggle.is-on .icon-on{display:block}
-.sound-toggle.is-on .icon-off{display:none}
+/* sound toggle: the ON/OFF pill from leoespinoel.com, the same button on all three sites (owner asked 20 Sep). A 3x3 dot
+   matrix that lights up with the track's own frequencies while it plays and pulses while the track buffers, plus a mono
+   On/Off label that drops away on phones. Its ink follows the theme; the border goes red while the sound is on */
+.sound-toggle{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 18px;border-radius:999px;border:1px solid currentColor;background:none;color:inherit;cursor:pointer;transition:border-color 300ms ease}
+.sound-toggle[aria-pressed="true"]{border-color:var(--red-lift)}
+body.on-clay .sound-toggle[aria-pressed="true"]{border-color:currentColor} /* red on the red panels would vanish */
 .sound-toggle[aria-disabled="true"]{opacity:.5;cursor:default}
-.icon-on .wd{fill:currentColor;stroke:none;opacity:.25;transform-box:fill-box;transform-origin:center}
-@keyframes dotWave{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:1;transform:scale(1.3)}}
-.sound-toggle.is-on .icon-on .wd{animation:dotWave 1.3s ease-in-out infinite;animation-delay:calc(var(--i) * 110ms)}
-@media (prefers-reduced-motion:reduce){.sound-toggle.is-on .icon-on .wd{animation:none;opacity:1;transform:none}}
-.sound-wrap{position:relative;display:inline-flex;width:38px;height:38px}
+.sound-toggle__matrix{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;width:15px;height:15px;flex:none}
+.sound-toggle__matrix i{display:block;border-radius:1px;background:currentColor;opacity:.22;transform:scale(.55);transition:opacity 120ms ease,transform 120ms ease}
+.sound-toggle.is-loading .sound-toggle__matrix i{animation:sound-load 1.1s ease-in-out infinite}
+.sound-toggle.is-loading .sound-toggle__matrix i:nth-child(2){animation-delay:-.9s}
+.sound-toggle.is-loading .sound-toggle__matrix i:nth-child(3){animation-delay:-.7s}
+.sound-toggle.is-loading .sound-toggle__matrix i:nth-child(4){animation-delay:-.5s}
+.sound-toggle.is-loading .sound-toggle__matrix i:nth-child(5){animation-delay:-.3s}
+.sound-toggle.is-loading .sound-toggle__matrix i:nth-child(6){animation-delay:-.1s}
+.sound-toggle.is-loading .sound-toggle__matrix i:nth-child(7){animation-delay:-.8s}
+.sound-toggle.is-loading .sound-toggle__matrix i:nth-child(8){animation-delay:-.6s}
+.sound-toggle.is-loading .sound-toggle__matrix i:nth-child(9){animation-delay:-.4s}
+@keyframes sound-load{0%,100%{opacity:.22;transform:scale(.55)}50%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.sound-toggle.is-loading .sound-toggle__matrix i{animation:none}}
+.sound-toggle__label{font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;line-height:1;min-width:calc(3ch + .24em);text-align:left;opacity:.6;transition:opacity 300ms ease} /* min-width: "On" takes the room of "Off", so the header never shifts */
+.sound-toggle[aria-pressed="true"] .sound-toggle__label{opacity:1}
+@media (max-width:720px){.sound-toggle{padding:0 14px;gap:8px}.sound-toggle__label{display:none}}
 .strip{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;width:100%;color:var(--pebble)}
 .strip > :nth-child(2){text-align:center}
 .strip > :nth-child(3){text-align:right}
@@ -149,30 +162,60 @@ html.intro-done .intro{display:none}
 .warp.is-on{display:block}
 .warp video{width:100%;height:100%;object-fit:cover;display:block}
 html.intro-done .warp{display:none}
-/* black hole to the store: a Store click spirals everything on screen into the centre while the black hole clip grows
-   over the page (screen blend, so its black is see-through), the veil closes to black under it, then the browser lands
-   on the store, whose heart loader opens on the same black. Modifier clicks and reduced motion keep the plain link. */
+/* black hole to the store: the supernova turns into the black hole (owner asked 20 Sep: the hole has to come out of
+   the supernova's centre). The clip, assets/collapse-*.mp4, opens on the remnant cloud's own first frame: its blue core
+   gives way, a black point appears exactly there and grows until it has swallowed the cloud, while everything on
+   screen spirals into that same point; then the veil closes and the browser lands on the store, whose heart loader
+   opens on the same black. Two placements, chosen on the click (sink() in the script):
+   - in the cloud: a sky (hero or exit panel) fills the screen, so the clip takes over from the live cloud where it
+     stands: .sky-collapse is laid over that sky, in the same panel and under its headline and copy (which fall over
+     the clouds into the hole), with the sky's crop, breath and turn, but no mask and full strength. Fading it in is
+     all it takes: the cloud opens up past the mask's top strip and bottom fade, the hole is truly black (no stars
+     shining through it, a black hole absorbs light), its ring is never dimmed, and an opacity fade is the
+     compositor's work alone (the first build animated the sky's mask open instead, which repainted a screen-sized
+     masked video layer on every frame and hitched the trip's first half second). The veil sits above the panel, so it
+     waits until the hole has filled it.
+   - bloom: anywhere else, and always in the light theme, the cloud blooms in over the whole page first (screen blend,
+     so the page still shows falling through it), the veil closing to black under it.
+   Modifier clicks and reduced motion keep the plain link. */
 .hole-veil{position:fixed;inset:0;z-index:94;background:#000;opacity:0;visibility:hidden;pointer-events:none;will-change:opacity}
-.hole-video{position:fixed;inset:0;z-index:95;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:0;visibility:hidden;pointer-events:none;will-change:opacity}
+.hole-video{position:fixed;inset:0;z-index:95;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:0;visibility:hidden;pointer-events:none;will-change:opacity,transform;transform:scale(1.06)}
+.hole-video.is-in-sky{position:absolute;z-index:auto;mix-blend-mode:normal;transform:none;object-position:50% 35%}
+.sky-collapse{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.sky-collapse__live{position:absolute;inset:-5%;will-change:transform}
 html.is-sinking-prep .hole-veil,html.is-sinking-prep .hole-video{visibility:visible}
 html.is-sinking-prep .hole-video{opacity:.01}
 html.is-sinking-prep .hole-veil{pointer-events:auto}
-html.is-sinking .hole-veil,html.is-sinking .hole-video{opacity:1}
-html.is-sinking .hole-veil{transition:opacity 700ms cubic-bezier(.45,0,.75,.6) 150ms}
-html.is-sinking .hole-video{transition:opacity 350ms ease-out}
+html.is-sinking .hole-video{opacity:1;transform:none;transition:opacity 450ms ease-out,transform 900ms cubic-bezier(.2,.7,.2,1)}
+html.is-sinking-close .hole-veil{opacity:1;transition:opacity 900ms cubic-bezier(.45,0,.75,.6)}
+html.is-sinking-close .hole-veil.is-late{transition:opacity 420ms ease-in}
+/* the core gives way with a flash. The clip has its own, 0.35s in, but inside the sky it stays behind the headline and
+   copy: this one, timed to peak with it, lets that light wash over them too */
+.hole-flare{position:fixed;left:0;top:0;z-index:96;width:34vmin;height:34vmin;margin:-17vmin 0 0 -17vmin;border-radius:50%;pointer-events:none;opacity:0;mix-blend-mode:screen;
+  background:radial-gradient(circle,rgba(235,250,255,.95) 0%,rgba(120,200,255,.55) 18%,rgba(70,130,255,.18) 42%,rgba(70,130,255,0) 68%)}
+html.is-sinking .hole-flare{animation:hole-flare 520ms ease-out 230ms both}
+@keyframes hole-flare{0%{opacity:0;transform:translate(var(--hx),var(--hy)) scale(.3)}26%{opacity:1;transform:translate(var(--hx),var(--hy)) scale(1)}100%{opacity:0;transform:translate(var(--hx),var(--hy)) scale(.08)}}
 html.is-sinking-prep .cursor-dot,html.is-sinking-prep .cursor{opacity:0!important}
 
 /* ---------- sections ---------- */
 section{position:relative}
 .wrap{padding-left:var(--gutter);padding-right:var(--gutter)}
 .hero{min-height:100svh;display:grid;grid-template-columns:1fr;align-items:end;padding:120px var(--gutter) var(--gap);overflow:hidden;isolation:isolate}
-/* Milky Way behind the hero (owner asked 17 Sep): a generated astrophoto, dark theme only, held at half strength and
-   masked so it dissolves into the void before the manifesto. z-index -1 inside the hero's own stacking context keeps
-   it under the headline, copy and heart. The twinkling .starfield canvas sits behind it (page-level z-index -1) and shows through
-   where the mask thins. */
-.hero-sky,.exit-sky{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;object-position:50% 35%;opacity:.5;pointer-events:none;
-  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,#000 14%,#000 58%,rgba(0,0,0,0) 100%);
-  mask-image:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,#000 14%,#000 58%,rgba(0,0,0,0) 100%)}
+/* Supernova remnant behind the hero and the exit panel (owner asked 20 Sep; it replaced the Milky Way astrophoto), so
+   the newsletter's supernova trip lands inside what the explosion left behind. It moves, like the aurora and nebula on
+   leoespinoel.com (owner asked the same day): one Seedance take rebuilt as a 14s, 60fps there-and-back loop whose end
+   is its beginning (see skyLoop() in the script), with a slow breath and turn over the footage. The poster is a still of the cloud, which is
+   also all that shows under reduced motion. Dark theme only, held at half strength and masked so it dissolves into the
+   void before the manifesto. z-index -1 inside the hero's own stacking context keeps it under the headline, copy and
+   heart. The twinkling .starfield canvas sits behind it (page-level z-index -1) and shows through where the mask thins. */
+.hero-sky,.exit-sky{position:absolute;inset:0;z-index:-1;overflow:hidden;opacity:.95;pointer-events:none; /* shown the way leoespinoel.com shows its nebula: near native size, original contrast. A first try got "brighter and closer" with a gamma lift and a 1.55x zoom, which made it soft and hazy (owner, 20 Sep: colours unclear, poor quality); the closeness now comes from the footage itself */
+  /* at this strength the cloud would swallow the red in the nav (Store) and the red words in the hero copy, so it is
+     held back along the top strip and leaves sooner at the bottom */
+  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.28) 0%,rgba(0,0,0,.28) 7%,#000 24%,#000 46%,rgba(0,0,0,.18) 72%,rgba(0,0,0,0) 90%);
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.28) 0%,rgba(0,0,0,.28) 7%,#000 24%,#000 46%,rgba(0,0,0,.18) 72%,rgba(0,0,0,0) 90%)}
+.sky-live{position:absolute;inset:-5%;will-change:transform}
+.sky-live video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%;opacity:0}
+.sky-live video:first-child{opacity:1}
 :root[data-theme="light"] .hero-sky,:root[data-theme="light"] .exit-sky{opacity:0}
 .hero-copy{position:static;z-index:2}
 .hero .h-hero{margin:0 0 36px}
@@ -555,7 +598,8 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 })();
 </script>
 <div class="hole-veil" id="hole-veil" aria-hidden="true"></div>
-<video class="hole-video" id="hole-video" src="assets/blackhole.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+<video class="hole-video" id="hole-video" muted playsinline preload="none" aria-hidden="true"></video>
+<div class="hole-flare" id="hole-flare" aria-hidden="true"></div>
 
 <header class="chrome top" id="chrome-top">
   <a class="brand" href="#top" data-anchor="#top" aria-label="Force of Nature, back to top">
@@ -577,17 +621,10 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
       <span>Cart</span><span class="count" aria-live="polite"><span id="cart-count">(0)</span></span>
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg>
     </button>
-    <span class="sound-wrap">
-      <button class="theme-toggle sound-toggle" id="sound-toggle" type="button" aria-label="Turn sound on" aria-pressed="false" data-cursor="Sound on">
-        <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/></svg>
-        <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M11 5 6 9H2v6h4l5 4V5z"/>
-          <circle class="wd" style="--i:0" cx="15" cy="7" r="1.1"/><circle class="wd" style="--i:1" cx="18.25" cy="7" r="1.1"/><circle class="wd" style="--i:2" cx="21.5" cy="7" r="1.1"/>
-          <circle class="wd" style="--i:1" cx="15" cy="11.5" r="1.1"/><circle class="wd" style="--i:2" cx="18.25" cy="11.5" r="1.1"/><circle class="wd" style="--i:3" cx="21.5" cy="11.5" r="1.1"/>
-          <circle class="wd" style="--i:2" cx="15" cy="16" r="1.1"/><circle class="wd" style="--i:3" cx="18.25" cy="16" r="1.1"/><circle class="wd" style="--i:4" cx="21.5" cy="16" r="1.1"/>
-        </svg>
-      </button>
-    </span>
+    <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn sound on" data-cursor="Sound on">
+      <span class="sound-toggle__matrix" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="sound-toggle__label" id="sound-toggle-label">Off</span>
+    </button>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false" data-cursor="Go light">
       <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -606,7 +643,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 <main id="top">
   <!-- HERO -->
   <section class="hero" aria-label="Intro">
-    <img class="hero-sky" src="assets/milky-way.jpg" srcset="assets/milky-way-sm.jpg 1200w, assets/milky-way.jpg 2400w" sizes="100vw" alt="" aria-hidden="true" decoding="async" fetchpriority="low">
+    <div class="hero-sky" data-sky aria-hidden="true"><div class="sky-live"><video src="assets/remnant-loop.mp4" poster="assets/remnant-cloud.jpg" muted loop playsinline preload="none" tabindex="-1"></video></div></div>
     <div class="hero-copy">
       <div class="hero-object" id="hero-object" data-reveal>
         <a href="#heart" data-anchor="#heart" data-cursor="The heart" aria-label="What the heart means"><img src="assets/logo-480.png" alt="Force of Nature heart logo, illustrated in red with black drips" width="132" height="182" decoding="async"></a>
@@ -857,7 +894,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
       <p class="msg" id="join-msg" aria-live="polite"></p>
     </div>
     <div class="exit" id="exit">
-      <img class="exit-sky" src="assets/milky-way.jpg" srcset="assets/milky-way-sm.jpg 1200w, assets/milky-way.jpg 2400w" sizes="100vw" alt="" aria-hidden="true" decoding="async" fetchpriority="low">
+      <div class="exit-sky" data-sky aria-hidden="true"><div class="sky-live"><video src="assets/remnant-loop.mp4" poster="assets/remnant-cloud.jpg" muted loop playsinline preload="none" tabindex="-1"></video></div></div>
       <p class="eyebrow mono" data-reveal>The store</p>
       <h2 class="display h-section" data-reveal>Five lines.<br><em>one</em> store</h2>
       <a class="cta pill exit-cta" href="https://forceofnature.org.in/store/" data-store data-cursor="Shop" target="_blank" rel="noopener" data-reveal><span class="txt" data-scramble>Enter the store</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
@@ -958,16 +995,23 @@ const boot = () => {
   const CONTACT_EMAIL = '';
   /* MUSIC_SRCS: the song the sound toggle plays (loops), tried in order. Drop the file in assets/ as music.mp3 or music.mp4 (the audio track of an MP4 plays fine), or add a path here. None found = the toggle stays off and reads "Song to come". */
   const MUSIC_SRCS = ['assets/music.mp3', 'assets/music.mp4', 'assets/music.m4a'];
-  /* black hole: assets/blackhole.mp4 is a 1.47s cut made for this trip (the wormhole is ~2.5s), ending on pure black; the
-     fallback covers a stalled play.
-     Smoothness (owner, 18 Sep: "a bit glitchy"): the clip is pre-cut, pre-sped and motion-interpolated with ffmpeg (540p, 30fps: light to decode), so the
-     browser plays it from its first frame at normal speed instead of seeking into a 5s file and decoding at 2.4x; it is
+  /* black hole: assets/collapse-1080.mp4 (-720 on phones) is Seedance 2.5 image-to-video whose first frame is frame 0 of
+     the remnant cloud, so the cloud on the page and the cloud in the clip are the same cloud when one hands over to the
+     other; its core collapses, the hole grows out of that point and the clip ends on pure black. The fallback covers a
+     stalled play. See the CSS note on .hole-veil for the two placements.
+     Smoothness (owner, 18 Sep: "a bit glitchy"): the clip is pre-cut and pre-sped with ffmpeg (8-bit H.264, 30fps), so
+     the browser plays it from its first frame at normal speed; it is
      fetched while the page idles, so the click only has to press play; the pieces are measured in one pass,
      promoted to their own layers, and only start moving two frames later, driven by a single loop that writes transforms
      directly; every other animation on the page is frozen for the trip.
-     On localhost the trip lands on the local store so the whole journey can be tested offline. */
-  const HOLE_FALLBACK_MS = 2400, HOLE_MAX_PIECES = 90;
-  const holeVideo = $('#hole-video');
+     On localhost the trip lands on the local store so the whole journey can be tested offline.
+     Checked with: node tools/hole-check.cjs */
+  const HOLE_FALLBACK_MS = 4600, HOLE_MAX_PIECES = 90;
+  const CORE_X = 0.5, CORE_Y = 0.496;   /* where the hole is born in the clip, on the cloud's blue core, as shares of the frame (measured) */
+  const FALL_AT_MS = 300;               /* the clip has all but taken over from the live cloud: the page starts falling */
+  const CLOSE_AT_S = 2.35;              /* in the cloud: the clip time at which the hole has filled the frame and the veil may close over it */
+  const PUSH_IN = 0.2, PUSH_FROM_MS = 400, PUSH_MS = 1900; /* in the cloud: the sky pushes in on the core as the hole grows (stays under 1.3x: past 1.4x footage goes soft) */
+  const holeVideo = $('#hole-video'), holeVeil = $('#hole-veil'), holeFlare = $('#hole-flare');
   const storeHref = () => {
     const local = ['localhost', '127.0.0.1'].includes(location.hostname);
     const url = new URL(local ? 'http://localhost:3002/' : STORE_URL);
@@ -977,6 +1021,8 @@ const boot = () => {
   let sinking = false, holeWarm = false;
   const warmHole = () => {
     if (holeWarm) return; holeWarm = true;
+    /* phones get the 720p copy: a third of the bytes, and nothing on a phone screen shows the difference */
+    holeVideo.src = 'assets/collapse-' + (Math.min(innerWidth, innerHeight) <= 600 ? '720' : '1080') + '.mp4';
     holeVideo.preload = 'auto'; holeVideo.load();
     const pre = document.createElement('link'); pre.rel = 'prefetch'; pre.href = storeHref(); document.head.append(pre); /* the store page is already in the cache when the trip ends */
   };
@@ -993,14 +1039,36 @@ const boot = () => {
 
     /* read pass: everything on screen becomes a piece. Big containers are opened up, big text blocks break into their
        lines at most, and past HOLE_MAX_PIECES whatever is left travels whole. */
-    const vw = innerWidth, vh = innerHeight, cx = vw / 2, cy = vh / 2, reach = Math.hypot(cx, cy);
+    const vw = innerWidth, vh = innerHeight;
+    /* where the hole is born. A sky that fills the screen with its core near the middle hosts the clip itself; the core's
+       place on screen follows from how the clip is cropped into .sky-live (5% larger than the box all round, cover,
+       object-position 50% 35%, the breath's current scale; the turn is under 1.5 degrees and the core sits by the pivot).
+       Anywhere else the cloud blooms over the whole page with its core at the centre of the screen. */
+    let cx = vw / 2, cy = vh / 2, sky = null;
+    if (document.documentElement.getAttribute('data-theme') !== 'light') for (const box of $$('[data-sky]')) {
+      const b = box.getBoundingClientRect();
+      const seen = Math.max(0, Math.min(b.right, vw) - Math.max(b.left, 0)) * Math.max(0, Math.min(b.bottom, vh) - Math.max(b.top, 0));
+      if (seen < vw * vh * 0.8) continue;
+      const live = $('.sky-live', box), W = b.width * 1.1, H = b.height * 1.1, cw = Math.max(W, H * 16 / 9), ch = cw * 9 / 16;
+      const dx = (W - cw) * 0.5 + CORE_X * cw - W / 2, dy = (H - ch) * 0.35 + CORE_Y * ch - H / 2; /* the core, measured from the middle of .sky-live */
+      const s0 = +gsap.getProperty(live, 'scale') || 1, x = b.left + b.width / 2 + s0 * dx, y = b.top + b.height / 2 + s0 * dy;
+      if (x < vw * 0.2 || x > vw * 0.8 || y < vh * 0.2 || y > vh * 0.8) continue;
+      sky = { box, live, dx, dy, s0, turn: +gsap.getProperty(live, 'rotation') || 0 }; cx = x; cy = y;
+      break;
+    }
+    const reach = Math.hypot(Math.max(cx, vw - cx), Math.max(cy, vh - cy));
     const pieces = [], TEXT = /^(H[1-6]|P|LI|A|BUTTON|DT|DD|LABEL)$/;
     const add = (el, r) => pieces.push({ el, px: r.left + r.width / 2, py: r.top + r.height / 2 });
+    const ownWords = (el) => [...el.childNodes].some(n => n.nodeType === 3 && n.nodeValue.trim());
     (function walk(el, inText) {
       for (const c of el.children) {
+        if (sky && c === sky.box) continue; /* the cloud is the hole's own picture: it stays where it is */
         const r = c.getBoundingClientRect();
         if (!r.width || !r.height || r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw) continue;
-        if (pieces.length < HOLE_MAX_PIECES && c.children.length && !inText && r.width * r.height > vw * vh * 0.12) walk(c, TEXT.test(c.tagName));
+        /* an element with words of its own travels whole: opened up, only its child elements would leave and the words
+           would stay behind (on a phone the hero paragraph did, minus its bold and red words, in plain view now that
+           the veil closes late) */
+        if (pieces.length < HOLE_MAX_PIECES && c.children.length && !inText && r.width * r.height > vw * vh * 0.12 && !ownWords(c)) walk(c, TEXT.test(c.tagName));
         else add(c, r);
       }
     })(document.body.querySelector('main'), false);
@@ -1008,7 +1076,7 @@ const boot = () => {
       for (const k of el.children) {
         const r = k.getBoundingClientRect();
         if (!r.width || !r.height) continue;
-        if (k.children.length && r.width > 260) walk(k); else add(k, r);
+        if (k.children.length && r.width > 260 && !ownWords(k)) walk(k); else add(k, r); /* "% · Scroll" stayed behind the same way */
       }
     })(c));
     pieces.forEach(p => {
@@ -1018,36 +1086,54 @@ const boot = () => {
       p.alpha = parseFloat(cs.opacity);
       const dx = p.px - cx, dy = p.py - cy;
       p.r0 = Math.hypot(dx, dy); p.a0 = Math.atan2(dy, dx);
-      p.delay = (p.r0 / reach) * 200;
+      p.delay = FALL_AT_MS + (p.r0 / reach) * 250;
       p.swirl = Math.PI * (1.1 + Math.random() * 0.5); p.spin = 200 + Math.random() * 160;
     });
 
     /* write pass: layers first and the clip set rolling (all but invisible). Nothing moves yet: whatever it costs the
        browser to promote the layers and spin the video up lands on a still page, as a pause too short to notice. */
     pieces.forEach(p => { if (p.inline) p.el.style.display = 'inline-block'; p.el.style.willChange = 'transform, opacity'; });
+    /* in the cloud, the clip moves into a layer of its own over the sky (see .sky-collapse in the CSS), standing exactly
+       as the live cloud stands now; the loaded clip comes along with the element */
+    if (sky) {
+      const over = document.createElement('div'); over.className = 'sky-collapse';
+      sky.stage = document.createElement('div'); sky.stage.className = 'sky-collapse__live';
+      sky.stage.style.transform = 'rotate(' + sky.turn + 'deg) scale(' + sky.s0 + ')';
+      holeVideo.classList.add('is-in-sky'); sky.stage.append(holeVideo); over.append(sky.stage); sky.box.after(over);
+      holeVeil.classList.add('is-late');
+    }
+    holeFlare.style.setProperty('--hx', cx.toFixed(1) + 'px'); holeFlare.style.setProperty('--hy', cy.toFixed(1) + 'px');
     document.documentElement.classList.add('is-sinking-prep');
-    const D = 850;
-    let moving = false;
+    const D = 1100;
+    let moving = false, closed = false;
+    const close = () => { if (closed) return; closed = true; document.documentElement.classList.add('is-sinking-close'); };
     const move = () => { if (moving) return; moving = true; requestAnimationFrame(() => requestAnimationFrame((t0) => {
       document.documentElement.classList.add('is-sinking');
-      holeVideo.playbackRate = 1;
       (function frame(now) {
-        const t = now - t0; let live = false;
+        if (gone) return;
+        const t = now - t0;
         for (const p of pieces) {
           const k = (t - p.delay) / D;
-          if (k <= 0) { live = true; continue; }
-          if (k >= 1) { if (!p.done) { p.done = true; p.el.style.opacity = '0'; } continue; }
-          live = true;
+          if (k <= 0 || p.done) continue;
+          if (k >= 1) { p.done = true; p.el.style.opacity = '0'; continue; }
           const e = k * k, r = p.r0 * (1 - e), a = p.a0 + p.swirl * e;
           p.el.style.transform = 'translate(' + (cx + Math.cos(a) * r - p.px).toFixed(1) + 'px,' + (cy + Math.sin(a) * r - p.py).toFixed(1) + 'px) ' + p.base + 'rotate(' + (p.spin * e).toFixed(1) + 'deg) scale(' + (1 - 0.97 * e).toFixed(3) + ')';
           if (e > 0.7) p.el.style.opacity = (p.alpha * (1 - e) / 0.3).toFixed(3);
         }
-        if (live) requestAnimationFrame(frame);
+        if (sky) {
+          /* the sky pushes in on the core: scaled about its middle, then shifted back so the core stays where it is */
+          const u = Math.min(1, Math.max(0, (t - PUSH_FROM_MS) / PUSH_MS)), s = sky.s0 * (1 + PUSH_IN * u * u * (3 - 2 * u));
+          sky.stage.style.transform = 'translate(' + ((sky.s0 - s) * sky.dx).toFixed(2) + 'px,' + ((sky.s0 - s) * sky.dy).toFixed(2) + 'px) rotate(' + sky.turn + 'deg) scale(' + s.toFixed(4) + ')';
+          if (holeVideo.currentTime >= CLOSE_AT_S) close(); /* the veil lies over the sky: it waits for the hole to have filled it */
+        } else if (t >= 350) close(); /* bloom: the veil closes under the clip, as the page falls */
+        requestAnimationFrame(frame);
       })(t0);
     })); };
 
     warmHole();
-    holeVideo.playbackRate = 0.5; /* half speed while the browser spins it up: its next frame comes soon enough to signal that it is rolling, and little of the clip is spent before the trip shows */
+    /* normal speed from the first frame. The old black hole clip was set rolling at half speed and switched to full as
+       the trip showed, so little of it was spent unseen; this clip opens on a third of a second of still cloud, so
+       there is nothing to save, and runs without the switch stalled less often (hole-check, 20 Sep, on a busy PC: not proof) */
     const played = holeVideo.play();
     if (played && played.catch) played.catch(() => setTimeout(go, 900));
     /* the trip starts once the clip has delivered a frame, or after 450ms at the latest */
@@ -1113,6 +1199,30 @@ const boot = () => {
   };
   $$('[data-anchor]').forEach(a => a.addEventListener('click', (e) => { e.preventDefault(); scrollTo(a.dataset.anchor); }));
 
+  /* ---------- supernova sky: the moving cloud behind the hero and the exit panel ----------
+     The loop is in the file, not the script (owner, 20 Sep: smoother frames, no visible seam). The footage is a flight
+     through the cloud, so its last frame looks nothing like its first and the old two-player crossfade showed as clouds
+     melting away every 8s. remnant-loop.mp4 is the same take interpolated to 60fps and rebuilt as an eased there-and-back
+     flight: it slows to a standstill at both ends and its last frame is its first, so the native loop wraps where nothing
+     is moving. Nothing downloads or decodes until a sky is nearly on screen, and it stops once it has left, in the light
+     theme, and during the black hole trip. */
+  const skyLoop = (box) => {
+    const vid = $('video', box), live = $('.sky-live', box);
+    let near = false;
+    const dark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+    const sync = () => { if (!near || !dark() || sinking) vid.pause(); else vid.play().catch(() => {}); };
+    /* a breath and turn over the footage, on periods that never line up with the 14s clip. Owner, 20 Sep, on the first
+       there-and-back build (12s each way, breath 19s, turn 13s): "move a bit faster, right now it looks like a picture".
+       The flight is now 7s each way (pingpong.py, 420 frames a direction: a little faster than it was filmed) and the
+       breath and turn keep the cloud alive while the flight stands still at its two ends */
+    const wave = (vars, duration) => gsap.to(live, { ...vars, duration, ease: 'sine.inOut', yoyo: true, repeat: -1, paused: true });
+    gsap.set(live, { scale: 1, rotation: -1.5 });
+    const sweeps = [wave({ scale: 1.08 }, 11), wave({ rotation: 1.5 }, 8.5)];
+    new IntersectionObserver(([e]) => { near = e.isIntersecting; sync(); sweeps.forEach((t) => t.paused(!near)); }, { rootMargin: '40% 0px' }).observe(box);
+    new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+  };
+  if (!reduce) $$('[data-sky]').forEach(skyLoop);
+
   /* ---------- scramble hovers ---------- */
   $$('[data-scramble]').forEach(el => {
     const original = el.textContent;
@@ -1170,54 +1280,101 @@ const boot = () => {
     else applyTheme(next);
   });
 
-  /* ---------- sound: off by default, one click starts the song with a 1s fade, remembered for the session ----------
-     Browsers refuse audio before the visitor has clicked or tapped, so on a reload with sound remembered the first click or key
-     anywhere on the page starts it. Hidden tab pauses it, back to the tab resumes it. */
+  /* ---------- sound: the leoespinoel.com button, the same on all three sites (owner asked 20 Sep) ----------
+     Off by default, one click starts the song with a 1s fade, remembered for the session.
+     One <audio> element wired through WebAudio: source -> analyser -> gain -> speakers. The analyser feeds the 3x3 matrix
+     the track's live frequencies; the gain does the level and the fades (iOS ignores audio.volume). The graph is built on
+     the first press, since browsers refuse to start an AudioContext before the visitor has clicked or tapped; for the same
+     reason, on a reload with sound remembered, the first click or key anywhere on the page starts it. Hidden tab pauses
+     it, back to the tab resumes it. */
   const soundBtn = $('#sound-toggle');
   if (soundBtn) {
+    const soundLabel = $('#sound-toggle-label'), dots = $$('.sound-toggle__matrix i', soundBtn);
     const music = new Audio();
-    music.loop = true; music.preload = 'auto'; music.volume = 0;
+    music.loop = true; music.preload = 'none';
     const srcs = MUSIC_SRCS.slice();
     const LEVEL = 0.6;
-    let on = false, fade = null, missing = false;
+    let ctx = null, analyser = null, gain = null, bins = null, groups = null, on = false, raf = null, missing = false, pauseT = null, startedAt = 0, healed = false;
+    const graph = () => {
+      if (ctx) return;
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      ctx = new AC();
+      analyser = ctx.createAnalyser(); analyser.fftSize = 128; analyser.smoothingTimeConstant = 0.82;
+      bins = new Uint8Array(analyser.frequencyBinCount);
+      gain = ctx.createGain(); gain.gain.value = 0;
+      ctx.createMediaElementSource(music).connect(analyser); analyser.connect(gain); gain.connect(ctx.destination);
+      /* most of a track's energy sits low in the spectrum: a log-weighted split over the bottom 60% of the bins keeps all nine dots alive */
+      const usable = Math.floor(bins.length * 0.6);
+      groups = dots.map((_, i) => {
+        const from = Math.floor(usable * Math.pow(i / dots.length, 1.6));
+        return [from, Math.max(from + 1, Math.floor(usable * Math.pow((i + 1) / dots.length, 1.6)))];
+      });
+    };
+    const ramp = (to, secs) => { const t = ctx.currentTime; gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(to, t + Math.max(secs, 0.01)); };
+    const idle = () => dots.forEach((d) => { d.style.opacity = ''; d.style.transform = ''; });
+    const tick = () => {
+      analyser.getByteFrequencyData(bins);
+      dots.forEach((d, i) => {
+        const [from, to] = groups[i];
+        let sum = 0; for (let b = from; b < to; b++) sum += bins[b];
+        const level = Math.min(1, (sum / (to - from) / 255) * 1.6);
+        d.style.opacity = 0.22 + level * 0.78;
+        if (!reduce) d.style.transform = `scale(${0.55 + level * 0.55})`;
+      });
+      raf = requestAnimationFrame(tick);
+    };
     const setUi = () => {
-      soundBtn.classList.toggle('is-on', on);
       soundBtn.setAttribute('aria-pressed', String(on));
       soundBtn.setAttribute('aria-label', missing ? 'Song to come' : on ? 'Turn sound off' : 'Turn sound on');
       soundBtn.dataset.cursor = missing ? 'Song to come' : on ? 'Sound off' : 'Sound on';
+      if (!soundBtn.classList.contains('is-loading')) soundLabel.textContent = missing ? 'Soon' : on ? 'On' : 'Off';
       if (soundBtn.matches(':hover')) cursorTxt.textContent = soundBtn.dataset.cursor;
     };
+    const setLoading = (l) => { soundBtn.classList.toggle('is-loading', l); if (l) { idle(); soundLabel.textContent = 'Loading…'; } else setUi(); };
+    const play = () => { const p = music.play(); if (p && p.catch) p.catch((err) => { if (on && err && err.name === 'NotAllowedError') stop(); }); };
     const start = () => {
       if (missing) return;
-      const p = music.play();
-      if (p && p.catch) p.catch(() => { on = false; setUi(); });
-      if (fade) fade.kill();
-      fade = gsap.to(music, { volume: LEVEL, duration: reduce ? 0 : 1, ease: 'power1.out' });
-      on = true; setUi();
+      graph();
+      if (!ctx) { missing = true; soundBtn.setAttribute('aria-disabled', 'true'); setUi(); return; }
+      clearTimeout(pauseT);
+      ctx.resume();
+      on = true; startedAt = performance.now(); healed = false; setLoading(true); setUi();
+      play(); ramp(LEVEL, reduce ? 0 : 1);
       try { sessionStorage.setItem('fon-sound', '1'); } catch (e) {}
     };
     const stop = () => {
-      if (fade) fade.kill();
-      fade = gsap.to(music, { volume: 0, duration: reduce ? 0 : 0.6, ease: 'power1.in', onComplete: () => music.pause() });
-      on = false; setUi();
+      on = false;
+      if (ctx) ramp(0, reduce ? 0 : 0.6);
+      clearTimeout(pauseT); pauseT = setTimeout(() => music.pause(), reduce ? 0 : 620);
+      if (raf) cancelAnimationFrame(raf); raf = null;
+      setLoading(false); idle();
       try { sessionStorage.removeItem('fon-sound'); } catch (e) {}
     };
-    /* try each path in turn; when none loads the button dims */
+    /* try each path in turn; when none loads the button dims and reads "Soon" */
     const tryNext = () => {
-      if (!srcs.length) { missing = true; on = false; soundBtn.setAttribute('aria-disabled', 'true'); setUi(); return; }
+      if (!srcs.length) { const was = on; missing = true; if (was) stop(); soundBtn.setAttribute('aria-disabled', 'true'); setUi(); return; }
       music.src = srcs.shift();
+      if (on) play();
     };
     music.addEventListener('error', tryNext);
+    music.addEventListener('waiting', () => on && setLoading(true));
+    /* paused by something other than this button. In the first seconds after a press it is a browser hiccup (seen about once
+       in 35 test runs): start it again, once. Later it is the visitor's media key: the button goes to Off rather than pretend */
+    music.addEventListener('pause', () => {
+      if (!on || document.hidden) return;
+      if (!healed && performance.now() - startedAt < 4000) { healed = true; play(); } else stop();
+    });
+    music.addEventListener('playing', () => { setLoading(false); if (on && !raf) raf = requestAnimationFrame(tick); });
     tryNext();
     soundBtn.addEventListener('click', () => { on ? stop() : start(); });
     document.addEventListener('visibilitychange', () => {
       if (!on) return;
-      if (document.hidden) music.pause(); else { const p = music.play(); if (p && p.catch) p.catch(() => {}); }
+      if (document.hidden) music.pause(); else play();
     });
     let remembered = false;
     try { remembered = sessionStorage.getItem('fon-sound') === '1'; } catch (e) {}
     if (remembered) {
-      const arm = (e) => { if (e.type === 'keydown' && e.key === 'Tab') return; document.removeEventListener('pointerdown', arm); document.removeEventListener('keydown', arm); start(); };
+      const arm = (e) => { if (e.type === 'keydown' && e.key === 'Tab') return; document.removeEventListener('pointerdown', arm); document.removeEventListener('keydown', arm); if (!on && !(e.target.closest && e.target.closest('#sound-toggle'))) start(); };
       document.addEventListener('pointerdown', arm); document.addEventListener('keydown', arm);
     }
     setUi();

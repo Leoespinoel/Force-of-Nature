@@ -1,7 +1,7 @@
 // Copy the Online Store into ./store so it ships with this repo to GitHub Pages
 // at https://forceofnature.org.in/store/ .
 // Usage: node deploy-online-store.mjs
-//   Copies "../Online Store/index.html" and its assets (logo, pieces/*.jpg) into ./store/,
+//   Copies "../Online Store/index.html" and its assets (logo, pieces/*.jpg, the sound button's music.mp3) into ./store/,
 //   wiping whatever was there. Tools, design-loop docs and screenshots never ship.
 // Then: git add store && git commit && git push
 import fs from 'node:fs';
@@ -12,7 +12,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SRC = path.resolve(HERE, '..', 'Online Store');
 const DEST = path.join(HERE, 'store');
 
-const SHIP_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.mp4', '.webm', '.woff', '.woff2', '.css', '.js', '.mjs', '.json']);
+const SHIP_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.mp4', '.webm', '.mp3', '.woff', '.woff2', '.css', '.js', '.mjs', '.json']);
 
 if (!fs.existsSync(path.join(SRC, 'index.html'))) {
   console.error('Online Store index.html not found at ' + SRC);
