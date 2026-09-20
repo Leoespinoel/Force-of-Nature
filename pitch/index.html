@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Force of Nature, the pitch</title>
+<meta name="description" content="Force of Nature, investor and partner pitch. A lifestyle brand where 10% of every sale, not profit, funds reef, forest and coastline conservation. Automatically.">
+<meta name="theme-color" content="#0A0908">
+<link rel="icon" href="assets/logo-480.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Tokens are the same ones the newsletter, the Bon Voyage page and the Online Store use. */
+:root{
+  --void:#0A0908; --plate:#151311; --smoke:#24201C;
+  --bone:#F4F1EC; --ash:#C9C3BA; --pebble:#8E877D;
+  --red:#C11B15; --red-lift:#E8392F; --clay:#E7A196;
+  --hairline:rgba(244,241,236,.14);
+  --gutter:clamp(16px,2.5vw,36px);
+  --gap:clamp(48px,5vw,72px);
+  --font-display:'Bricolage Grotesque',sans-serif;
+  --font-serif:'Instrument Serif',serif;
+  --font-mono:'Geist Mono',ui-monospace,monospace;
+  --ease-out:cubic-bezier(.19,1,.22,1);
+  --ease-main:cubic-bezier(.65,.01,.05,.99);
+}
+*{box-sizing:border-box}
+html{background:var(--void);color:var(--bone)}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+body{margin:0;overflow-x:clip;font-family:var(--font-display);font-variation-settings:"wdth" 100,"opsz" 16;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+p,h1,h2,h3,figure,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+::selection{background:var(--red);color:#fff}
+:focus-visible{outline:2px solid var(--red-lift);outline-offset:3px}
+.skip{position:fixed;top:8px;left:-9999px;z-index:100;padding:12px 16px;background:var(--bone);color:var(--void)}
+.skip:focus{left:8px}
+
+/* ---------- type ---------- */
+.mono{font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+.display{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 96;font-weight:700;text-transform:uppercase;letter-spacing:-.03em;line-height:.88;margin:0}
+.display em{font-family:var(--font-serif);font-style:italic;font-weight:400;text-transform:lowercase;letter-spacing:-.01em;font-size:.55em;position:relative;top:-.08em}
+.h-section{font-size:clamp(2.4rem,5.5vw,5.1rem)}
+.body{color:var(--c-soft);font-size:clamp(1rem,1.15vw,1.125rem);max-width:54ch}
+.body strong{color:var(--c-ink);font-weight:600}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;color:var(--c-mute);margin:0 0 20px}
+.eyebrow::before{content:"";width:22px;height:1px;background:currentColor;display:inline-block;opacity:.6}
+.eyebrow .num{color:var(--c-accent)}
+.lead{font-family:var(--font-display);font-variation-settings:"wdth" 88,"opsz" 40;font-weight:600;font-size:clamp(1.35rem,2.2vw,2rem);line-height:1.12;letter-spacing:-.015em;max-width:24ch}
+.closer{font-family:var(--font-serif);font-style:italic;font-size:clamp(1.35rem,2vw,1.9rem);line-height:1.15;max-width:34ch;color:var(--c-ink)}
+
+/* ---------- sections: one per deck slide ---------- */
+.sec{
+  --c-ink:var(--bone); --c-soft:var(--ash); --c-mute:var(--pebble); --c-line:var(--hairline); --c-card:var(--plate); --c-chip:var(--smoke); --c-accent:var(--red-lift); --c-bg:var(--void);
+  position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding:calc(var(--gap) + 44px) var(--gutter) calc(var(--gap) + 36px);background:var(--c-bg);color:var(--c-ink);
+}
+.sec--plate{--c-bg:var(--plate);--c-card:var(--void)}
+.sec--bone{--c-bg:var(--bone);--c-ink:var(--void);--c-soft:#3F3934;--c-mute:#6B645B;--c-line:rgba(10,9,8,.16);--c-card:#EBE6DE;--c-chip:#0A0908;--c-accent:var(--red)}
+.sec--red{--c-bg:var(--red);--c-ink:#F4F1EC;--c-soft:rgba(244,241,236,.86);--c-mute:rgba(244,241,236,.7);--c-line:rgba(244,241,236,.32);--c-card:rgba(10,9,8,.18);--c-chip:#0A0908;--c-accent:#F4F1EC}
+.wrap{width:100%;max-width:1360px;margin:0 auto}
+.sec-head{margin-bottom:clamp(28px,3.4vw,48px)}
+.sec-head--aside{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,72px);align-items:end}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,88px);align-items:start}
+.split--wide-left{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+.stack{display:grid;gap:clamp(20px,2.4vw,32px)}
+
+/* ---------- shared components ---------- */
+.ic{flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--c-chip);color:#F4F1EC}
+.ic svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ic.is-red{background:var(--red)}
+.ic.is-green{background:#2F5D3A}
+.row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
+.row h3,.card h3{font-family:var(--font-display);font-variation-settings:"wdth" 88,"opsz" 28;font-weight:700;font-size:clamp(1.1rem,1.5vw,1.35rem);line-height:1.1;letter-spacing:-.01em;margin:2px 0 8px}
+.row p,.card p{color:var(--c-soft);font-size:15px;line-height:1.5;max-width:52ch}
+.card{background:var(--c-card);border:1px solid var(--c-line);padding:24px 22px 22px;display:grid;align-content:start;gap:0}
+.card .ic{margin-bottom:18px}
+.card .k{color:var(--c-mute);margin-bottom:14px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--c-line);border:1px solid var(--c-line)}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--c-line);border:1px solid var(--c-line)}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--c-line);border:1px solid var(--c-line)}
+.grid-5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--c-line);border:1px solid var(--c-line)}
+.grid-2>.card,.grid-3>.card,.grid-4>.card,.grid-5>.card{border:0}
+.bullets li{position:relative;padding-left:18px;color:var(--c-soft);font-size:15px;line-height:1.45}
+.bullets li + li{margin-top:9px}
+.bullets li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:1px;background:var(--c-accent)}
+/* the honesty pattern: a bracketed figure stays bracketed and carries a dashed tag, so a placeholder can never pass for data */
+.ph{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;line-height:1;color:var(--c-mute);border:1px dashed var(--c-mute);padding:7px 10px;white-space:nowrap}
+.ph::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+.fig{font-variant-numeric:tabular-nums;white-space:nowrap}
+.note{color:var(--c-mute);font-size:13px;line-height:1.45;max-width:46ch}
+.meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;margin-top:clamp(24px,3vw,40px)}
+.link{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--c-ink);padding:6px 0;position:relative}
+.link svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.5;fill:none;transition:transform .5s var(--ease-out)}
+.link::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .6s var(--ease-out)}
+.link:hover::after{transform:scaleX(1)}
+.link:hover svg{transform:translate(3px,-3px)}
+
+/* ---------- chrome: fixed top and bottom bars, progress line, index ---------- */
+.progress{position:fixed;left:0;top:0;right:0;height:2px;z-index:52;pointer-events:none}
+.progress i{display:block;height:100%;background:var(--red-lift);transform:scaleX(0);transform-origin:left}
+.chrome{position:fixed;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px var(--gutter);background:rgba(10,9,8,.92);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:#F4F1EC}
+.chrome.top{top:0;border-bottom:1px solid var(--hairline)}
+.chrome.bottom{bottom:0;border-top:1px solid var(--hairline);padding-top:10px;padding-bottom:10px}
+.brand{display:inline-flex;align-items:center;gap:12px}
+.brand img{height:26px;width:auto;filter:drop-shadow(0 0 .6px rgba(244,241,236,.9))}
+.chrome .mid{color:var(--pebble)}
+.chrome .right{display:flex;align-items:center;gap:clamp(12px,2vw,24px)}
+.counter{font-variant-numeric:tabular-nums;color:var(--ash)}
+.counter b{color:#F4F1EC;font-weight:500}
+.chip-btn{display:inline-flex;align-items:center;gap:10px;min-height:36px;padding:0 14px;border:1px solid var(--hairline);transition:background .4s var(--ease-out),border-color .4s var(--ease-out)}
+.chip-btn:hover{background:rgba(244,241,236,.1);border-color:rgba(244,241,236,.4)}
+.chip-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.chip-btn[disabled]{opacity:.3;pointer-events:none}
+.now{display:flex;align-items:center;gap:12px;min-width:0}
+.now .lab{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now .hint{color:var(--pebble)}
+.steps{display:flex;gap:8px}
+.index{position:fixed;inset:0;z-index:60;background:var(--void);color:#F4F1EC;display:grid;grid-template-rows:auto 1fr;visibility:hidden;opacity:0;transition:opacity .45s var(--ease-out),visibility 0s .45s}
+.index.is-open{visibility:visible;opacity:1;transition:opacity .45s var(--ease-out)}
+.index-head{display:flex;justify-content:space-between;align-items:center;padding:14px var(--gutter);border-bottom:1px solid var(--hairline)}
+.index-list{overflow:auto;padding:clamp(24px,4vw,56px) var(--gutter) 40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(24px,5vw,96px);align-content:start;max-width:1360px;width:100%;margin:0 auto}
+.index-list a{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:baseline;gap:8px;padding:13px 0;border-bottom:1px solid var(--hairline);transition:color .4s var(--ease-out),padding-left .6s var(--ease-out)}
+.index-list a .n{color:var(--pebble)}
+.index-list a .t{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 60;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.3rem,2.6vw,2.2rem);line-height:1}
+.index-list a:hover,.index-list a.is-active{color:var(--red-lift);padding-left:10px}
+.index-list a.is-active .n{color:var(--red-lift)}
+
+/* ---------- 01 cover ---------- */
+.hero{padding-top:calc(var(--gap) + 56px)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.7fr);gap:clamp(24px,4vw,72px);align-items:center}
+.h-hero{font-size:clamp(4.2rem,14.6vw,15.5rem);line-height:.8;letter-spacing:-.055em;margin:0 0 clamp(20px,2.6vw,36px)}
+.ln{display:block;overflow:hidden;padding:.06em 0 .1em;margin-bottom:-.1em}
+.ln>span{display:block}
+.hero-tag{font-family:var(--font-serif);font-style:italic;font-size:clamp(1.7rem,3.3vw,3.1rem);line-height:1.05;letter-spacing:-.01em;margin-bottom:18px}
+.hero-mark{justify-self:center;width:min(100%,380px)}
+.hero-mark img{width:100%;height:auto;filter:drop-shadow(0 0 1px rgba(244,241,236,.85)) drop-shadow(0 30px 70px rgba(193,27,21,.35))}
+.hero-foot{display:flex;justify-content:space-between;gap:16px;color:var(--pebble);margin-top:clamp(32px,5vw,72px)}
+.hero-foot .cue{display:inline-flex;align-items:center;gap:10px}
+.hero-foot .cue i{display:inline-block;width:34px;height:1px;background:currentColor;transform-origin:left;animation:cue 2.4s var(--ease-main) infinite}
+@keyframes cue{0%{transform:scaleX(0)}55%{transform:scaleX(1)}100%{transform:scaleX(1);opacity:0}}
+
+/* ---------- 02 origins: the founder's line, drawn as you scroll ---------- */
+.byline{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin-top:22px;color:var(--c-soft)}
+.journey{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(14px,1.8vw,28px)}
+.journey-line{position:absolute;left:23px;right:calc(20% - 23px - clamp(14px,1.8vw,28px) * .8);top:23px;height:1px;background:var(--c-line)}
+.journey-line i{position:absolute;inset:0;background:var(--red-lift);transform:scaleX(0);transform-origin:left}
+.step{position:relative;display:grid;gap:0;align-content:start}
+.step .ic{position:relative;z-index:1;margin-bottom:22px;transition:background .6s var(--ease-out),transform .8s var(--ease-out)}
+.step .yr{color:var(--c-mute);margin-bottom:10px}
+.step h3{font-family:var(--font-display);font-variation-settings:"wdth" 80,"opsz" 40;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.2rem,1.75vw,1.65rem);line-height:.98;margin-bottom:12px}
+.step p{color:var(--c-soft);font-size:15px;line-height:1.5}
+.js-motion .journey .step{opacity:.28;transition:opacity .7s var(--ease-out)}
+.js-motion .journey .step.is-on{opacity:1}
+.js-motion .journey .step.is-on .ic{background:var(--bone);color:var(--void)}
+.js-motion .journey .step.is-on .ic.is-red{background:var(--red);color:#F4F1EC;transform:scale(1.12)}
+.quote{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(12px,1.6vw,22px);align-items:start;border-left:1px solid var(--c-line);padding-left:clamp(18px,2.4vw,36px)}
+.quote .mark{font-family:var(--font-serif);font-style:italic;font-size:clamp(3.4rem,6vw,5.6rem);line-height:.7;color:var(--red-lift);padding-top:.12em}
+.quote p{font-family:var(--font-serif);font-style:italic;font-size:clamp(1.5rem,2.5vw,2.4rem);line-height:1.1;letter-spacing:-.01em;max-width:26ch}
+
+/* ---------- 03 problem ---------- */
+.statline{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(16px,2vw,28px);align-items:center;margin-top:clamp(24px,3vw,40px);padding-top:clamp(20px,2.4vw,32px);border-top:1px solid var(--c-line)}
+.bigfig{font-size:clamp(4rem,8vw,7.4rem);line-height:.8;letter-spacing:-.05em;color:var(--red-lift)}
+.statline .ph{margin-top:12px}
+.rows{display:grid;gap:0}
+.rows .row{padding:clamp(16px,1.9vw,24px) 0;border-top:1px solid var(--c-line)}
+.rows .row:last-child{border-bottom:1px solid var(--c-line)}
+
+/* ---------- 04 the idea (adapted from the newsletter's "Where the 10% goes") ---------- */
+.idea-grid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(24px,4vw,72px);align-items:center}
+.ten-num{font-size:clamp(9rem,21vw,21rem);line-height:.78;letter-spacing:-.06em;display:flex;align-items:flex-start;margin:0 0 26px}
+.ten-num .n{display:inline-block;min-width:.9em;text-align:right;font-variant-numeric:tabular-nums}
+.ten-num .pc{color:var(--red);font-size:.46em;margin:.1em 0 0 .04em}
+.ten-cap{font-size:clamp(1.6rem,2.9vw,2.9rem);line-height:.98;margin-bottom:22px}
+.ten-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.2vw,18px);align-items:start}
+.ten-card:nth-child(2){margin-top:14%}
+.ten-card:nth-child(3){margin-top:28%}
+.frame{overflow:hidden;background:var(--plate)}
+.ten-card .frame{aspect-ratio:3/4}
+.frame img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease-out)}
+.ten-card:hover .frame img,.piece:hover .frame img{transform:scale(1.045)}
+.ten-card figcaption{padding-top:12px}
+.ten-card .cap{display:flex;gap:10px;color:var(--bone);margin-bottom:8px}
+.ten-card .cap .k{color:var(--red-lift)}
+.ten-card p{color:var(--ash);font-size:14px;line-height:1.45}
+
+/* ---------- 05 brand world ---------- */
+.world{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:clamp(28px,4vw,72px);align-items:center}
+.world-mark{display:grid;justify-items:center;gap:22px;text-align:center}
+.world-mark img{width:min(62%,240px);height:auto}
+.world-mark .cap{font-family:var(--font-serif);font-style:italic;font-size:clamp(1.3rem,2vw,1.8rem);line-height:1.1;max-width:18ch}
+.world-mark .mono{color:var(--red)}
+
+/* ---------- 06 product ---------- */
+.pieces{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(8px,1vw,16px)}
+.piece .frame{aspect-ratio:3/4}
+.piece figcaption{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding-top:12px}
+.piece .name{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 40;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.15rem,1.7vw,1.6rem);line-height:1}
+.piece .mono{color:var(--pebble);font-size:11px;text-align:right}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,48px);margin-top:clamp(32px,4vw,56px);border-top:1px solid var(--c-line);padding-top:clamp(20px,2.4vw,32px)}
+.facts .mono{color:var(--c-accent);margin-bottom:10px}
+.facts p{color:var(--c-soft);font-size:15px;max-width:34ch}
+
+/* ---------- 07 mechanism / generic flows ---------- */
+.flow{position:relative}
+.flow .card{position:relative}
+.flow .card .n{position:absolute;right:20px;top:22px;color:var(--c-mute)}
+.flow-arrow{position:absolute;top:50%;right:-13px;z-index:2;width:25px;height:25px;border-radius:50%;background:var(--c-bg);border:1px solid var(--c-line);display:grid;place-items:center;transform:translateY(-50%);color:var(--c-accent)}
+.flow-arrow svg{width:11px;height:11px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sub-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:clamp(22px,2.6vw,36px) 0 14px;color:var(--c-mute)}
+.partner{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+.partner .nm{font-family:var(--font-display);font-variation-settings:"wdth" 85,"opsz" 28;font-weight:700;font-size:1.1rem;line-height:1.15}
+.partner .mono{color:var(--c-mute);margin-top:4px;display:block}
+
+/* ---------- 08 impact ---------- */
+.kpi{min-height:164px;grid-template-rows:auto 1fr auto}
+.kpi .ic{margin-bottom:14px}
+.kpi .v{font-size:clamp(2.2rem,4vw,3.8rem);line-height:.86;align-self:end;margin-bottom:12px;color:var(--c-ink)}
+.kpi .mono{color:var(--c-mute)}
+.chart{border:1px solid var(--c-line);background:var(--c-card);padding:22px 22px 18px;display:grid;gap:18px}
+.chart-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;color:var(--c-mute)}
+.bars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2.4vw,40px);align-items:end;height:clamp(200px,20vw,270px);border-bottom:1px solid var(--c-line);padding:0 clamp(4px,1vw,16px)}
+.bar{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.bar i{display:block;width:100%;height:calc(var(--v) / 190 * 86%);background:var(--red);transform-origin:bottom}
+.bar:last-child i{background:var(--red-lift)}
+.bar .val{font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;color:var(--c-ink);margin-bottom:10px}
+.bar-labs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2.4vw,40px);padding:0 clamp(4px,1vw,16px);text-align:center;color:var(--c-mute)}
+
+/* ---------- 09 market ---------- */
+.stat .v{font-size:clamp(2.4rem,4.4vw,4.2rem);line-height:.86;margin-bottom:14px;color:var(--c-ink)}
+.stat p{color:var(--c-soft);font-size:15px;max-width:28ch}
+.statrows{display:grid;gap:0}
+.statrow{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:20px;align-items:center;padding:12px 0;border-top:1px solid var(--c-line)}
+.statrow:last-of-type{border-bottom:1px solid var(--c-line)}
+.statrow .v{font-size:clamp(1.9rem,3.2vw,3rem);line-height:.9;color:var(--c-ink)}
+.statrow p:last-child{color:var(--c-soft);font-size:15px;line-height:1.4}
+.statrows .ph{margin-top:14px;justify-self:start}
+.linechart svg{width:100%;height:auto;display:block;overflow:visible}
+.linechart .grid line{stroke:var(--c-line);stroke-width:1}
+.linechart .path{fill:none;stroke:#2F5D3A;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.linechart .dot{fill:#2F5D3A}
+.linechart text{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;fill:var(--c-mute)}
+.linechart text.v{fill:var(--c-ink)}
+
+/* ---------- 10 business model ---------- */
+.mix{margin-top:16px;padding-top:12px;border-top:1px solid var(--c-line);color:var(--c-accent)}
+.unit{width:100%;border-collapse:collapse;border:1px solid var(--c-line)}
+.unit th,.unit td{padding:12px 14px;text-align:center;border-left:1px solid var(--c-line)}
+.unit th:first-child,.unit td:first-child{border-left:0}
+.unit th{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--c-mute);border-bottom:1px solid var(--c-line)}
+.unit td{font-family:var(--font-display);font-variation-settings:"wdth" 80,"opsz" 40;font-weight:700;font-size:clamp(1.3rem,2.2vw,2rem);letter-spacing:-.02em}
+.unit td.is-red{color:var(--red-lift)}
+.unit td.is-green{color:#5FA872}
+
+/* ---------- 11 go-to-market ---------- */
+.phase .n{font-size:clamp(2.6rem,4.6vw,4.2rem);line-height:.8;color:var(--c-mute);opacity:.55;margin-bottom:18px}
+.phase h3{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 60;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.6rem,2.6vw,2.4rem);line-height:.95;margin:0 0 18px}
+.channels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.4vw,36px)}
+.channels .row h3{margin-bottom:4px}
+
+/* ---------- 12 traction ---------- */
+.live-links{margin-top:0;padding-bottom:10px}
+.checks{display:grid;gap:0}
+.checks .row{padding:13px 0;border-top:1px solid var(--c-line)}
+.checks .row:last-child{border-bottom:1px solid var(--c-line)}
+.checks .ic{width:38px;height:38px}
+.browser{border:1px solid var(--c-line);background:var(--plate)}
+.browser-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid var(--c-line);color:var(--pebble)}
+.browser-bar b{width:9px;height:9px;border-radius:50%;background:var(--smoke);display:block}
+.browser-bar span{margin-left:10px;font-size:11px}
+.browser .frame{aspect-ratio:1440/1026}
+.browser .frame img{object-position:top}
+
+/* ---------- 13 roadmap ---------- */
+.road{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.4vw,40px)}
+.road-line{position:absolute;left:24px;right:calc(25% - 24px - clamp(16px,2.4vw,40px) * .75);top:24px;height:1px;background:var(--c-line)}
+.road-line i{position:absolute;inset:0;background:var(--red-lift);transform:scaleX(0);transform-origin:left}
+.stage .node{position:relative;z-index:1;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--c-chip);color:#F4F1EC;margin-bottom:24px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em}
+.stage .node.is-now{background:var(--red)}
+.stage .when{color:var(--c-accent);margin-bottom:8px;display:block}
+.stage h3{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 60;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.5rem,2.4vw,2.2rem);line-height:.95;margin:0 0 16px}
+
+/* ---------- 14 partnerships ---------- */
+.ask-col .top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;margin-bottom:26px}
+.ask-col .top h3{margin:0 0 4px}
+.ask-col .top .mono{color:var(--c-mute)}
+.ask-col .lbl{color:var(--c-mute);margin:0 0 12px;display:block}
+.ask-col .bullets + .lbl{margin-top:26px}
+
+/* ---------- 15 team ---------- */
+.founder{padding:clamp(24px,3vw,40px)}
+.founder .top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center;margin-bottom:28px}
+.founder .ic{width:84px;height:84px;margin:0}
+.founder .ic svg{width:34px;height:34px}
+.founder .nm{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 60;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.7rem,2.8vw,2.6rem);line-height:.95;color:var(--c-ink)}
+.founder .mono{color:var(--c-accent);margin-top:8px;display:block}
+.founder p + p{margin-top:14px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.tag{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;line-height:1;padding:8px 11px;background:var(--c-chip);color:#F4F1EC}
+.role{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center}
+.role .ic{margin:0;background:var(--c-line);color:var(--c-ink)}
+.role h3{margin:0 0 4px}
+.role .mono{color:var(--c-accent);margin-top:10px;display:block;font-size:11px}
+
+/* ---------- 16 the ask ---------- */
+.raise{font-size:clamp(4.6rem,11.5vw,11.5rem);line-height:.8;letter-spacing:-.05em;margin:0 0 clamp(16px,2vw,26px)}
+.funds{display:grid;gap:0;margin-top:clamp(20px,2.6vw,34px)}
+.funds li{display:grid;grid-template-columns:clamp(64px,7vw,96px) 14px minmax(0,1fr);align-items:center;gap:14px;padding:10px 0;border-top:1px solid var(--c-line)}
+.funds li:last-child{border-bottom:1px solid var(--c-line)}
+.funds .pc{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 60;font-weight:700;font-size:clamp(1.6rem,2.6vw,2.4rem);letter-spacing:-.02em;line-height:1}
+.funds .sw{width:12px;height:12px;display:block}
+.funds .t{color:var(--c-soft)}
+.donut-wrap{display:grid;justify-items:center;gap:22px}
+.donut{position:relative;width:min(100%,430px);aspect-ratio:1;border-radius:50%;background:conic-gradient(#F4F1EC 0 40%,#0A0908 40% 70%,#6A1410 70% 90%,#E7A196 90% 100%)}
+.donut::after{content:"";position:absolute;inset:23%;border-radius:50%;background:var(--red)}
+.donut .mid{position:absolute;inset:0;z-index:1;display:grid;place-content:center;text-align:center;gap:6px}
+.donut .mid .v{font-size:clamp(1.8rem,3.4vw,3rem);line-height:.9}
+.donut .mid .mono{color:var(--c-mute)}
+
+/* ---------- 17 closing ---------- */
+.close{text-align:center;align-items:center}
+.close .wrap{display:grid;justify-items:center}
+.close-mark{width:clamp(130px,16vw,220px);margin-bottom:clamp(24px,3vw,44px)}
+.close-mark img{width:100%;height:auto;filter:drop-shadow(0 0 1px rgba(244,241,236,.85)) drop-shadow(0 24px 60px rgba(193,27,21,.35))}
+.h-close{font-size:clamp(2.6rem,7vw,7rem);margin:0 auto 22px}
+.close .hero-tag{color:var(--ash)}
+.contact{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 22px;margin-top:clamp(30px,4vw,56px)}
+.contact .sep{color:var(--pebble)}
+.close-foot{margin-top:clamp(36px,5vw,72px);color:var(--red-lift)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1100px){
+  .grid-5{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-5>.card:last-child{grid-column:1 / -1}
+  .flow-arrow{display:none}
+  .channels{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+  .sec{min-height:0;padding:calc(var(--gap) + 56px) var(--gutter) calc(var(--gap) + 48px)}
+  .sec-head--aside{grid-template-columns:minmax(0,1fr)}
+  .ph{white-space:normal;line-height:1.35}
+  .statline{grid-template-columns:minmax(0,1fr)}
+  .quote{border-left:0;padding-left:0;border-top:1px solid var(--c-line);padding-top:24px}
+  .hero,.close{min-height:100svh}
+  .split,.split--wide-left,.idea-grid,.world,.hero-grid{grid-template-columns:minmax(0,1fr)}
+  .hero-mark{order:-1;width:min(46vw,210px);justify-self:start}
+  .chrome .mid,.now .hint{display:none}
+  .grid-3,.grid-4{grid-template-columns:minmax(0,1fr)}
+  .grid-2.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .journey,.road{grid-template-columns:minmax(0,1fr);gap:0}
+  .journey-line,.road-line{left:23px;right:auto;top:23px;bottom:60px;width:1px;height:auto}
+  .road-line{left:24px}
+  .journey-line i,.road-line i{transform:scaleY(0);transform-origin:top}
+  .step,.stage{display:grid;align-content:start;grid-template-columns:auto minmax(0,1fr);column-gap:18px;padding-bottom:30px}
+  .step .ic,.stage .node{grid-row:1 / span 4;margin-bottom:0}
+  .step .yr,.step h3,.step p,.stage .when,.stage h3,.stage ul{grid-column:2}
+  .ten-cards{grid-template-columns:minmax(0,1fr);gap:20px}
+  .ten-card:nth-child(n){margin-top:0}
+  .ten-card .frame{aspect-ratio:16/10}
+  .pieces{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 10px}
+  .facts{grid-template-columns:minmax(0,1fr)}
+  .unit-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .unit{min-width:640px}
+  .index-list{grid-template-columns:minmax(0,1fr)}
+  .quote{grid-template-columns:minmax(0,1fr)}
+  .hero-foot .cue{display:none}
+}
+@media (max-width:560px){
+  .grid-2{grid-template-columns:minmax(0,1fr)}
+  .channels{grid-template-columns:minmax(0,1fr)}
+  .brand span{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-foot .cue i{animation:none}
+  .frame img{transition:none}
+}
+</style>
+</head>
+<body>
+<a class="skip mono" href="#origins">Skip to the pitch</a>
+
+<!-- one sprite, hand-drawn line icons in the same idiom as the other three sites -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2 9c2.5-3 4.5-3 7 0s4.5 3 7 0 3.5-2.5 6-.5M2 15c2.5-3 4.5-3 7 0s4.5 3 7 0 3.5-2.5 6-.5"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 20h18M4 16l5-5 4 3 7-8M15 6h5v5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/></symbol>
+    <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3l4 2 4-2 5 4-3 3-2-1.5V21H8V8.5L6 10 3 7z"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5C7 16.5 3.5 13.2 3.5 9.2A4.7 4.7 0 0 1 12 6.5a4.7 4.7 0 0 1 8.5 2.7c0 4-3.5 7.3-8.5 11.3z"/></symbol>
+    <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M3 3l18 18M10 5.2A9.7 9.7 0 0 1 12 5c5.2 0 8.7 4.2 9.5 7a11 11 0 0 1-2.6 3.8M6.4 7.3A11.4 11.4 0 0 0 2.5 12c.8 2.8 4.3 7 9.5 7 1.500 0 2.800-.3 4-.9M9.9 9.9a3 3 0 0 0 4.200 4.200"/></symbol>
+    <symbol id="i-megaphone" viewBox="0 0 24 24"><path d="M4 10v4h3l8 4V6l-8 4zM18.5 9.5a3.5 3.5 0 0 1 0 5M7.5 14l1.2 5h2.3"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M9 11a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6M17.500 14.500A5.500 5.500 0 0 1 21 20"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19C5 10 10 5 20 4c-.5 10-5.5 15-15 15zM5 19l8-8"/></symbol>
+    <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 3l5 7h-3l4 6H6l4-6H7zM12 16v5"/></symbol>
+    <symbol id="i-coast" viewBox="0 0 24 24"><path d="M3 20h18M12 20V9M4.500 11a7.500 7.500 0 0 1 15 0z"/></symbol>
+    <symbol id="i-dollar" viewBox="0 0 24 24"><path d="M12 3v18M16.500 7.800c-1-1.300-2.500-2-4.500-2-2.400 0-4 1.200-4 3 0 4.200 8.500 2 8.500 6.400 0 1.900-1.800 3-4.500 3-2 0-3.600-.7-4.600-2"/></symbol>
+    <symbol id="i-hands" viewBox="0 0 24 24"><circle cx="9" cy="12" r="5.500"/><circle cx="15" cy="12" r="5.500"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6zM9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><path d="M6 11h12v9H6zM9 11V8a3 3 0 0 1 6 0v3"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.500l5 5L20 6.500"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.500 3 14.500 0 18M12 3c-3 3.500-3 14.500 0 18"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1.500-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h3l2.500 11h10l2-8H7"/><circle cx="10" cy="19" r="1.200"/><circle cx="17" cy="19" r="1.200"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><path d="M3 6h18v12H3zM3 7l9 7 9-7"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.500-6-6.500-11a6.500 6.500 0 0 1 13 0c0 5-6.500 11-6.500 11z"/><circle cx="12" cy="10" r="2.500"/></symbol>
+    <symbol id="i-cam" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4.500"/><circle cx="12" cy="12" r="3.700"/><path d="M17.500 6.500h.01"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 21c-3.500 0-6-2.500-6-6 0-3 2-4.500 3-7 .5 2 1.500 3 2.500 3.500C11 8 12 5 14.500 3c0 3 3.500 5.500 3.500 11 0 4-2.500 7-6 7z"/></symbol>
+    <symbol id="i-seed" viewBox="0 0 24 24"><path d="M12 21v-9M12 12c0-3-2-5-6-5 0 3 2 5 6 5zM12 10c0-3 2-5 6-5 0 3-2 5-6 5z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-arrow-l" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-ne" viewBox="0 0 16 16"><path d="M3 13 13 3M5 3h8v8"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></symbol>
+  </defs>
+</svg>
+
+<div class="progress" aria-hidden="true"><i id="progress"></i></div>
+
+<header class="chrome top" id="chrome-top">
+  <a class="brand mono" href="#cover" data-go="0" aria-label="Force of Nature, back to the cover">
+    <img src="assets/logo-480.png" alt="" width="19" height="26">
+    <span>Force of Nature</span>
+  </a>
+  <span class="mid mono">Investor &amp; partner pitch</span>
+  <div class="right">
+    <span class="counter mono" aria-live="polite"><b id="count">01</b> / 17</span>
+    <button class="chip-btn mono" id="index-open" aria-haspopup="dialog" aria-controls="index"><svg aria-hidden="true"><use href="#i-grid"/></svg>Index</button>
+  </div>
+</header>
+
+<div class="chrome bottom" id="chrome-bottom">
+  <div class="now mono"><span class="lab" id="now-label">Cover</span><span class="hint">·  ← → to step</span></div>
+  <div class="steps">
+    <button class="chip-btn mono" id="prev" aria-label="Previous section" disabled><svg aria-hidden="true"><use href="#i-arrow-l"/></svg></button>
+    <button class="chip-btn mono" id="next" aria-label="Next section">Next<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+  </div>
+</div>
+
+<div class="index" id="index" role="dialog" aria-modal="true" aria-label="All sections" aria-hidden="true">
+  <div class="index-head">
+    <span class="mono">Index · 17 sections</span>
+    <button class="chip-btn mono" id="index-close"><svg aria-hidden="true"><use href="#i-x"/></svg>Close</button>
+  </div>
+  <nav class="index-list" id="index-list" aria-label="Sections"></nav>
+</div>
+
+<main id="main">
+
+  <!-- 01 COVER -->
+  <section class="sec hero" id="cover" data-slide="01" data-label="Cover">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow mono" data-hero><span class="num" data-scramble>Investor &amp; partner pitch · 2026</span></p>
+          <h1 class="display h-hero" aria-label="Force of Nature"><span class="ln"><span>Force of</span></span><span class="ln"><span>Nature</span></span></h1>
+          <p class="hero-tag" data-hero>Where mission and lifestyle collide.</p>
+          <p class="body" data-hero><strong>10% of every sale, not profit,</strong> goes to reef, forest and coastline conservation. Automatically.</p>
+        </div>
+        <div class="hero-mark" id="hero-mark"><img src="assets/logo-1200.png" alt="Force of Nature heart logo, illustrated in red with black drips" width="870" height="1200" fetchpriority="high"></div>
+      </div>
+      <div class="hero-foot mono" data-hero><span>Force of Nature Operations</span><span class="cue"><i></i>Scroll, or press →</span></div>
+    </div>
+  </section>
+
+  <!-- 02 ORIGINS -->
+  <section class="sec" id="origins" data-slide="02" data-label="The founder">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">02</span> The founder</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>The origins</span></span><span class="ln"><span><em>of the</em> brand</span></span></h2>
+          <p class="byline" data-reveal><span>[Founder Name] · Founder, Force of Nature</span><span class="ph">Name to come</span></p>
+        </div>
+        <blockquote class="quote" data-reveal>
+          <span class="mark" aria-hidden="true">“</span>
+          <p>I've been in a privileged position. That comes with a responsibility to pay it forward, not to keep it for myself.</p>
+        </blockquote>
+      </div>
+      <ol class="journey" id="journey">
+        <li class="journey-line" aria-hidden="true"><i></i></li>
+        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-wave"/></svg></span><span class="yr mono">01</span><h3>Mauritius, before the boom</h3><p>Grew up watching a paradise before fibre optics, mass real estate and reef loss. Saw first-hand what a place gains and loses when it modernises.</p></li>
+        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><span class="yr mono">02</span><h3>Finance, the Netherlands</h3><p>Studied finance, chased status and money, and hit a wall of emptiness. Knew sustainability had to be part of the answer, but couldn't build it there.</p></li>
+        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><span class="yr mono">03</span><h3>The military</h3><p>Stepped away to reset. The structure and discipline created the space to think clearly about what came next.</p></li>
+        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><span class="yr mono">04</span><h3>Fashion, Amsterdam</h3><p>Worked at Mr Marvis, a sustainable B Corp start-up, while living inside the high end of fashion culture.</p></li>
+        <li class="step"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><span class="yr mono">05</span><h3>Force of Nature</h3><p>Everything combined: a brand for a generation that lost community to social media, giving a voice and a visible outcome to the people creating real impact.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 03 PROBLEM -->
+  <section class="sec sec--plate" id="problem" data-slide="03" data-label="The problem">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow mono" data-reveal><span class="num">03</span> The problem</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>Apparel has an</span></span><span class="ln"><span>accountability <em>problem</em></span></span></h2>
+        <p class="lead" data-reveal style="margin-top:28px">Every brand talks about impact. Almost none can show you where a single dollar went.</p>
+        <div class="statline">
+          <p class="display bigfig fig" data-fig>[XX]%</p>
+          <div data-reveal><p class="body">of conscious consumers say they don't trust brands' sustainability claims.</p><span class="ph">Illustrative · placeholder figure</span></div>
+        </div>
+      </div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-eyeoff"/></svg></span><div><h3>Impact you can't see</h3><p>Pledges, opt-ins and round-ups nobody tracks. The giving is optional, invisible and easy to quietly drop.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><div><h3>Sustainability as a campaign</h3><p>A capsule, a hashtag, a percentage of profit that never materialises, because early-stage brands rarely have profit.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>A generation that wants proof</h3><p>Younger buyers want the impact built into the product itself, without guilt, extra steps or a lecture.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 THE IDEA -->
+  <section class="sec" id="idea" data-slide="04" data-label="The idea">
+    <div class="wrap idea-grid">
+      <div>
+        <p class="eyebrow mono" data-reveal><span class="num">04</span> The idea</p>
+        <p class="display ten-num" aria-label="10 percent"><span class="n" id="ten-num" aria-hidden="true">10</span><span class="pc" aria-hidden="true">%</span></p>
+        <p class="display ten-cap" data-reveal>Of every sale, <em>not</em> profit.<br>Automatically.</p>
+        <p class="closer" data-reveal style="margin-bottom:18px">No pledges. No opt-ins. No round-ups. The impact happens the moment you wear it.</p>
+        <p class="body" data-reveal>Ten percent of the price of every piece is set aside the moment it's bought and sent to conservation work on the ground.</p>
+      </div>
+      <div class="ten-cards" data-frames>
+        <figure class="ten-card"><div class="frame"><img src="assets/ten-reef.jpg" srcset="assets/ten-reef-sm.jpg 600w, assets/ten-reef.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Coral reef in low evening light" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">01</span><span>Reef</span></span><p>Coral restoration and marine protection, starting in the Indian Ocean.</p></figcaption></figure>
+        <figure class="ten-card"><div class="frame"><img src="assets/ten-forest.jpg" srcset="assets/ten-forest-sm.jpg 600w, assets/ten-forest.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Native forest with a shaft of light through the canopy" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">02</span><span>Forest</span></span><p>Native reforestation and habitat protection.</p></figcaption></figure>
+        <figure class="ten-card"><div class="frame"><img src="assets/ten-coast.jpg" srcset="assets/ten-coast-sm.jpg 600w, assets/ten-coast.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Volcanic coastline and lagoon at dusk" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">03</span><span>Coastline</span></span><p>Beach and mangrove clean-ups, erosion and plastic recovery.</p></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 BRAND WORLD -->
+  <section class="sec sec--bone" id="world" data-slide="05" data-label="Brand world">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow mono" data-reveal><span class="num">05</span> Brand world</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>A lifestyle brand first.</span></span><span class="ln"><span><em>not</em> charity merch</span></span></h2>
+      </div>
+      <div class="world">
+        <div class="grid-2" data-stagger>
+          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><h3>Premium first</h3><p>Heavyweight fabrics, clean silhouettes, quiet branding. It has to be a piece you'd buy with no mission attached.</p></div>
+          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-seed"/></svg></span><h3>Mission built in</h3><p>The 10% is a mechanism, not a marketing line. It ships with every product, every time.</p></div>
+          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3>Community over followers</h3><p>Rebuilding the belonging social media hollowed out, around people doing real work.</p></div>
+          <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-flame"/></svg></span><h3>Raw, a little rebellious</h3><p>A dripping heart, not a green leaf. Honest and emotional, for a generation that can smell a pitch.</p></div>
+        </div>
+        <div class="world-mark" data-reveal>
+          <img src="assets/logo-1200.png" alt="The Force of Nature drip heart" width="870" height="1200" loading="lazy" decoding="async">
+          <p class="cap">The drip heart: love that bleeds into action.</p>
+          <span class="mono">Where mission and lifestyle collide</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 PRODUCT -->
+  <section class="sec" id="line" data-slide="06" data-label="The line">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow mono" data-reveal><span class="num">06</span> The line</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>Five chapters.</span></span><span class="ln"><span><em>one</em> line</span></span></h2>
+      </div>
+      <div class="pieces" data-frames>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/classic-1.jpg" alt="Classic: an undyed linen shirt and trousers" loading="lazy" decoding="async"></div><figcaption><span class="name">Classic</span><span class="mono">Linen, unbranded</span></figcaption></figure>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/originals-1.jpg" alt="Originals: a heavyweight black tee and pleated trousers" loading="lazy" decoding="async"></div><figcaption><span class="name">Originals</span><span class="mono">Streetwear</span></figcaption></figure>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/collective-1.jpg" alt="Collective: a sculptural black coat on a runway" loading="lazy" decoding="async"></div><figcaption><span class="name">Collective</span><span class="mono">Runway</span></figcaption></figure>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/mer-1.jpg" alt="Mer: black swim shorts" loading="lazy" decoding="async"></div><figcaption><span class="name">Mer</span><span class="mono">Swim</span></figcaption></figure>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/terre-1.jpg" alt="Terre: a grey running shell and black shorts, mid-stride" loading="lazy" decoding="async"></div><figcaption><span class="name">Terre</span><span class="mono">Sport</span></figcaption></figure>
+      </div>
+      <div class="facts" data-stagger>
+        <div><p class="mono">Material</p><p>Heavyweight cotton and linen, muted earth palette, hits of red.</p></div>
+        <div><p class="mono">Cadence</p><p>Drops, not seasons. Small runs, no markdowns.</p></div>
+        <div><p class="mono">Price band</p><p><span class="fig">[€XX – €XXX]</span> per piece</p><span class="ph" style="margin-top:12px">Illustrative</span></div>
+      </div>
+      <div class="meta-row" data-reveal><a class="link" href="https://forceofnature.org.in/store/" target="_blank" rel="noopener">See the line in the store<svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-ne"/></svg></a></div>
+    </div>
+  </section>
+
+  <!-- 07 MECHANISM -->
+  <section class="sec sec--plate" id="mechanism" data-slide="07" data-label="The mechanism">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">07</span> The mechanism</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>How 10% moves <em>from a</em></span></span><span class="ln"><span>checkout <em>to a</em> coastline</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>Transparency is the product feature. If we can't show it, we don't claim it.</p>
+      </div>
+      <ol class="grid-5 flow" data-stagger>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-bag"/></svg></span><span class="n mono">01</span><h3>A piece is bought</h3><p>10% of the sale price is ring-fenced at checkout. Before costs, before margin.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-lock"/></svg></span><span class="n mono">02</span><h3>Held separately</h3><p>Mission funds sit in a dedicated account. Never working capital, never payroll.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-layers"/></svg></span><span class="n mono">03</span><h3>Pooled each quarter</h3><p>Funds are batched and allocated across reef, forest and coastline projects.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><span class="n mono">04</span><h3>Deployed to partners</h3><p>Vetted conservation partners receive it as flexible, recurring funding.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><span class="n mono">05</span><h3>Published openly</h3><p>Every quarter: raised, deployed, outcomes. On the site, in the newsletter, on the label.</p></li>
+      </ol>
+      <div class="sub-head mono" data-reveal><span>Conservation partners · to be confirmed</span><span class="ph">Partner names are placeholders</span></div>
+      <div class="grid-3" data-stagger>
+        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-wave"/></svg></span><div><span class="nm">[Conservation Partner A]</span><span class="mono">Reef · Indian Ocean</span></div></div>
+        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-tree"/></svg></span><div><span class="nm">[Conservation Partner B]</span><span class="mono">Forest · [Region]</span></div></div>
+        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-coast"/></svg></span><div><span class="nm">[Conservation Partner C]</span><span class="mono">Coastline · [Region]</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 IMPACT -->
+  <section class="sec" id="impact" data-slide="08" data-label="Impact">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow mono" data-reveal><span class="num">08</span> Impact</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>What 10%</span></span><span class="ln"><span><em>turns</em> into</span></span></h2>
+      </div>
+      <div class="split">
+        <div class="stack">
+          <div class="grid-2 kpis" data-stagger>
+            <div class="card kpi"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-tree"/></svg></span><p class="display v fig" data-fig>[X,XXX]</p><p class="mono">Trees planted</p></div>
+            <div class="card kpi"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-wave"/></svg></span><p class="display v fig" data-fig>[XX] ha</p><p class="mono">Of reef restored</p></div>
+            <div class="card kpi"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-coast"/></svg></span><p class="display v fig" data-fig>[XXX] km</p><p class="mono">Of coastline cleaned</p></div>
+            <div class="card kpi"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-dollar"/></svg></span><p class="display v fig" data-fig>$[XXX]K</p><p class="mono">Deployed to partners</p></div>
+          </div>
+          <div class="meta-row" data-reveal style="margin-top:0"><span class="ph">Illustrative · projected year-3 run rate</span><span class="note">Replaced with audited figures every quarter once live.</span></div>
+        </div>
+        <div class="stack">
+          <figure class="chart" data-reveal>
+            <figcaption class="chart-head mono"><span>Projected mission funds deployed, $K</span><span class="ph">Illustrative</span></figcaption>
+            <div class="bars" id="bars" role="img" aria-label="Bar chart, illustrative: year 1 25 thousand dollars, year 2 80 thousand, year 3 190 thousand">
+              <div class="bar" style="--v:25"><span class="val">$25K</span><i></i></div>
+              <div class="bar" style="--v:80"><span class="val">$80K</span><i></i></div>
+              <div class="bar" style="--v:190"><span class="val">$190K</span><i></i></div>
+            </div>
+            <div class="bar-labs mono" aria-hidden="true"><span>Year 1</span><span>Year 2</span><span>Year 3</span></div>
+          </figure>
+          <p class="note" data-reveal>Assumes <span class="fig">[X]</span> units / month at <span class="fig">€[XX]</span> average order value.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 MARKET -->
+  <section class="sec sec--bone" id="market" data-slide="09" data-label="Market opportunity">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">09</span> Market opportunity</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Conscious consumption</span></span><span class="ln"><span>is <em>the</em> default now</span></span></h2>
+        </div>
+        <div class="statrows" data-stagger>
+          <div class="statrow"><p class="display v fig" data-fig>$[XXX]B</p><p>global streetwear market</p></div>
+          <div class="statrow"><p class="display v fig" data-fig>[XX]%</p><p>CAGR, sustainable apparel</p></div>
+          <div class="statrow"><p class="display v fig" data-fig>[X] in [X]</p><p>Gen Z and Millennials will pay more for proven impact</p></div>
+          <span class="ph">Illustrative · replace with sourced data</span>
+        </div>
+      </div>
+      <div class="split">
+        <div>
+          <p class="mono" data-reveal style="color:var(--c-mute);margin-bottom:6px">Why now</p>
+          <div class="rows" data-stagger>
+            <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-globe"/></svg></span><div><h3>Proof is now cheap</h3><p>Payments, partner data and reporting can be published in near real time. Proof used to be expensive; now it's a design choice.</p></div></div>
+            <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><div><h3>Creators want a cause</h3><p>Creators build around meaning. A brand with a real mechanism gives them something honest to stand next to.</p></div></div>
+            <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Community hunger</h3><p>People are tired of feeds. They want to belong to something small, physical and true.</p></div></div>
+          </div>
+        </div>
+        <figure class="chart linechart" data-reveal>
+          <figcaption class="chart-head mono"><span>Sustainable apparel, $B</span><span class="ph">Illustrative growth curve</span></figcaption>
+          <svg id="linechart" viewBox="0 0 600 250" role="img" aria-label="Line chart, illustrative: 8 billion dollars in 2024 rising to 15.5 billion in 2028"></svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 BUSINESS MODEL -->
+  <section class="sec" id="model" data-slide="10" data-label="Business model">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">10</span> Business model</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Three ways <em>the</em> line</span></span><span class="ln"><span>makes money</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>The 10% is a cost line planned in from day one, not a donation deducted from whatever is left.</p>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cart"/></svg></span><h3>Direct e-commerce</h3><p>Core channel. Full price, full margin, first-party data. The store is already built.</p><p class="mix mono">Target mix: <span class="fig">[XX]%</span></p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span><h3>Limited drops</h3><p>Small dated runs with community-first access. Scarcity that's real because the runs are small, not manufactured.</p><p class="mix mono">Target mix: <span class="fig">[XX]%</span></p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-store"/></svg></span><h3>Wholesale &amp; collabs</h3><p>A few selected stockists and partner capsules. Reach and credibility, not volume.</p><p class="mix mono">Target mix: <span class="fig">[XX]%</span></p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>Unit economics per piece</span><span class="ph">Illustrative</span></div>
+      <div class="unit-scroll" data-reveal>
+        <table class="unit">
+          <thead><tr><th scope="col">Retail price</th><th scope="col">Cost of goods</th><th scope="col">Mission (10%)</th><th scope="col">Marketing &amp; fulfilment</th><th scope="col">Contribution margin</th></tr></thead>
+          <tbody><tr><td class="fig">€[XX]</td><td class="fig">€[XX]</td><td class="fig is-red">€[X.X]</td><td class="fig">€[XX]</td><td class="fig is-green">[XX]%</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 GO-TO-MARKET -->
+  <section class="sec sec--plate" id="gtm" data-slide="11" data-label="Go-to-market">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow mono" data-reveal><span class="num">11</span> Go-to-market</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>Build the tribe</span></span><span class="ln"><span><em>before the</em> first drop</span></span></h2>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card phase"><p class="display n">01</p><h3>Build</h3><ul class="bullets"><li>Waitlist and behind-the-scenes newsletter, already live on the brand site</li><li>Founding-member pre-order for the first run</li><li>Seed 20 to 30 creators who already live the mission: divers, surfers, foresters</li></ul></div>
+        <div class="card phase"><p class="display n">02</p><h3>Launch</h3><ul class="bullets"><li>First drop: Originals and Classic chapters</li><li>Launch event or pop-up in [City]</li><li>First impact commitment announced with named partners</li></ul></div>
+        <div class="card phase"><p class="display n">03</p><h3>Compound</h3><ul class="bullets"><li>Monthly drop rhythm across the five chapters</li><li>Quarterly impact report published as content, not a PDF</li><li>Community rituals: clean-ups, dives, plantings</li></ul></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>Channels</span></div>
+      <div class="channels" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><div><h3>Instagram &amp; TikTok</h3><p>Short-form, founder-led</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-mail"/></svg></span><div><h3>Email on Kit</h3><p>Drops, reports, first access</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Creators &amp; ambassadors</h3><p>Long-term, not one-off posts</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><div><h3>Pop-ups &amp; events</h3><p>Where the community meets</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 TRACTION -->
+  <section class="sec" id="traction" data-slide="12" data-label="Traction">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">12</span> Traction</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>What's</span></span><span class="ln"><span><em>already</em> built</span></span></h2>
+        </div>
+        <div class="meta-row live-links" data-reveal>
+          <span class="mono" style="color:var(--c-mute);flex-basis:100%">Live today</span>
+          <a class="link" href="https://forceofnature.org.in/" target="_blank" rel="noopener">The brand site<svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-ne"/></svg></a>
+          <a class="link" href="https://forceofnature.org.in/bon-voyage/" target="_blank" rel="noopener">Bon Voyage<svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-ne"/></svg></a>
+          <a class="link" href="https://forceofnature.org.in/store/" target="_blank" rel="noopener">The store<svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-ne"/></svg></a>
+        </div>
+      </div>
+      <div class="split">
+        <div>
+          <div class="checks" data-stagger>
+            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Brand identity</h3><p>Name, drip-heart mark, voice and tagline.</p></div></div>
+            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Brand site live at forceofnature.org.in</h3><p>Mission story, newsletter capture and follow-the-build updates.</p></div></div>
+            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Online store designed and built</h3><p>Immersive five-chapter product experience with bag and checkout flow.</p></div></div>
+            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Product direction and visuals</h3><p>Five chapters cast and shot; first samples in development.</p></div></div>
+            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Audience infrastructure</h3><p>Email list on Kit, content pipeline, <span class="fig">[XXX]</span> early subscribers.</p><span class="ph" style="margin-top:10px">Illustrative</span></div></div>
+          </div>
+        </div>
+        <figure class="browser" data-frames>
+          <div class="browser-bar mono" aria-hidden="true"><b></b><b></b><b></b><span>forceofnature.org.in</span></div>
+          <div class="frame"><img src="assets/site-screenshot.jpg" alt="The Force of Nature brand site: the drip heart beside the headline Wear it like you mean it" width="1440" height="1026" loading="lazy" decoding="async"></div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 ROADMAP -->
+  <section class="sec sec--plate" id="roadmap" data-slide="13" data-label="Roadmap">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow mono" data-reveal><span class="num">13</span> Roadmap</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>From pre-launch</span></span><span class="ln"><span><em>to</em> scale</span></span></h2>
+      </div>
+      <ol class="road" id="road">
+        <li class="road-line" aria-hidden="true"><i></i></li>
+        <li class="stage"><span class="node is-now">Now</span><span class="when mono">Q[X] 2026</span><h3>Foundation</h3><ul class="bullets"><li>Brand, site and store built</li><li>Samples and supplier selection</li><li>Partner conversations opened</li></ul></li>
+        <li class="stage"><span class="node">02</span><span class="when mono">Q[X] 2026</span><h3>Pre-launch</h3><ul class="bullets"><li>Funding close</li><li>Founding-member pre-order</li><li>Partner MoUs signed</li><li>Creator seeding</li></ul></li>
+        <li class="stage"><span class="node">03</span><span class="when mono">Q[X] 2026</span><h3>Launch</h3><ul class="bullets"><li>First drop: Originals and Classic</li><li>Launch event in [City]</li><li>First impact report published</li></ul></li>
+        <li class="stage"><span class="node">04</span><span class="when mono">2027</span><h3>Scale</h3><ul class="bullets"><li>Monthly drops across five chapters</li><li>Wholesale and partner capsules</li><li>Second-region conservation partner</li><li>First hires</li></ul></li>
+      </ol>
+      <div class="meta-row" data-reveal><span class="ph">Quarters are placeholders pending funding close</span></div>
+    </div>
+  </section>
+
+  <!-- 14 PARTNERSHIPS -->
+  <section class="sec" id="partnerships" data-slide="14" data-label="Partnerships">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow mono" data-reveal><span class="num">14</span> Partnerships</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>What we're asking for,</span></span><span class="ln"><span><em>and</em> what partners get</span></span></h2>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card ask-col">
+          <div class="top"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-leaf"/></svg></span><div><h3>Conservation partners</h3><span class="mono">[Partner A] · [Partner B]</span></div></div>
+          <span class="lbl mono">We're looking for</span>
+          <ul class="bullets"><li>Verified reef, forest and coastline projects</li><li>Simple outcome reporting</li><li>Willingness to be visible to our community</li></ul>
+          <span class="lbl mono">What you get</span>
+          <ul class="bullets"><li>Recurring, flexible funding that grows with sales</li><li>Storytelling to a young, engaged audience</li><li>A named place in every impact report</li></ul>
+        </div>
+        <div class="card ask-col">
+          <div class="top"><span class="ic" style="margin:0"><svg aria-hidden="true"><use href="#i-store"/></svg></span><div><h3>Retail &amp; brand partners</h3><span class="mono">[Stockist A] · [Brand B]</span></div></div>
+          <span class="lbl mono">We're looking for</span>
+          <ul class="bullets"><li>Three to five stockists aligned on premium and purpose</li><li>Partner capsules and co-branded drops</li><li>Pop-up spaces in key cities</li></ul>
+          <span class="lbl mono">What you get</span>
+          <ul class="bullets"><li>A story that sells itself on the floor</li><li>Limited exclusives for your customers</li><li>Shared impact credit</li></ul>
+        </div>
+        <div class="card ask-col">
+          <div class="top"><span class="ic is-red" style="margin:0"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Creators &amp; community</h3><span class="mono">[Ambassador A] · [Ambassador B]</span></div></div>
+          <span class="lbl mono">We're looking for</span>
+          <ul class="bullets"><li>People already doing the work: divers, surfers, foresters, athletes</li><li>Long-term ambassadors, not one-off posts</li></ul>
+          <span class="lbl mono">What you get</span>
+          <ul class="bullets"><li>Early product and first access</li><li>A platform and a share of the voice</li><li>A seat at the rituals: dives, plantings, clean-ups</li></ul>
+        </div>
+      </div>
+      <div class="meta-row" data-reveal><span class="ph">Partner names are placeholders</span></div>
+    </div>
+  </section>
+
+  <!-- 15 TEAM -->
+  <section class="sec sec--plate" id="team" data-slide="15" data-label="Team">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow mono" data-reveal><span class="num">15</span> Team</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>Who's</span></span><span class="ln"><span><em>building</em> it</span></span></h2>
+      </div>
+      <div class="split">
+        <div class="card founder" data-reveal>
+          <div class="top"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><p class="nm">[Founder Name]</p><span class="mono">Founder</span></div></div>
+          <p>Grew up in Mauritius before the boom. Studied finance in the Netherlands, reset in the military, then worked in fashion at Mr Marvis, a sustainable B Corp start-up, while living in Amsterdam.</p>
+          <p>Building Force of Nature to combine all of it, and to pay forward a privileged path rather than keep it.</p>
+          <div class="tags"><span class="tag">Mauritius</span><span class="tag">Finance · NL</span><span class="tag">Military</span><span class="tag">Mr Marvis · B Corp</span></div>
+        </div>
+        <div class="stack" data-stagger>
+          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><h3>[Name] · Creative Director</h3><p>Brand, product design, drop concepts.</p><span class="mono">Open role</span></div></div>
+          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><h3>[Name] · Operations &amp; Supply Chain</h3><p>Sourcing, production, fulfilment.</p><span class="mono">Open role</span></div></div>
+          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><h3>[Name] · Conservation Advisor</h3><p>Partner vetting and impact measurement.</p><span class="mono">Advisor · to be confirmed</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 THE ASK -->
+  <section class="sec sec--red" id="ask" data-slide="16" data-label="The ask">
+    <div class="wrap split split--wide-left" style="align-items:center">
+      <div>
+        <p class="eyebrow mono" data-reveal><span class="num">16</span> The ask</p>
+        <h2 class="display" data-lines style="font-size:clamp(1.6rem,3vw,2.8rem);margin-bottom:18px"><span class="ln"><span>What we're raising</span></span></h2>
+        <p class="display raise fig" data-fig>$[XXX]K</p>
+        <p class="lead" data-reveal style="max-width:28ch">Pre-seed. <span class="fig">[XX]</span> months of runway to two drops and the first published impact report.</p>
+        <ul class="funds" data-stagger>
+          <li><span class="pc">40%</span><i class="sw" style="background:#F4F1EC"></i><span class="t">Product and first inventory</span></li>
+          <li><span class="pc">30%</span><i class="sw" style="background:#0A0908"></i><span class="t">Brand, content and launch</span></li>
+          <li><span class="pc">20%</span><i class="sw" style="background:#6A1410"></i><span class="t">Team and operations</span></li>
+          <li><span class="pc">10%</span><i class="sw" style="background:#E7A196"></i><span class="t">Mission infrastructure and reserve</span></li>
+        </ul>
+        <div class="meta-row" data-reveal><span class="ph">Illustrative · placeholder figures</span></div>
+      </div>
+      <div class="donut-wrap" data-reveal>
+        <div class="donut" id="donut" role="img" aria-label="Doughnut chart, illustrative use of funds: 40 percent product and inventory, 30 percent brand and launch, 20 percent team and operations, 10 percent mission infrastructure">
+          <div class="mid"><span class="display v">Use of funds</span><span class="mono">Illustrative</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 CLOSING -->
+  <section class="sec close" id="close" data-slide="17" data-label="Let's build it">
+    <div class="wrap">
+      <div class="close-mark" data-reveal><img src="assets/logo-480.png" alt="" width="348" height="480" loading="lazy" decoding="async"></div>
+      <h2 class="display h-close" data-lines><span class="ln"><span>Where mission</span></span><span class="ln"><span><em>and</em> lifestyle collide</span></span></h2>
+      <p class="hero-tag" data-reveal>Let's build it together.</p>
+      <div class="contact mono" data-reveal>
+        <span>[Founder Name]</span><span class="sep">·</span><span>[email@forceofnature.org.in]</span><span class="sep">·</span>
+        <a class="link" href="https://forceofnature.org.in/" target="_blank" rel="noopener">forceofnature.org.in<svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-ne"/></svg></a>
+      </div>
+      <p class="close-foot mono">Force of Nature Operations · 2026</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const $ = (s, c = document) => c.querySelector(s);
+  const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const html = document.documentElement;
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HAS_GSAP = !!(window.gsap && window.ScrollTrigger);
+  const MOTION = HAS_GSAP && !RM; /* no GSAP or reduced motion: the page is simply its final state, fully readable */
+  const PHONE = matchMedia('(max-width: 900px)').matches;
+
+  /* ---------- sections, index, counter ---------- */
+  const secs = $$('section[data-slide]');
+  const count = $('#count'), nowLabel = $('#now-label'), prevBtn = $('#prev'), nextBtn = $('#next'), bar = $('#progress');
+  const indexEl = $('#index'), indexList = $('#index-list');
+  secs.forEach((s, i) => {
+    const a = document.createElement('a');
+    a.href = '#' + s.id; a.dataset.go = i;
+    a.innerHTML = `<span class="n mono">${s.dataset.slide}</span><span class="t">${s.dataset.label}</span>`;
+    indexList.appendChild(a);
+  });
+  const indexLinks = $$('a', indexList);
+
+  /* ---------- smooth scroll + section stepping ---------- */
+  let lenis = null;
+  if (MOTION && window.Lenis) {
+    gsap.registerPlugin(ScrollTrigger);
+    lenis = new Lenis({ lerp: 0.1 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  } else if (HAS_GSAP) { gsap.registerPlugin(ScrollTrigger); }
+
+  let active = 0;
+  const topOf = (el) => el.getBoundingClientRect().top + window.scrollY;
+  const go = (i, immediate) => {
+    i = Math.max(0, Math.min(secs.length - 1, i));
+    const y = i === 0 ? 0 : topOf(secs[i]);
+    if (lenis) lenis.scrollTo(y, immediate ? { immediate: true, force: true } : { duration: 1.15, easing: (t) => 1 - Math.pow(1 - t, 4), force: true });
+    else window.scrollTo({ top: y, behavior: immediate || RM ? 'auto' : 'smooth' });
+  };
+  const setActive = (i) => {
+    if (i === active && count.textContent === secs[i].dataset.slide) return;
+    active = i;
+    count.textContent = secs[i].dataset.slide;
+    prevBtn.disabled = i === 0; nextBtn.disabled = i === secs.length - 1;
+    indexLinks.forEach((a, k) => a.classList.toggle('is-active', k === i));
+    if (MOTION && window.ScrambleTextPlugin) gsap.to(nowLabel, { duration: 0.6, scrambleText: { text: secs[i].dataset.label, chars: 'upperCase', speed: 0.6 } });
+    else nowLabel.textContent = secs[i].dataset.label;
+    history.replaceState(null, '', i === 0 ? location.pathname + location.search : '#' + secs[i].id);
+  };
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const mid = window.scrollY + innerHeight * 0.45;
+      let i = 0;
+      secs.forEach((s, k) => { if (topOf(s) <= mid) i = k; });
+      setActive(i);
+      const max = html.scrollHeight - innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+    });
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+
+  prevBtn.addEventListener('click', () => go(active - 1));
+  nextBtn.addEventListener('click', () => go(active + 1));
+  const openIndex = (open) => {
+    indexEl.classList.toggle('is-open', open);
+    indexEl.setAttribute('aria-hidden', String(!open));
+    if (lenis) open ? lenis.stop() : lenis.start();
+    if (open) {
+      $('#index-close').focus();
+      if (MOTION) gsap.fromTo(indexLinks, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: 'expo.out', stagger: 0.025, delay: 0.1 });
+    } else $('#index-open').focus();
+  };
+  $('#index-open').addEventListener('click', () => openIndex(true));
+  $('#index-close').addEventListener('click', () => openIndex(false));
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-go]');
+    if (!a) return;
+    e.preventDefault();
+    const wasOpen = indexEl.classList.contains('is-open');
+    if (wasOpen) openIndex(false);
+    go(+a.dataset.go, wasOpen);
+  });
+  addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
+    if (typing) return;
+    const open = indexEl.classList.contains('is-open');
+    if (e.key === 'Escape' && open) return openIndex(false);
+    if ((e.key === 'i' || e.key === 'I') && !open) return openIndex(true);
+    if (open) return;
+    /* left/right and page keys step a section, the way a clicker would; up/down and space stay ordinary scrolling */
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(active + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(active - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(secs.length - 1); }
+  });
+
+  /* ---------- line chart: built from the deck's own data ---------- */
+  (() => {
+    const svg = $('#linechart'); if (!svg) return;
+    const data = [['2024', 8], ['2025', 9.5], ['2026', 11.2], ['2027', 13.2], ['2028', 15.5]];
+    const W = 600, H = 250, L = 30, R = 30, T = 40, B = 44, lo = 6, hi = 16.5;
+    const x = (i) => L + (i * (W - L - R)) / (data.length - 1);
+    const y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+    const NS = 'http://www.w3.org/2000/svg';
+    const el = (n, a, txt) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
+    const grid = el('g', { class: 'grid' });
+    for (let g = 0; g <= 4; g++) { const gy = T + (g * (H - T - B)) / 4; grid.appendChild(el('line', { x1: L, x2: W - R, y1: gy, y2: gy })); }
+    svg.appendChild(grid);
+    svg.appendChild(el('path', { class: 'path', id: 'line-path', d: data.map((d, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(d[1]).toFixed(1)}`).join(' ') }));
+    data.forEach((d, i) => {
+      const g = el('g', { class: 'pt' });
+      g.appendChild(el('circle', { class: 'dot', cx: x(i), cy: y(d[1]), r: 6 }));
+      g.appendChild(el('text', { class: 'v', x: x(i), y: y(d[1]) - 16, 'text-anchor': 'middle' }, d[1].toFixed(1)));
+      svg.appendChild(g);
+      svg.appendChild(el('text', { x: x(i), y: H - 14, 'text-anchor': 'middle' }, d[0]));
+    });
+  })();
+
+  /* deep link: land on the hashed section before anything animates */
+  const startAt = secs.findIndex((s) => '#' + s.id === location.hash);
+  window.__fon = { go, scrollTo: (y) => (lenis ? lenis.scrollTo(y, { immediate: true, force: true }) : window.scrollTo(0, y)), count: secs.length };
+
+  if (!MOTION) { if (startAt > 0) go(startAt, true); onScroll(); return; }
+
+  /* =====================================================================
+     Motion. Everything below only runs with GSAP present and motion allowed.
+     ===================================================================== */
+  gsap.registerPlugin(ScrambleTextPlugin);
+  html.classList.add('js-motion');
+  const once = (trigger, start = 'top 86%') => ({ trigger, start, once: true });
+
+  /* generic fade-ups: batched so neighbours that enter together stagger naturally */
+  gsap.set('[data-reveal]', { autoAlpha: 0, y: 36 });
+  ScrollTrigger.batch('[data-reveal]', { start: 'top 97%', once: true, onEnter: (b) => gsap.to(b, { autoAlpha: 1, y: 0, duration: 1.15, ease: 'expo.out', stagger: 0.08 }) });
+
+  /* groups of cards / rows: children rise one after another */
+  $$('[data-stagger]').forEach((g) => {
+    const kids = [...g.children];
+    gsap.set(kids, { autoAlpha: 0, y: 44 });
+    gsap.to(kids, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.09, clearProps: 'transform,opacity,visibility', scrollTrigger: once(g, 'top 88%') });
+  });
+
+  /* photographs: the frame wipes open from the bottom while the image settles back */
+  $$('[data-frames]').forEach((g) => {
+    const frames = $$('.frame', g);
+    gsap.set(frames, { clipPath: 'inset(100% 0% 0% 0%)' });
+    gsap.set($$('.frame img', g), { scale: 1.28 });
+    gsap.set($$('figcaption', g), { autoAlpha: 0, y: 16 });
+    const tl = gsap.timeline({ scrollTrigger: once(g, 'top 82%') });
+    tl.to(frames, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'expo.inOut', stagger: 0.1 }, 0)
+      .to($$('.frame img', g), { scale: 1, duration: 1.9, ease: 'expo.out', stagger: 0.1, clearProps: 'transform' }, 0.15)
+      .to($$('figcaption', g), { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.1 }, 0.7);
+  });
+
+  /* bracketed figures decode into place: a placeholder that visibly resolves to a placeholder */
+  $$('[data-fig]').forEach((el) => {
+    const text = el.textContent;
+    gsap.set(el, { autoAlpha: 0 });
+    gsap.timeline({ scrollTrigger: once(el, 'top 88%') })
+      .to(el, { autoAlpha: 1, duration: 0.3 }, 0)
+      .to(el, { duration: 1.3, scrambleText: { text, chars: 'X0123456789', speed: 0.45, revealDelay: 0.25 } }, 0);
+  });
+
+  /* headings: each hand-set line rises out of its own mask */
+  $$('[data-lines]').forEach((h) => {
+    const lines = $$('.ln > span', h);
+    gsap.set(lines, { yPercent: 112 });
+    gsap.to(lines, { yPercent: 0, duration: 1.25, ease: 'expo.out', stagger: 0.1, scrollTrigger: once(h, 'top 90%') });
+  });
+  document.fonts.ready.then(() => ScrollTrigger.refresh());
+
+  /* 01 cover: plays on load, no scroll involved */
+  (() => {
+    const lines = $$('.h-hero .ln > span'), bits = $$('[data-hero]'), mark = $('#hero-mark');
+    gsap.set(lines, { yPercent: 108 }); gsap.set(bits, { autoAlpha: 0, y: 26 });
+    gsap.set(mark, { autoAlpha: 0, scale: 0.86, rotation: -7 });
+    gsap.set(['#chrome-top', '#chrome-bottom'], { autoAlpha: 0 });
+    const tl = gsap.timeline({ delay: 0.15 });
+    tl.to(lines, { yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: 0.12 }, 0)
+      .to(mark, { autoAlpha: 1, scale: 1, rotation: 0, duration: 1.9, ease: 'expo.out' }, 0.2)
+      .to(bits, { autoAlpha: 1, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1 }, 0.55)
+      .to(['#chrome-top', '#chrome-bottom'], { autoAlpha: 1, duration: 1 }, 0.9);
+    const s = $('[data-scramble]');
+    if (s) tl.to(s, { duration: 1.4, scrambleText: { text: s.textContent, chars: 'upperCase', speed: 0.4 } }, 0.55);
+    /* the heart drifts a touch slower than the page as the cover scrolls away */
+    gsap.to(mark.firstElementChild, { yPercent: 14, ease: 'none', scrollTrigger: { trigger: '#cover', start: 'top top', end: 'bottom top', scrub: true } });
+  })();
+
+  /* 02 the founder's line: drawn by the scroll itself, each chapter lighting as the line reaches it */
+  (() => {
+    const j = $('#journey'); if (!j) return;
+    const fill = $('.journey-line i', j), steps = $$('.step', j);
+    gsap.to(fill, {
+      [PHONE ? 'scaleY' : 'scaleX']: 1, ease: 'none',
+      scrollTrigger: {
+        trigger: j, start: PHONE ? 'top 70%' : 'top 92%', end: PHONE ? 'bottom 65%' : 'top 64%', scrub: 0.5,
+        onUpdate: (self) => steps.forEach((s, i) => s.classList.toggle('is-on', self.progress >= i / (steps.length - 1) - 0.015)),
+      },
+    });
+  })();
+
+  /* 04 the ten counts up */
+  (() => {
+    const n = $('#ten-num'); if (!n) return;
+    const v = { n: 0 }; n.textContent = '0';
+    gsap.to(v, { n: 10, duration: 1.8, ease: 'expo.out', snap: { n: 1 }, onUpdate: () => { n.textContent = v.n; }, scrollTrigger: once(n, 'top 85%') });
+  })();
+
+  /* 08 bars grow from the baseline, values follow */
+  (() => {
+    const bars = $('#bars'); if (!bars) return;
+    gsap.set($$('i', bars), { scaleY: 0 }); gsap.set($$('.val', bars), { autoAlpha: 0, y: 10 });
+    gsap.timeline({ scrollTrigger: once(bars, 'top 80%') })
+      .to($$('i', bars), { scaleY: 1, duration: 1.5, ease: 'expo.out', stagger: 0.16 }, 0)
+      .to($$('.val', bars), { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.16 }, 0.55);
+  })();
+
+  /* 09 the curve draws itself, points land as it passes them */
+  (() => {
+    const p = $('#line-path'); if (!p) return;
+    const len = p.getTotalLength(), pts = $$('#linechart .pt');
+    gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
+    gsap.set(pts, { autoAlpha: 0, scale: 0.4, transformOrigin: '50% 50%' });
+    gsap.timeline({ scrollTrigger: once('#linechart', 'top 80%') })
+      .to(p, { strokeDashoffset: 0, duration: 1.9, ease: 'power2.inOut' }, 0)
+      .to(pts, { autoAlpha: 1, scale: 1, duration: 0.7, ease: 'back.out(2)', stagger: 0.36 }, 0.15);
+  })();
+
+  /* 13 the roadmap line runs left to right, then the stages arrive in order */
+  (() => {
+    const r = $('#road'); if (!r) return;
+    const fill = $('.road-line i', r), stages = $$('.stage', r);
+    gsap.set(stages, { autoAlpha: 0, y: 40 });
+    gsap.timeline({ scrollTrigger: once(r, 'top 80%') })
+      .to(fill, { [PHONE ? 'scaleY' : 'scaleX']: 1, duration: 1.8, ease: 'expo.inOut' }, 0)
+      .to(stages, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.18 }, 0.2);
+  })();
+
+  /* 16 the doughnut sweeps open clockwise */
+  (() => {
+    const d = $('#donut'); if (!d) return;
+    const segs = [['#F4F1EC', 40], ['#0A0908', 30], ['#6A1410', 20], ['#E7A196', 10]];
+    const paint = (p) => {
+      let acc = 0; const stops = [];
+      segs.forEach(([c, v]) => { const a = acc * p, b = (acc + v) * p; stops.push(`${c} ${a}% ${b}%`); acc += v; });
+      stops.push(`rgba(10,9,8,.16) ${100 * p}% 100%`);
+      d.style.background = `conic-gradient(${stops.join(',')})`;
+    };
+    const v = { p: 0 }; paint(0);
+    gsap.to(v, { p: 1, duration: 2, ease: 'expo.inOut', onUpdate: () => paint(v.p), scrollTrigger: once(d, 'top 78%') });
+  })();
+
+  if (startAt > 0) go(startAt, true);
+  onScroll();
+  addEventListener('load', () => { ScrollTrigger.refresh(); onScroll(); });
+})();
+</script>
+</body>
+</html>
