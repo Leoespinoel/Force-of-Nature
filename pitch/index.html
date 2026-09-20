@@ -241,7 +241,9 @@ html.pre .takeover{opacity:1;visibility:visible}
 /* ---------- 09 market ---------- */
 .stat .v{font-size:clamp(2.4rem,4.4vw,4.2rem);line-height:.86;margin-bottom:14px;color:var(--c-ink)}
 .stat p{color:var(--c-soft);font-size:15px;max-width:28ch}
-.statrows{display:grid;gap:0}
+/* top-aligned so the first grey rule runs level with the eyebrow's own dash: measured, the label's centre line sits 17px below the column top at every width */
+.sec-head--top{align-items:start}
+.statrows{display:grid;gap:0;margin-top:17px}
 .statrow{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:20px;align-items:center;padding:12px 0;border-top:1px solid var(--c-line)}
 .statrow:last-of-type{border-bottom:1px solid var(--c-line)}
 .statrow .v{font-size:clamp(1.9rem,3.2vw,3rem);line-height:.9;color:var(--c-ink)}
@@ -264,13 +266,24 @@ html.pre .takeover{opacity:1;visibility:visible}
 .unit td.is-red{color:var(--red-lift)}
 .unit td.is-green{color:#5FA872}
 
-/* ---------- 11 go-to-market ---------- */
+/* ---------- 11 membership ---------- */
+.member-foot{display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1.38fr);gap:clamp(28px,4vw,72px);align-items:start;margin-top:clamp(22px,2.6vw,36px)}
+.member-price .mono{color:var(--c-mute);margin-bottom:12px}
+.member-price .v{font-size:clamp(3rem,6.2vw,5.8rem);line-height:.84;color:var(--c-ink);display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.member-price .per{font-family:var(--font-serif);font-style:italic;font-weight:400;text-transform:lowercase;letter-spacing:-.01em;font-size:.34em}
+.member-price .ph{margin-top:14px}
+.member-why{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:clamp(18px,2.4vw,36px)}
+.member-why .row{grid-template-columns:minmax(0,1fr);gap:12px;border-bottom:0!important;padding-top:16px}
+.member-why .ic{width:38px;height:38px}
+.member-why .ic svg{width:17px;height:17px}
+
+/* ---------- 12 go-to-market ---------- */
 .phase .n{font-size:clamp(2.6rem,4.6vw,4.2rem);line-height:.8;color:var(--c-mute);opacity:.55;margin-bottom:18px}
 .phase h3{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 60;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.6rem,2.6vw,2.4rem);line-height:.95;margin:0 0 18px}
 .channels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.4vw,36px)}
 .channels .row h3{margin-bottom:4px}
 
-/* ---------- 12 traction ---------- */
+/* ---------- 13 traction ---------- */
 .live-links{margin-top:0;padding-bottom:10px}
 .checks{display:grid;gap:0}
 .checks .row{padding:13px 0;border-top:1px solid var(--c-line)}
@@ -283,7 +296,7 @@ html.pre .takeover{opacity:1;visibility:visible}
 .browser .frame{aspect-ratio:1440/1026}
 .browser .frame img{object-position:top}
 
-/* ---------- 13 roadmap ---------- */
+/* ---------- 14 roadmap ---------- */
 .road{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.4vw,40px)}
 .road-line{position:absolute;left:24px;right:calc(25% - 24px - clamp(16px,2.4vw,40px) * .75);top:24px;height:1px;background:var(--c-line)}
 .road-line i{position:absolute;inset:0;background:var(--red-lift);transform:scaleX(0);transform-origin:left}
@@ -292,14 +305,14 @@ html.pre .takeover{opacity:1;visibility:visible}
 .stage .when{color:var(--c-accent);margin-bottom:8px;display:block}
 .stage h3{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 60;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.5rem,2.4vw,2.2rem);line-height:.95;margin:0 0 16px}
 
-/* ---------- 14 partnerships ---------- */
+/* ---------- 15 partnerships ---------- */
 .ask-col .top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;margin-bottom:26px}
 .ask-col .top h3{margin:0 0 4px}
 .ask-col .top .mono{color:var(--c-mute)}
 .ask-col .lbl{color:var(--c-mute);margin:0 0 12px;display:block}
 .ask-col .bullets + .lbl{margin-top:26px}
 
-/* ---------- 15 team ---------- */
+/* ---------- 16 team ---------- */
 .founder{padding:clamp(24px,3vw,40px)}
 .founder .top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center;margin-bottom:28px}
 .founder .ic{width:84px;height:84px;margin:0}
@@ -314,7 +327,7 @@ html.pre .takeover{opacity:1;visibility:visible}
 .role h3{margin:0 0 4px}
 .role .mono{color:var(--c-accent);margin-top:10px;display:block;font-size:11px}
 
-/* ---------- 16 the ask ---------- */
+/* ---------- 17 the ask ---------- */
 .raise{font-size:clamp(4.6rem,11.5vw,11.5rem);line-height:.8;letter-spacing:-.05em;margin:0 0 clamp(16px,2vw,26px)}
 .funds{display:grid;gap:0;margin-top:clamp(20px,2.6vw,34px)}
 .funds li{display:grid;grid-template-columns:clamp(64px,7vw,96px) 14px minmax(0,1fr);align-items:center;gap:14px;padding:10px 0;border-top:1px solid var(--c-line)}
@@ -329,7 +342,7 @@ html.pre .takeover{opacity:1;visibility:visible}
 .donut .mid .v{font-size:clamp(1.8rem,3.4vw,3rem);line-height:.9}
 .donut .mid .mono{color:var(--c-mute)}
 
-/* ---------- 17 closing ---------- */
+/* ---------- 18 closing ---------- */
 .close{text-align:center;align-items:center}
 .close .wrap{display:grid;justify-items:center}
 .close-mark{width:clamp(130px,16vw,220px);margin-bottom:clamp(24px,3vw,44px)}
@@ -350,6 +363,7 @@ html.pre .takeover{opacity:1;visibility:visible}
 @media (max-width:900px){
   .sec{min-height:0;padding:calc(var(--gap) + 56px) var(--gutter) calc(var(--gap) + 48px)}
   .sec-head--aside{grid-template-columns:minmax(0,1fr)}
+  .statrows{margin-top:0}
   .ph{white-space:normal;line-height:1.35}
   .statline{grid-template-columns:minmax(0,1fr)}
   .quote{border-left:0;padding-left:0;border-top:1px solid var(--c-line);padding-top:24px}
@@ -371,6 +385,8 @@ html.pre .takeover{opacity:1;visibility:visible}
   .ten-card .frame{aspect-ratio:16/10}
   .pieces{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 10px}
   .facts{grid-template-columns:minmax(0,1fr)}
+  .member-foot,.member-why{grid-template-columns:minmax(0,1fr)}
+  .member-why .row{grid-template-columns:auto minmax(0,1fr);gap:18px}
   .unit-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   .unit{min-width:640px}
   .index-list{grid-template-columns:minmax(0,1fr)}
@@ -424,6 +440,8 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 21c-3.500 0-6-2.500-6-6 0-3 2-4.500 3-7 .5 2 1.500 3 2.500 3.500C11 8 12 5 14.500 3c0 3 3.500 5.500 3.500 11 0 4-2.500 7-6 7z"/></symbol>
     <symbol id="i-seed" viewBox="0 0 24 24"><path d="M12 21v-9M12 12c0-3-2-5-6-5 0 3 2 5 6 5zM12 10c0-3 2-5 6-5 0 3-2 5-6 5z"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12.500V4h8.500l9.500 9.500-8.500 8.500z"/><circle cx="7.800" cy="8.800" r="1.400"/></symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.500-5.800L20 8.500M20 4v4.500h-4.500M20 12a8 8 0 0 1-13.500 5.800L4 15.500M4 20v-4.500h4.500"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
     <symbol id="i-arrow-l" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
     <symbol id="i-ne" viewBox="0 0 16 16"><path d="M3 13 13 3M5 3h8v8"/></symbol>
@@ -441,7 +459,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
   </a>
   <span class="mid mono">Investor &amp; partner pitch</span>
   <div class="right">
-    <span class="counter mono" aria-live="polite"><b id="count">01</b> / 17</span>
+    <span class="counter mono" aria-live="polite"><b id="count">01</b> / <span id="count-total">18</span></span>
     <button class="chip-btn mono" id="index-open" aria-haspopup="dialog" aria-controls="index"><svg aria-hidden="true"><use href="#i-grid"/></svg>Index</button>
   </div>
 </header>
@@ -456,7 +474,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
 
 <div class="index" id="index" role="dialog" aria-modal="true" aria-label="All sections" aria-hidden="true">
   <div class="index-head">
-    <span class="mono">Index · 17 sections</span>
+    <span class="mono">Index · <span id="index-total">18</span> sections</span>
     <button class="chip-btn mono" id="index-close"><svg aria-hidden="true"><use href="#i-x"/></svg>Close</button>
   </div>
   <nav class="index-list" id="index-list" aria-label="Sections"></nav>
@@ -657,7 +675,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
   <!-- 09 MARKET -->
   <section class="sec sec--bone" id="market" data-slide="09" data-label="Market opportunity">
     <div class="wrap">
-      <div class="sec-head sec-head--aside">
+      <div class="sec-head sec-head--aside sec-head--top">
         <div>
           <p class="eyebrow mono" data-reveal><span class="num">09</span> Market opportunity</p>
           <h2 class="display h-section" data-lines><span class="ln"><span>Conscious consumption</span></span><span class="ln"><span>is <em>the</em> default now</span></span></h2>
@@ -694,7 +712,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
           <p class="eyebrow mono" data-reveal><span class="num">10</span> Business model</p>
           <h2 class="display h-section" data-lines><span class="ln"><span>Three ways <em>the</em> line</span></span><span class="ln"><span>makes money</span></span></h2>
         </div>
-        <p class="closer" data-reveal>The 10% is a cost line planned in from day one, not a donation deducted from whatever is left.</p>
+        <p class="closer" data-reveal>The 10% is a cost line planned in from day one, not a donation deducted from whatever is left. A membership adds recurring revenue on top.</p>
       </div>
       <div class="grid-3" data-stagger>
         <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cart"/></svg></span><h3>Direct e-commerce</h3><p>Core channel. Full price, full margin, first-party data. The store is already built.</p><p class="mix mono">Target mix: <span class="fig">[XX]%</span></p></div>
@@ -711,11 +729,42 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     </div>
   </section>
 
-  <!-- 11 GO-TO-MARKET -->
-  <section class="sec sec--plate" id="gtm" data-slide="11" data-label="Go-to-market">
+  <!-- 11 MEMBERSHIP -->
+  <section class="sec sec--bone" id="membership" data-slide="11" data-label="Membership">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">11</span> Membership</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Subscribe</span></span><span class="ln"><span><em>to the</em> inside line</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>A paid tier above the free newsletter. Recurring revenue for the brand, real advantages for the people closest to it.</p>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-tag"/></svg></span><h3>Member pricing</h3><p>Discounts on every drop and on the core line, all year. The more you wear it, the less it costs you to keep wearing it.</p><p class="mix mono">Member discount: <span class="fig">[XX]%</span></p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span><h3>The fast lane</h3><p>Members go to the front of every waitlist and get first access to limited runs, before a drop opens to anyone else.</p><p class="mix mono">Head start: <span class="fig">[XX]</span> hours</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3>The community</h3><p>A private space for the people who wear it like they mean it, and a seat at the rituals: dives, plantings, clean-ups, member-only events.</p><p class="mix mono">Online and in person</p></div>
+      </div>
+      <div class="member-foot">
+        <div class="member-price" data-reveal>
+          <p class="mono">Membership</p>
+          <p class="display v"><span class="fig" data-fig>€[XX]</span><span class="per">/ month</span></p>
+          <p class="note">or <span class="fig">€[XXX]</span> a year. Cancel any time.</p>
+          <span class="ph">Illustrative · price to be set</span>
+        </div>
+        <div class="rows member-why" data-stagger>
+          <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><div><h3>Recurring revenue</h3><p>Predictable monthly income between drops, target <span class="fig">[XX]%</span> of revenue by year two.</p></div></div>
+          <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><div><h3>Demand before production</h3><p>The member waitlist tells us how many to make, so small runs stay small on purpose, not by guesswork.</p></div></div>
+          <div class="row"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><div><h3>The 10% applies here too</h3><p>A tenth of every membership fee goes to the same reef, forest and coastline work as every sale.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 GO-TO-MARKET -->
+  <section class="sec sec--plate" id="gtm" data-slide="12" data-label="Go-to-market">
     <div class="wrap">
       <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">11</span> Go-to-market</p>
+        <p class="eyebrow mono" data-reveal><span class="num">12</span> Go-to-market</p>
         <h2 class="display h-section" data-lines><span class="ln"><span>Build the tribe</span></span><span class="ln"><span><em>before the</em> first drop</span></span></h2>
       </div>
       <div class="grid-3" data-stagger>
@@ -733,12 +782,12 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     </div>
   </section>
 
-  <!-- 12 TRACTION -->
-  <section class="sec" id="traction" data-slide="12" data-label="Traction">
+  <!-- 13 TRACTION -->
+  <section class="sec" id="traction" data-slide="13" data-label="Traction">
     <div class="wrap">
       <div class="sec-head sec-head--aside">
         <div>
-          <p class="eyebrow mono" data-reveal><span class="num">12</span> Traction</p>
+          <p class="eyebrow mono" data-reveal><span class="num">13</span> Traction</p>
           <h2 class="display h-section" data-lines><span class="ln"><span>What's</span></span><span class="ln"><span><em>already</em> built</span></span></h2>
         </div>
         <div class="meta-row live-links" data-reveal>
@@ -766,11 +815,11 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     </div>
   </section>
 
-  <!-- 13 ROADMAP -->
-  <section class="sec sec--plate" id="roadmap" data-slide="13" data-label="Roadmap">
+  <!-- 14 ROADMAP -->
+  <section class="sec sec--plate" id="roadmap" data-slide="14" data-label="Roadmap">
     <div class="wrap">
       <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">13</span> Roadmap</p>
+        <p class="eyebrow mono" data-reveal><span class="num">14</span> Roadmap</p>
         <h2 class="display h-section" data-lines><span class="ln"><span>From pre-launch</span></span><span class="ln"><span><em>to</em> scale</span></span></h2>
       </div>
       <ol class="road" id="road">
@@ -784,11 +833,11 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     </div>
   </section>
 
-  <!-- 14 PARTNERSHIPS -->
-  <section class="sec" id="partnerships" data-slide="14" data-label="Partnerships">
+  <!-- 15 PARTNERSHIPS -->
+  <section class="sec" id="partnerships" data-slide="15" data-label="Partnerships">
     <div class="wrap">
       <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">14</span> Partnerships</p>
+        <p class="eyebrow mono" data-reveal><span class="num">15</span> Partnerships</p>
         <h2 class="display h-section" data-lines><span class="ln"><span>What we're asking for,</span></span><span class="ln"><span><em>and</em> what partners get</span></span></h2>
       </div>
       <div class="grid-3" data-stagger>
@@ -818,11 +867,11 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     </div>
   </section>
 
-  <!-- 15 TEAM -->
-  <section class="sec sec--plate" id="team" data-slide="15" data-label="Team">
+  <!-- 16 TEAM -->
+  <section class="sec sec--plate" id="team" data-slide="16" data-label="Team">
     <div class="wrap">
       <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">15</span> Team</p>
+        <p class="eyebrow mono" data-reveal><span class="num">16</span> Team</p>
         <h2 class="display h-section" data-lines><span class="ln"><span>Who's</span></span><span class="ln"><span><em>building</em> it</span></span></h2>
       </div>
       <div class="split">
@@ -841,11 +890,11 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     </div>
   </section>
 
-  <!-- 16 THE ASK -->
-  <section class="sec sec--red" id="ask" data-slide="16" data-label="The ask">
+  <!-- 17 THE ASK -->
+  <section class="sec sec--red" id="ask" data-slide="17" data-label="The ask">
     <div class="wrap split split--wide-left" style="align-items:center">
       <div>
-        <p class="eyebrow mono" data-reveal><span class="num">16</span> The ask</p>
+        <p class="eyebrow mono" data-reveal><span class="num">17</span> The ask</p>
         <h2 class="display" data-lines style="font-size:clamp(1.6rem,3vw,2.8rem);margin-bottom:18px"><span class="ln"><span>What we're raising</span></span></h2>
         <p class="display raise fig" data-fig>$[XXX]K</p>
         <p class="lead" data-reveal style="max-width:28ch">Pre-seed. <span class="fig">[XX]</span> months of runway to two drops and the first published impact report.</p>
@@ -865,8 +914,8 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     </div>
   </section>
 
-  <!-- 17 CLOSING -->
-  <section class="sec close" id="close" data-slide="17" data-label="Let's build it">
+  <!-- 18 CLOSING -->
+  <section class="sec close" id="close" data-slide="18" data-label="Let's build it">
     <div class="wrap">
       <div class="close-mark" data-reveal><img src="assets/logo-480.png" alt="" width="348" height="480" loading="lazy" decoding="async"></div>
       <h2 class="display h-close" data-lines><span class="ln"><span>Where mission</span></span><span class="ln"><span><em>and</em> lifestyle collide</span></span></h2>
@@ -906,6 +955,8 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     indexList.appendChild(a);
   });
   const indexLinks = $$('a', indexList);
+  $('#count-total').textContent = String(secs.length).padStart(2, '0');
+  $('#index-total').textContent = secs.length;
 
   /* ---------- smooth scroll + section stepping ---------- */
   let lenis = null;
@@ -914,7 +965,10 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     lenis = new Lenis({ lerp: 0.1 });
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
-    gsap.ticker.lagSmoothing(0);
+    /* not lagSmoothing(0): with smoothing off, a long frame (the browser decoding a whole section's images, a busy laptop on a
+       projector) is charged to every running animation at once, and a 2s takeover can elapse inside a single hitch and never be
+       seen. Any frame over 250ms is counted as 33ms instead. Lenis is driven from this same ticker, so the two stay in step. */
+    gsap.ticker.lagSmoothing(250, 33);
   } else if (HAS_GSAP) { gsap.registerPlugin(ScrollTrigger); }
 
   let active = 0;
@@ -1152,7 +1206,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
       .to(pts, { autoAlpha: 1, scale: 1, duration: 0.7, ease: 'back.out(2)', stagger: 0.36 }, LEAD + 0.15));
   })();
 
-  /* 13 the roadmap line runs left to right, then the stages arrive in order */
+  /* 14 the roadmap line runs left to right, then the stages arrive in order */
   (() => {
     const r = $('#road'); if (!r) return;
     const fill = $('.road-line i', r), stages = $$('.stage', r);
@@ -1162,7 +1216,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
       .to(stages, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.18 }, LEAD + 0.2));
   })();
 
-  /* 16 the doughnut sweeps open clockwise */
+  /* 17 the doughnut sweeps open clockwise */
   (() => {
     const d = $('#donut'); if (!d) return;
     const segs = [['#F4F1EC', 40], ['#0A0908', 30], ['#6A1410', 20], ['#E7A196', 10]];
