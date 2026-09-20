@@ -522,7 +522,7 @@ ul,ol{padding:0;list-style:none}
       <div>
         <p class="eyebrow mono" data-reveal><span class="num">04</span> The idea</p>
         <p class="display ten-num" aria-label="10 percent"><span class="n" id="ten-num" aria-hidden="true">10</span><span class="pc" aria-hidden="true">%</span></p>
-        <p class="display ten-cap" data-reveal>Of every sale, <em>not</em> profit.<br>Automatically.</p>
+        <h2 class="display ten-cap" data-lines><span class="ln"><span>Of every sale, <em>not</em> profit.</span></span><span class="ln"><span>Automatically.</span></span></h2>
         <p class="closer" data-reveal style="margin-bottom:18px">No pledges. No opt-ins. No round-ups. The impact happens the moment you wear it.</p>
         <p class="body" data-reveal>Ten percent of the price of every piece is set aside the moment it's bought and sent to conservation work on the ground.</p>
       </div>
@@ -1007,15 +1007,19 @@ ul,ol{padding:0;list-style:none}
   html.classList.add('js-motion');
   const once = (trigger, start = 'top 86%') => ({ trigger, start, once: true });
 
+  /* the headline decodes first and leads: everything else in a section waits LEAD seconds behind it */
+  const LEAD = 0.3;
+
   /* generic fade-ups: batched so neighbours that enter together stagger naturally */
   gsap.set('[data-reveal]', { autoAlpha: 0, y: 36 });
-  ScrollTrigger.batch('[data-reveal]', { start: 'top 97%', once: true, onEnter: (b) => gsap.to(b, { autoAlpha: 1, y: 0, duration: 1.15, ease: 'expo.out', stagger: 0.08 }) });
+  ScrollTrigger.batch('[data-reveal]', { start: 'top 97%', once: true, onEnter: (b) => gsap.to(b, { autoAlpha: 1, y: 0, duration: 1.15, ease: 'expo.out', stagger: 0.08, delay: LEAD }) });
 
   /* groups of cards / rows: children rise one after another */
   $$('[data-stagger]').forEach((g) => {
     const kids = [...g.children];
     gsap.set(kids, { autoAlpha: 0, y: 44 });
-    gsap.to(kids, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.09, clearProps: 'transform,opacity,visibility', scrollTrigger: once(g, 'top 88%') });
+    gsap.timeline({ scrollTrigger: once(g, 'top 88%') })
+      .to(kids, { autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.09, clearProps: 'transform,opacity,visibility' }, LEAD);
   });
 
   /* photographs: the frame wipes open from the bottom while the image settles back */
@@ -1039,27 +1043,69 @@ ul,ol{padding:0;list-style:none}
       .to(el, { duration: 1.3, scrambleText: { text, chars: 'X0123456789', speed: 0.45, revealDelay: 0.25 } }, 0);
   });
 
-  /* headings: each hand-set line rises out of its own mask */
-  $$('[data-lines]').forEach((h) => {
-    const lines = $$('.ln > span', h);
-    gsap.set(lines, { yPercent: 112 });
-    gsap.to(lines, { yPercent: 0, duration: 1.25, ease: 'expo.out', stagger: 0.1, scrollTrigger: once(h, 'top 90%') });
-  });
-  document.fonts.ready.then(() => ScrollTrigger.refresh());
+  /* headings: the Bon Voyage "NOT JUST A TEE" decode, in place. Each headline fades in as random letters in the section's
+     accent, resolves left to right into the real words, then settles to ink. It is split per word (not per line) so spaces,
+     and with them the word shapes, hold still while the letters churn, and so the small italic <em> words survive: they
+     scramble in lowercase inside their own tag. Returns a timeline; pass a scrollTrigger, or nest it (the cover does). */
+  const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', abc = 'abcdefghijklmnopqrstuvwxyz';
+  const rnd = (text, set) => [...text].map((c) => (/[A-Za-z0-9]/.test(c) ? set[Math.floor(Math.random() * set.length)] : c)).join('');
+  const decode = (h, scrollTrigger) => {
+    if (!h.hasAttribute('aria-label')) h.setAttribute('aria-label', $$('.ln > span', h).map((l) => l.textContent.trim()).join(' '));
+    const ink = getComputedStyle(h).color;
+    h.style.color = 'var(--c-accent)';
+    const accent = getComputedStyle(h).color;
+    const lines = $$('.ln > span', h), words = [];
+    lines.forEach((line, li) => {
+      /* a line that fits on one row is pinned there while it scrambles, so wider random glyphs cannot wrap it and jolt the page */
+      if (line.offsetHeight < (parseFloat(getComputedStyle(line).lineHeight) || line.offsetHeight) * 1.6) line.style.whiteSpace = 'nowrap';
+      const mine = [];
+      const walk = (node, lower) => [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 1) return walk(n, n.tagName === 'EM');
+        if (n.nodeType !== 3) return;
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) return frag.appendChild(document.createTextNode(part));
+          const el = document.createElement('span');
+          el.textContent = rnd(part, lower ? abc : ABC);
+          frag.appendChild(el); mine.push({ el, text: part, lower });
+        });
+        n.replaceWith(frag);
+      });
+      walk(line, false);
+      const total = mine.reduce((a, w) => a + w.text.length, 0) || 1;
+      let seen = 0;
+      mine.forEach((w) => { w.at = li * 0.22 + (seen / total) * 0.55; seen += w.text.length; words.push(w); });
+    });
+    gsap.set(h, { autoAlpha: 0 });
+    const tl = gsap.timeline(scrollTrigger ? { scrollTrigger } : {});
+    tl.to(h, { autoAlpha: 1, duration: 0.3, ease: 'power1.out' }, 0);
+    words.forEach((w) => tl.to(w.el, { duration: 0.95, scrambleText: { text: w.text, chars: w.lower ? 'lowerCase' : 'upperCase', speed: 0.45, revealDelay: 0.3, tweenLength: false } }, w.at));
+    tl.fromTo(h, { color: accent }, { color: ink, duration: 0.55, ease: 'power2.out', immediateRender: false }, tl.duration() - 0.35)
+      .add(() => { h.style.color = ''; lines.forEach((l) => { l.style.whiteSpace = ''; }); });
+    return tl;
+  };
+  /* headlines are prepared only once the webfonts have landed: the one-row pin and the word widths are measured on the
+     real face, and nothing flashes in the fallback first (2.5s cap so a stalled font never holds the page hidden) */
+  gsap.set('[data-lines], .h-hero', { autoAlpha: 0 });
+  const fontsIn = Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 2500))]);
+  fontsIn.then(() => { $$('[data-lines]').forEach((h) => decode(h, once(h, 'top 90%'))); ScrollTrigger.refresh(); });
 
   /* 01 cover: plays on load, no scroll involved */
   (() => {
-    const lines = $$('.h-hero .ln > span'), bits = $$('[data-hero]'), mark = $('#hero-mark');
-    gsap.set(lines, { yPercent: 108 }); gsap.set(bits, { autoAlpha: 0, y: 26 });
+    const bits = $$('[data-hero]'), mark = $('#hero-mark');
+    gsap.set(bits, { autoAlpha: 0, y: 26 });
     gsap.set(mark, { autoAlpha: 0, scale: 0.86, rotation: -7 });
     gsap.set(['#chrome-top', '#chrome-bottom'], { autoAlpha: 0 });
-    const tl = gsap.timeline({ delay: 0.15 });
-    tl.to(lines, { yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: 0.12 }, 0)
-      .to(mark, { autoAlpha: 1, scale: 1, rotation: 0, duration: 1.9, ease: 'expo.out' }, 0.2)
-      .to(bits, { autoAlpha: 1, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1 }, 0.55)
-      .to(['#chrome-top', '#chrome-bottom'], { autoAlpha: 1, duration: 1 }, 0.9);
+    /* the page opens the way Bon Voyage does: the name decodes first, everything else arrives as it resolves */
+    const tl = gsap.timeline({ paused: true, delay: 0.25 });
+    fontsIn.then(() => { tl.add(decode($('.h-hero')), 0); tl.play(); });
+    tl
+      .to(mark, { autoAlpha: 1, scale: 1, rotation: 0, duration: 1.9, ease: 'expo.out' }, 0.45)
+      .to(bits, { autoAlpha: 1, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1 }, 1.05)
+      .to(['#chrome-top', '#chrome-bottom'], { autoAlpha: 1, duration: 1 }, 1.3);
     const s = $('[data-scramble]');
-    if (s) tl.to(s, { duration: 1.4, scrambleText: { text: s.textContent, chars: 'upperCase', speed: 0.4 } }, 0.55);
+    if (s) tl.to(s, { duration: 1.4, scrambleText: { text: s.textContent, chars: 'upperCase', speed: 0.4 } }, 1.05);
     /* the heart drifts a touch slower than the page as the cover scrolls away */
     gsap.to(mark.firstElementChild, { yPercent: 14, ease: 'none', scrollTrigger: { trigger: '#cover', start: 'top top', end: 'bottom top', scrub: true } });
   })();
