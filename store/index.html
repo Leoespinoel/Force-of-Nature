@@ -62,7 +62,10 @@
   #stars,#bloom{position:fixed;inset:0;z-index:1;width:100%;height:100%;pointer-events:none;opacity:0;}
   #bloom{z-index:0;--reveal:0;--fade:1;opacity:calc(var(--reveal) * var(--fade));}
   /* ---------- black hole: a Seedance 2.5 clip screened over the sky in the top band ----------
-     Two copies of the same clip; the loop is a .7s crossfade between them. The clip's own black
+     Two copies of the same clip; the loop is a 1.2s dissolve: the incoming copy fades in ON TOP of the
+     outgoing one, which stays fully opaque underneath (fading both at once dips the brightness at the
+     seam). assets/hole.mp4 has the Seedance clip's slow push-in taken out, so the ring is the same size
+     at both ends of the seam (uncut original: design-loop/hole-source.mp4). The clip's own black
      keeps the event horizon black; an elliptical mask melts its edges into the sky. It sits
      over the star canvas (DOM order, same z-index) so stars and meteors passing behind it are
      occluded within its masked ellipse instead of drawing over it, a black hole absorbs light. */
@@ -73,8 +76,9 @@
     mask-image:radial-gradient(ellipse 50% 50% at 50% 50%, #000 52%, transparent 100%);
     --reveal:0;--fade:1;opacity:calc(var(--reveal) * var(--fade));
   }
-  .hole video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .7s linear;}
-  .hole video.is-on{opacity:1;}
+  .hole video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;}
+  .hole video.is-on{opacity:1;transition:opacity 1.2s linear;}
+  .hole video.is-top{z-index:1;}
   @media (max-width:900px){.hole{width:130vw;top:28vh;}}
   /* second copy of the same clip, sitting behind the footer wordmark instead of the sky; not fixed,
      so it scrolls with the footer, and it reveals once on the way in rather than fading with the hero */
@@ -679,29 +683,40 @@
     }
   }
 
-  /* ---------- black hole loop: two copies of the clip, .7s crossfade at the seam ----------
-     Factored so the hero sky and the footer wordmark can each run their own copy. */
-  const HOLE_XF = .7;
+  /* ---------- black hole loop: two copies of the clip, 1.2s dissolve at the seam ----------
+     Factored so the hero sky and the footer wordmark can each run their own copy. Watched every frame
+     (timeupdate only fires ~4x a second); the other copy is set playing a touch early and the dissolve
+     only starts once it is really delivering frames, so the seam never shows an empty layer. */
+  const HOLE_XF = 1.2;
   function makeHole(el) {
     const vids = $$('video', el);
-    let cur = 0, on = false, asleep = false;
+    let cur = 0, on = false, asleep = false, next = null, raf = 0;
+    function tick() {
+      raf = 0;
+      if (!on || asleep) return;
+      const v = vids[cur], n = vids[1 - cur];
+      if (!next && v.duration && v.duration - v.currentTime <= HOLE_XF + .15) { next = n; n.play().catch(() => {}); }
+      if (next && n.currentTime > 0 && n.readyState >= 2) {
+        v.classList.remove('is-top'); n.classList.add('is-on', 'is-top');
+        cur = 1 - cur; next = null;
+        // the old copy is now hidden under the new one: drop it and park it on frame 0, ready for its next turn
+        setTimeout(() => { v.classList.remove('is-on'); v.pause(); v.currentTime = 0; }, HOLE_XF * 1000 + 50);
+      }
+      raf = requestAnimationFrame(tick);
+    }
     function start() {
       on = true;
-      const v = vids[cur]; v.currentTime = 0; v.classList.add('is-on'); v.play().catch(() => {});
+      vids.forEach((v) => { v.preload = 'auto'; if (v.readyState === 0) v.load(); });
+      const v = vids[cur]; v.currentTime = 0; v.classList.add('is-on', 'is-top'); v.play().catch(() => {});
+      if (!raf) raf = requestAnimationFrame(tick);
     }
-    function sleep(next) {
-      if (next === asleep || !on) return;
-      asleep = next;
-      if (asleep) vids.forEach((v) => v.pause()); else vids[cur].play().catch(() => {});
+    function sleep(s) {
+      if (s === asleep || !on) return;
+      asleep = s;
+      if (asleep) { vids.forEach((v) => v.pause()); return; }
+      vids.forEach((v) => { if (v === next || v.classList.contains('is-on')) v.play().catch(() => {}); });
+      if (!raf) raf = requestAnimationFrame(tick);
     }
-    vids.forEach((v, i) => v.addEventListener('timeupdate', () => {
-      if (i !== cur || !v.duration || asleep) return;
-      if (v.duration - v.currentTime > HOLE_XF) return;
-      const n = vids[1 - i];
-      n.currentTime = 0; n.play().catch(() => {}); n.classList.add('is-on');
-      v.classList.remove('is-on'); cur = 1 - i;
-      setTimeout(() => { if (cur !== i) v.pause(); }, HOLE_XF * 1000 + 50);
-    }));
     if (RM) { vids[0].classList.add('is-on'); vids[0].addEventListener('loadeddata', () => { vids[0].currentTime = .1; }, { once: true }); }
     return { start, sleep };
   }
