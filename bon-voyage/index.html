@@ -7,7 +7,9 @@
 <meta name="description" content="Force of Nature store. A t-shirt with a second job: 10% of every sale, not profit, funds reef, forest and coastline conservation.">
 <meta name="theme-color" content="#0A0908">
 <script>/* theme before first paint: every load opens dark (owner, 17 Sep: the page must load dark first). The toggle still
-   switches to light for the visit, and the stored 'fon-theme' choice is deliberately not restored here. */(function(){try{localStorage.removeItem('fon-theme');}catch(e){}})();</script>
+   switches to light for the visit, and the stored 'fon-theme' choice is deliberately not restored here. */(function(){try{localStorage.removeItem('fon-theme');}catch(e){}})();
+/* arriving through the newsletter's supernova (?voyage=1): flagged before first paint, so the intro opens see-through over the sky the clip ended on */
+(function(){try{if(new URLSearchParams(location.search).has('voyage'))document.documentElement.classList.add('via-voyage');}catch(e){}})();</script>
 <link rel="icon" href="assets/logo-480.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -154,6 +156,13 @@ body.on-clay .sound-toggle[aria-pressed="true"]{border-color:currentColor} /* re
 .intro .display{color:var(--red);font-size:100px;text-align:left;line-height:.84;opacity:0;width:100%}
 .intro .display span{display:block;white-space:nowrap;width:max-content;letter-spacing:-.04em}
 html.intro-done .intro{display:none}
+/* from the newsletter's supernova (owner, 20 Sep: the clip must end on this page's sky, not on black): the clip's last
+   frame is this page's remnant cloud under the veil below, so the decode plays over the cloud instead of over black and
+   the cloud comes up to full strength as the intro fades. The veil is what keeps the red string readable on a red cloud;
+   change it and the clip's last frame has to be rendered again. Until the script has hidden the hero and the chrome itself
+   (.is-booted), nothing may show through the see-through intro. A direct visit keeps the black intro */
+html.via-voyage .intro{background:rgba(10,9,8,.35)}
+html.via-voyage:not(.is-booted) [data-reveal],html.via-voyage:not(.is-booted) .chrome{visibility:hidden}
 /* wormhole on a direct visit (owner asked 17 Sep): the same tunnel the newsletter's Bon Voyage button plays, over the
    intro's void, so reaching /bon-voyage/ by its address is the same trip as clicking the button. Skipped when the
    address carries ?voyage=1 (the tunnel already ran on the newsletter site), once the session has seen the intro,
@@ -203,7 +212,7 @@ section{position:relative}
 .hero{min-height:100svh;display:grid;grid-template-columns:1fr;align-items:end;padding:120px var(--gutter) var(--gap);overflow:hidden;isolation:isolate}
 /* Supernova remnant behind the hero and the exit panel (owner asked 20 Sep; it replaced the Milky Way astrophoto), so
    the newsletter's supernova trip lands inside what the explosion left behind. It moves, like the aurora and nebula on
-   leoespinoel.com (owner asked the same day): one Seedance take rebuilt as a 14s, 60fps there-and-back loop whose end
+   leoespinoel.com (owner asked the same day): one Seedance take rebuilt as a 14s there-and-back loop (30fps, see skyLoop()) whose end
    is its beginning (see skyLoop() in the script), with a slow breath and turn over the footage. The poster is a still of the cloud, which is
    also all that shows under reduced motion. Dark theme only, held at half strength and masked so it dissolves into the
    void before the manifesto. z-index -1 inside the hero's own stacking context keeps it under the headline, copy and
@@ -1204,8 +1213,11 @@ const boot = () => {
      through the cloud, so its last frame looks nothing like its first and the old two-player crossfade showed as clouds
      melting away every 8s. remnant-loop.mp4 is the same take interpolated to 60fps and rebuilt as an eased there-and-back
      flight: it slows to a standstill at both ends and its last frame is its first, so the native loop wraps where nothing
-     is moving. Nothing downloads or decodes until a sky is nearly on screen, and it stops once it has left, in the light
-     theme, and during the black hole trip. */
+     is moving. The file itself is 30fps (every second frame of that 60fps build; owner, 20 Sep: the cloud looked
+     glitchy). Measured in Chrome on a 3x display, where the masked sky is ~3800x1750px to composite: the 60fps file got
+     an uneven 15-21 of its frames a second on screen, the 30fps file a steady 29-30, with the page itself faster too
+     (26ms a frame against 30-38). Nothing downloads or decodes until a sky is nearly on screen, and it stops once it
+     has left, in the light theme, and during the black hole trip. */
   const skyLoop = (box) => {
     const vid = $('video', box), live = $('.sky-live', box);
     let near = false;
@@ -1492,13 +1504,13 @@ const boot = () => {
   const html = document.documentElement;
 
   mm.add('(prefers-reduced-motion: reduce)', () => {
-    html.classList.add('intro-done');
+    html.classList.add('intro-done', 'is-booted');
   });
 
   mm.add('(prefers-reduced-motion: no-preference)', () => {
     /* the decode always plays, on every visit including a plain reload: arriving through the newsletter site's
-       Bon Voyage wormhole (?voyage=1), the wormhole ends on black and the intro's void beat is its landing, so the
-       flag is dropped from the address once read */
+       supernova (?voyage=1), the clip ends on this page's veiled sky and the decode plays over it (html.via-voyage,
+       set in the head), so the flag is dropped from the address once read */
     const viaVoyage = new URLSearchParams(location.search).has('voyage');
     if (viaVoyage) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
     const reveals = $$('[data-reveal]');
@@ -1534,6 +1546,7 @@ const boot = () => {
     /* 0–0.45s void only; 0.45–2.5s decode in red (owner, 18 Sep: a little slower than the 1.9s cut); barely a hold; then the
        string lifts out fast and the hero reveals underneath */
     const tl = gsap.timeline({ paused: true, delay: 0.45, onComplete: () => { html.classList.add('intro-done'); } });
+    html.classList.add('is-booted'); /* the hero and the chrome are hidden by the lines above now: the see-through intro's own guard can go */
     /* direct visit: the wormhole has already run by now (script under #warp; this whole start-up waited for it). Its last
        frame is black and the intro's void beat follows it */
     document.fonts.ready.then(() => { sizeIntro(); tl.play(); });

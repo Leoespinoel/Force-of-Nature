@@ -224,7 +224,7 @@
   /* ---------- departure: red supergiant, collapse, supernova ----------
      Click: the sun reddens, swells and glides to the centre of the screen as a red supergiant (GIANT_MS) while the
      page falls into it; then the supernova clip, which opens on that same star, fades in over it, the star blows
-     apart, the blast thins to black, and the browser lands on bon-voyage, whose sky is what the explosion left. Reduced motion, modifier clicks and a missing
+     apart, the blast thins into bon-voyage's own sky, and the browser lands on bon-voyage, under that same sky. Reduced motion, modifier clicks and a missing
      clip fall back to a plain link. */
   .voyage-portal{position:fixed;inset:0;z-index:50;background:#000;opacity:0;pointer-events:none;overflow:hidden;transition:opacity 320ms ease-in-out}
   .voyage-portal.is-open{opacity:1;pointer-events:auto}
@@ -505,16 +505,25 @@
     /* the clip is assets/supernova-giant-1080.mp4 (-720 on phones): Seedance 2.5 image-to-video whose first frame is
        a render of this page's own red giant (owner, 20 Sep: the supernova must start from the red giant, as it would
        in real life, not from a white dot), so the star on the page and the star in the clip are the same star when one
-       hands over to the other. Speed baked in, 8-bit H.264 30fps, index up front. Same rule the wormhole taught
-       (18 Sep, measured on the live site: cut off at 27-63% of the clip, 3-6 stalls): never playbackRate, never a
-       master. Checked with: node tools/voyage-check.cjs */
+       hands over to the other. In the clip the star never gets smaller (owner, 20 Sep: it must grow seamlessly and
+       then explode, not end at one size and restart at another): it goes on swelling from the first frame (disc .69
+       of the height, .74 at 1s, .82 at 2s, measured), fissures open, and at 2.3s the whole disc blows outward; from 3s that blast dissolves (0.6s, both
+       shells filling the frame) into the orange, magenta and blue explosion of the earlier clip, which the owner wanted kept; and from
+       4.3s the fading blast dissolves into a render of bon-voyage's own landing frame (its remnant cloud under the decode's
+       veil, html.via-voyage there), so the clip ends on the sky the visitor lands in, not on black (owner, 20 Sep). Change
+       that veil or that sky and this ending has to be rendered again. So the
+       page's star has to arrive at the clip's size still growing at the clip's rate, and keep growing under the fade.
+       8-bit H.264 24fps, index up front. Same rule the wormhole taught (18 Sep, measured on the live site: cut off at
+       27-63% of the clip, 3-6 stalls): never playbackRate, never a master. Checked with: node tools/voyage-check.cjs */
     const GIANT_MS = 2100;      /* the sun reddens, swells and glides to the centre for this long before its core gives way */
     const PULL_AT_MS = 650;     /* into the swell, the page starts falling into the star */
     const FADE_MS = 320;        /* the clip, opening on the same star, fades in over the page's star */
-    const GIANT_DISC = 0.82;    /* the giant's disc in the clip's first frame, as a share of the clip's height (measured) */
+    const GIANT_DISC = 0.70;    /* the giant's disc in the clip's first frame, as a share of the clip's height: the frame was rendered from this page with the sun's box at 806 of 1080px, times SUN_DISC */
     const SUN_DISC = 0.938;     /* the sun's disc as a share of its own square clip (measured: 1350 of 1440px, constant) */
-    const CLIP_ZOOM = 1.7;      /* the clip opens this much enlarged, so the giant towers over the screen, and pulls back to 1 as the blast spreads */
-    const ZOOM_OUT_MS = 1700, ZOOM_DELAY_MS = 900; /* the pull-back starts as the star bursts (1.2s into the clip) */
+    const CLIP_ZOOM = 2.0;      /* the clip opens this much enlarged, so the giant towers over the screen (the same size on screen as the .82 x 1.7 it replaces), and pulls back to 1 as the blast spreads */
+    const ZOOM_OUT_MS = 1150, ZOOM_DELAY_MS = 2250; /* the pull-back waits for the burst (2.3s into the clip: before it, any pull-back would read as the star shrinking), rides the blast while it outgrows it, and is over by 3.4s, when the shell is at its most colourful: zoomed in, only the white core shows and the colours sit off screen */
+    const GROW = 0.07;          /* the clip's star grows 7% a second at its start (measured): the page's star reaches the handover at that rate */
+    const TAIL_MS = 700;        /* and keeps it up under the clip while the clip fades in and the page's star fades out */
     const READY_WAIT_MS = 1500; /* after the swell: longest wait for the clip to be able to play through; then it plays anyway */
     const STUCK_MS = 1500;      /* during the trip: leave if the picture has not advanced for this long */
     const TRIP_CAP_MS = 9000 + GIANT_MS; /* whatever happens, the visitor is on bon-voyage by then */
@@ -532,7 +541,9 @@
       return url.href;
     }
     /* phones get the 720p copy: a third of the bytes, and nothing on a phone screen shows the difference */
-    function warm(){ if(video.preload !== 'auto'){ video.src = 'assets/supernova-giant-' + (Math.min(window.innerWidth, window.innerHeight) <= 600 ? '720' : '1080') + '.mp4'; video.preload = 'auto'; video.load(); } }
+    function warm(){ if(video.preload !== 'auto'){ video.src = 'assets/supernova-giant-' + (Math.min(window.innerWidth, window.innerHeight) <= 600 ? '720' : '1080') + '.mp4'; video.preload = 'auto'; video.load();
+      /* the clip ends on bon-voyage's sky: that sky's still is fetched here, so the page the visitor lands on paints it at once */
+      const sky = document.createElement('link'); sky.rel = 'prefetch'; sky.as = 'image'; sky.href = 'bon-voyage/assets/remnant-cloud.jpg'; document.head.append(sky); } }
     btn.addEventListener('pointerenter', warm);
     btn.addEventListener('focus', warm);
     btn.addEventListener('touchstart', warm, { passive: true });
@@ -554,6 +565,9 @@
     /* phase 1: red supergiant. The star reddens, swells and glides to the centre of the screen until it stands exactly
        where the clip's first frame has it: centred, its disc GIANT_DISC of the clip's height. The clip covers the
        screen, so its height on screen is the larger of the window's height and 9/16 of its width. */
+    let pose = null; /* where swell() put the star: the glide, the size, and whether `scale` can be animated apart from `transform` */
+    function place(size){ return pose.split ? 'translate(' + (pose.dx / size).toFixed(1) + 'px,' + (pose.dy / size).toFixed(1) + 'px)' : 'translate(' + pose.dx.toFixed(1) + 'px,' + pose.dy.toFixed(1) + 'px) scale(' + size.toFixed(4) + ')'; }
+    const TAIL = 'transform ' + TAIL_MS + 'ms linear, scale ' + TAIL_MS + 'ms linear';
     function swell(){
       document.body.classList.add('is-departing');
       if (lenis) lenis.stop();
@@ -562,9 +576,17 @@
       const clipH = Math.max(window.innerHeight, window.innerWidth * 9 / 16);
       const k = (GIANT_DISC * clipH * CLIP_ZOOM / SUN_DISC) / r.width;
       const dx = cx - (r.left + r.width / 2), dy = cy - (r.top + r.height / 2);
-      const move = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(' + k.toFixed(4) + ')';
       const ease = 'cubic-bezier(.45,0,.2,1)';
-      [sun, occ, glow].forEach(function(el){ el.style.transition = 'transform ' + GIANT_MS + 'ms ' + ease + ', filter ' + GIANT_MS + 'ms ease'; el.style.transform = move; });
+      /* the glide eases to a stop at the centre, but the growth must not stop: it goes on the `scale` property with a
+         curve of its own, whose end slope is the clip's growth rate (slope = rate x size x time / growth). `scale`
+         applies outside `transform`, so the glide is divided by the size it will be multiplied by */
+      const slope = k > 1.02 ? Math.min(2.4, GROW * k * GIANT_MS / 1000 / (k - 1)) : 0;
+      pose = { dx: dx, dy: dy, k: k, split: !!(window.CSS && CSS.supports && CSS.supports('scale', '1')) };
+      [sun, occ, glow].forEach(function(el){
+        if (!pose.split) { el.style.transition = 'transform ' + GIANT_MS + 'ms ' + ease + ', filter ' + GIANT_MS + 'ms ease'; el.style.transform = place(k); return; }
+        el.style.transition = 'transform ' + GIANT_MS + 'ms ' + ease + ', scale ' + GIANT_MS + 'ms cubic-bezier(.45,0,.6,' + (1 - slope * .4).toFixed(3) + '), filter ' + GIANT_MS + 'ms ease';
+        el.style.transform = place(k); el.style.scale = k.toFixed(4);
+      });
       glow.style.filter = 'hue-rotate(-24deg) saturate(1.7)';
       sunRed.style.transition = 'opacity ' + (GIANT_MS * .6) + 'ms ease-out';
       sunRed.style.opacity = '1';
@@ -588,7 +610,10 @@
     /* phase 2: the core gives way. The clip opens on this same red giant, in the same place at the same size, so it
        simply fades in over the page's star; then the star in the clip brightens from its core and blows apart */
     function ignite(){
-      setTimeout(function(){ sun.style.transition = glow.style.transition = occ.style.transition = 'opacity 200ms linear'; sun.style.opacity = glow.style.opacity = occ.style.opacity = '0'; }, FADE_MS + 80);
+      /* the clip's star is growing from its first frame, so the page's star grows with it for as long as it shows */
+      const k2 = pose.k * (1 + GROW * TAIL_MS / 1000);
+      [sun, occ, glow].forEach(function(el){ el.style.transition = TAIL; el.style.transform = place(k2); if (pose.split) el.style.scale = k2.toFixed(4); });
+      setTimeout(function(){ sun.style.transition = glow.style.transition = occ.style.transition = 'opacity 200ms linear, ' + TAIL; sun.style.opacity = glow.style.opacity = occ.style.opacity = '0'; }, FADE_MS + 80);
     }
 
     btn.addEventListener('click', function(e){
