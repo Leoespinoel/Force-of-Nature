@@ -66,20 +66,27 @@
      outgoing one, which stays fully opaque underneath (fading both at once dips the brightness at the
      seam). assets/hole.mp4 has the Seedance clip's slow push-in taken out, so the ring is the same size
      at both ends of the seam (uncut original: design-loop/hole-source.mp4). The clip's own black
-     keeps the event horizon black; an elliptical mask melts its edges into the sky. It sits
-     over the star canvas (DOM order, same z-index) so stars and meteors passing behind it are
-     occluded within its masked ellipse instead of drawing over it, a black hole absorbs light. */
+     keeps the event horizon black.
+     It fills the hero: sized and placed so the heart sits inside the dark dome with the photon ring
+     as its halo (the dome's centre is 48.5% across and 37% down the clip, hence the offsets), and the
+     disk runs out to the screen edges. The clip's four sides are faded to black in the file itself
+     (tools/hole-loop-build.py): under a screen blend black adds nothing, so no CSS mask is needed, and
+     masking a full-screen video would cost the GPU an extra pass every frame.
+     Screen-blended, so the nebula and the stars stay visible around it and no dark rectangle shows;
+     screen cannot make black, so the star canvas underneath paints the dome black itself, bends the
+     stars round it and pulls the meteors in (drawHoleShadow, lens, in the script). No ancestor of
+     this element may get a transform, opacity or isolation, or the blend stops reaching the sky.
+     The script writes the transform itself each frame (pointer parallax, scroll push-in, arrival scale). */
   .hole{
-    position:fixed;left:50%;top:21vh;z-index:1;width:min(680px, 50vw);aspect-ratio:16/9;
-    transform:translate(-50%,-50%);pointer-events:none;
-    -webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%, #000 52%, transparent 100%);
-    mask-image:radial-gradient(ellipse 50% 50% at 50% 50%, #000 52%, transparent 100%);
+    position:fixed;left:calc(50% + 1.4vw);top:calc(33vh + 6.7vw);z-index:1;width:min(92vw, 1900px);aspect-ratio:16/9;
+    transform:translate(-50%,-50%);will-change:transform;pointer-events:none;
+    mix-blend-mode:screen;
     --reveal:0;--fade:1;opacity:calc(var(--reveal) * var(--fade));
   }
   .hole video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;}
-  .hole video.is-on{opacity:1;transition:opacity 1.2s linear;}
+  .hole video.is-on{opacity:1;transition:opacity .3s linear;}
   .hole video.is-top{z-index:1;}
-  @media (max-width:900px){.hole{width:130vw;top:28vh;}}
+  @media (max-width:900px){.hole{width:215vw;left:calc(50% + 3.2vw);top:calc(36.7vh + 15.7vw);}}
   /* second copy of the same clip, sitting behind the footer wordmark instead of the sky; not fixed,
      so it scrolls with the footer, and it reveals once on the way in rather than fading with the hero */
   .hole--foot{position:absolute;left:50%;top:50%;z-index:0;width:min(1600px, 96vw);}
@@ -279,7 +286,9 @@
      A full closing screen: the wordmark and the two links sit centred in the middle of the viewport, the meta row
      stays pinned to the bottom edge. min-height uses 100vh with a 100svh upgrade so mobile browser chrome doesn't
      leave the meta row stranded off-screen (this section isn't pinned, so svh's resize during scroll is harmless). */
-  footer{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:clamp(32px, 5vw, 56px) var(--gutter) 28px;z-index:6;background:var(--void);}
+  footer{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:clamp(32px, 5vw, 56px) var(--gutter) 28px;z-index:6;background:var(--void);overflow-x:clip;}
+  /* overflow-x:clip: the footer's hole is wider than a phone screen, and unclipped it widened the phone's layout viewport
+     from 390 to 507px, which zoomed the whole page out and pushed everything fixed (the hero hole, the stars) off centre */
   .foot{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(24px, 4vw, 40px);text-align:center;}
   .foot__links{position:relative;z-index:1;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;opacity:0;transform:translateY(12px);}
   .wordmark-wrap{position:relative;width:100%;display:flex;align-items:center;justify-content:center;}
@@ -407,8 +416,8 @@
 <canvas id="bloom" aria-hidden="true"></canvas>
 <canvas id="stars" aria-hidden="true"></canvas>
 <div class="hole" id="hole" aria-hidden="true">
-  <video src="assets/hole.mp4" muted playsinline preload="auto"></video>
-  <video src="assets/hole.mp4" muted playsinline preload="auto"></video>
+  <video muted playsinline preload="auto"></video>
+  <video muted playsinline preload="auto"></video>
 </div>
 
 <div class="chrome">
@@ -575,8 +584,8 @@
     <div class="foot">
       <div class="wordmark-wrap">
         <div class="hole hole--foot" id="hole-foot" aria-hidden="true">
-          <video src="assets/hole.mp4" muted playsinline preload="none"></video>
-          <video src="assets/hole.mp4" muted playsinline preload="none"></video>
+          <video muted playsinline preload="none"></video>
+          <video muted playsinline preload="none"></video>
         </div>
         <p class="wordmark display" id="wordmark">Force of Nature</p>
       </div>
@@ -759,7 +768,7 @@
   const stars = $('#stars'), sctx = stars.getContext('2d');
   let W = 0, H = 0, field = [];
   function seedStars() {
-    W = innerWidth; H = innerHeight;
+    W = innerWidth; H = innerHeight; measureHole();
     stars.width = W * DPR; stars.height = H * DPR; sctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     const n = PHONE ? 140 : 320;
     field = Array.from({ length: n }, () => {
@@ -804,24 +813,33 @@
     }
   }
 
-  /* ---------- black hole loop: two copies of the clip, 1.2s dissolve at the seam ----------
-     Factored so the hero sky and the footer wordmark can each run their own copy. Watched every frame
-     (timeupdate only fires ~4x a second); the other copy is set playing a touch early and the dissolve
-     only starts once it is really delivering frames, so the seam never shows an empty layer. */
-  const HOLE_XF = 1.2;
+  /* ---------- black hole loop: two copies of the clip, handed over while both show the same picture ----------
+     The file (tools/hole-loop-build.py) is a loop body followed by a TAIL that repeats the body's first second frame
+     for frame. When the playing copy reaches the end of the body, the other copy starts from 0, so for the length of
+     the tail both show the same picture. The waiting copy is hidden while it is nudged into step (playbackRate), then
+     faded in on top over .3s and the old one parked on frame 0. Same picture under the fade: no seam to see, no
+     softening, and no hold like a native `loop` wrap. Factored so the hero and the footer each run their own pair. */
+  const HOLE_TAIL = 1, HOLE_FADE = .3;
   function makeHole(el) {
     const vids = $$('video', el);
+    vids.forEach((v) => { v.src = PHONE ? 'assets/hole-720.mp4' : 'assets/hole.mp4'; });
     let cur = 0, on = false, asleep = false, next = null, raf = 0;
     function tick() {
       raf = 0;
       if (!on || asleep) return;
-      const v = vids[cur], n = vids[1 - cur];
-      if (!next && v.duration && v.duration - v.currentTime <= HOLE_XF + .15) { next = n; n.play().catch(() => {}); }
-      if (next && n.currentTime > 0 && n.readyState >= 2) {
-        v.classList.remove('is-top'); n.classList.add('is-on', 'is-top');
-        cur = 1 - cur; next = null;
-        // the old copy is now hidden under the new one: drop it and park it on frame 0, ready for its next turn
-        setTimeout(() => { v.classList.remove('is-on'); v.pause(); v.currentTime = 0; }, HOLE_XF * 1000 + 50);
+      const v = vids[cur], n = vids[1 - cur], loopAt = v.duration - HOLE_TAIL;
+      if (v.duration) {
+        if (!next && v.currentTime >= loopAt - .05) { next = n; n.playbackRate = 1; n.play().catch(() => {}); }
+        if (next && n.currentTime > 0 && n.readyState >= 2) {
+          const behind = (v.currentTime - loopAt) - n.currentTime; // seconds the waiting copy trails the picture on screen
+          if (Math.abs(behind) > .017 && v.currentTime < v.duration - HOLE_FADE - .12 && !v.ended) n.playbackRate = behind > 0 ? 1.3 : .77;
+          else {
+            n.playbackRate = 1; v.classList.remove('is-top'); n.classList.add('is-on', 'is-top');
+            (window.__fon.seams = window.__fon.seams || []).push(+behind.toFixed(3)); // tools/hole-check.mjs: how far out of step each handover was
+            cur = 1 - cur; next = null;
+            setTimeout(() => { v.classList.remove('is-on'); v.pause(); v.currentTime = 0; }, HOLE_FADE * 1000 + 80);
+          }
+        }
       }
       raf = requestAnimationFrame(tick);
     }
@@ -845,39 +863,135 @@
   const holeStart = heroHole.start, holeSleep = heroHole.sleep;
   const footHoleEl = $('#hole-foot'), footHole = makeHole(footHoleEl);
 
+  /* ---------- the hole's gravity, painted on the star canvas under the screen-blended clip ----------
+     Measured off assets/hole.mp4 as fractions of the clip's width: the photon ring is a dome, the top half of an
+     ellipse standing on the disk line, centre (cx, cy), half-width rx, height ry. The near side of the disk
+     flows left to right, so the motes orbit that way and the glint on the ring (the far side, lensed over the
+     top) runs right to left. Everything here is scaled by vis = reveal x hero fade, so space bends as the
+     hole arrives and relaxes as it scrolls away. A new clip needs these four numbers measured again. */
+  const HOLE = { cx: .4853, cy: .507 * 9 / 16, rx: .1605, ry: .158, w: 0, bx: 0, by: 0, x: 0, y: 0, R: 0, Ry: 0, vis: 0, reveal: RM ? 1 : 0 };
+  function measureHole() { HOLE.w = hole.offsetWidth; HOLE.bx = hole.offsetLeft; HOLE.by = hole.offsetTop; }
+  function placeHole(fade) {
+    // pointer parallax at the depth of a middling star, a slow push-in as the hero scrolls away, and the arrival scale
+    const ox = RM ? 0 : -(ptrS.x - .5) * W * .016, oy = RM ? 0 : -(ptrS.y - .5) * H * .012;
+    const s = (1 + .16 * (1 - fade)) * (.86 + .14 * HOLE.reveal);
+    const tf = `translate(calc(-50% + ${ox.toFixed(1)}px), calc(-50% + ${oy.toFixed(1)}px)) scale(${s.toFixed(4)})`;
+    if (tf !== HOLE.tf) { HOLE.tf = tf; hole.style.transform = tf; }
+    HOLE.x = HOLE.bx + ox + (HOLE.cx - .5) * HOLE.w * s; HOLE.y = HOLE.by + oy + (HOLE.cy - .5 * 9 / 16) * HOLE.w * s;
+    HOLE.R = HOLE.rx * HOLE.w * s; HOLE.Ry = HOLE.ry * HOLE.w * s; HOLE.vis = HOLE.reveal * fade;
+  }
+  // screen blending cannot darken, so the dome's black is painted here: whatever passed behind it is gone
+  function drawHoleShadow() {
+    sctx.save(); sctx.translate(HOLE.x, HOLE.y); sctx.fillStyle = '#040303';
+    for (const [k, a] of [[1, .35], [.975, .6], [.95, 1]]) {
+      sctx.globalAlpha = a * HOLE.vis; sctx.beginPath();
+      sctx.ellipse(0, 0, HOLE.R * k, HOLE.Ry * k, 0, Math.PI, 0); sctx.ellipse(0, 0, HOLE.R * k, HOLE.Ry * .1 * k, 0, 0, Math.PI); sctx.fill();
+    }
+    sctx.restore();
+  }
+  // a glint runs the photon ring every 7s, over a slow breathing glow
+  function drawRingGlint(t) {
+    sctx.save(); sctx.translate(HOLE.x, HOLE.y); sctx.globalCompositeOperation = 'lighter'; sctx.lineCap = 'round';
+    const breathe = (.05 + .04 * Math.sin(t * .0011)) * HOLE.vis;
+    sctx.strokeStyle = `rgba(255,214,180,${breathe.toFixed(3)})`; sctx.lineWidth = 6;
+    sctx.beginPath(); sctx.ellipse(0, 0, HOLE.R, HOLE.Ry, 0, Math.PI, 0); sctx.stroke();
+    const u = (t % 7000) / 4200;
+    if (u < 1) {
+      const e = u * u * (3 - 2 * u), head = -e * Math.PI, env = Math.sin(u * Math.PI) * HOLE.vis; // 0 -> -PI: right foot, over the top, left foot
+      for (let j = 0; j < 5; j++) {
+        const a0 = Math.min(0, head + (j + 1) * .09), a1 = Math.min(0, head + j * .09);
+        if (a0 === a1) continue;
+        sctx.strokeStyle = `rgba(255,240,222,${(env * (1 - j / 5) * .85).toFixed(3)})`; sctx.lineWidth = 2.4 - j * .3;
+        sctx.beginPath(); sctx.ellipse(0, 0, HOLE.R, HOLE.Ry, 0, a0, a1, true); sctx.stroke();
+      }
+      const hx = Math.cos(head) * HOLE.R, hy = Math.sin(head) * HOLE.Ry, g = sctx.createRadialGradient(hx, hy, 0, hx, hy, 10);
+      g.addColorStop(0, `rgba(255,246,232,${(env * .75).toFixed(3)})`); g.addColorStop(1, 'rgba(255,246,232,0)');
+      sctx.fillStyle = g; sctx.beginPath(); sctx.arc(hx, hy, 10, 0, 6.283); sctx.fill();
+    }
+    sctx.restore();
+  }
+  // dust in the disk plane: Kepler-fast near the hole, drifting inward until it is lost against the disk
+  const MOTE_TILT = .2;
+  const newMote = (seed) => ({ a: seed ? 1.2 + Math.random() * 1.8 : 2.7 + Math.random() * .5, th: Math.random() * 6.283, r: .6 + Math.random() * 1.1, al: .35 + Math.random() * .55 });
+  const motes = Array.from({ length: PHONE ? 14 : 30 }, () => newMote(true));
+  let moteT = 0;
+  function stepMotes(t) {
+    const dt = Math.min(.05, (t - (moteT || t)) / 1000); moteT = t;
+    for (let i = 0; i < motes.length; i++) {
+      const m = motes[i];
+      m.th -= dt * 1.15 / (m.a * Math.sqrt(m.a)); m.a -= dt * .035 * (1 + 1.5 / m.a);
+      if (m.a < 1.06) motes[i] = newMote(false);
+    }
+  }
+  function drawMotes(near) {
+    sctx.save(); sctx.translate(HOLE.x, HOLE.y); sctx.globalCompositeOperation = 'lighter'; sctx.lineCap = 'round';
+    sctx.strokeStyle = 'rgb(255,216,176)'; sctx.fillStyle = 'rgb(255,240,220)';
+    for (const m of motes) {
+      if ((Math.sin(m.th) > 0) !== near) continue;
+      const env = Math.min(1, (3.2 - m.a) * 2.5) * Math.min(1, (m.a - 1.06) * 5) * m.al * HOLE.vis;
+      if (env <= 0) continue;
+      const rx = m.a * HOLE.R, ry = rx * MOTE_TILT, tail = Math.min(.5, (8 + 20 / m.a) / rx); // a short tail, longer where it is fast
+      sctx.globalAlpha = env * .45; sctx.lineWidth = m.r * 1.3;
+      sctx.beginPath(); sctx.ellipse(0, 0, rx, ry, 0, m.th, m.th + tail); sctx.stroke();
+      sctx.globalAlpha = env;
+      sctx.beginPath(); sctx.arc(Math.cos(m.th) * rx, Math.sin(m.th) * ry, m.r * 1.2, 0, 6.283); sctx.fill();
+    }
+    sctx.restore();
+  }
+
   /* ---------- meteors: a streak every 3–5 s across the top third, hero only ----------
-     Long tail with a soft outer glow and a bright head; one in four comes as a pair. */
+     Long tail with a soft outer glow and a bright head; one in four comes as a pair.
+     Each one is flown step by step under the hole's pull, so its path bends, the tail follows the bend,
+     and one that comes close speeds up, stops fading and falls in behind the dome. */
   const meteors = []; let nextMeteor = 1800;
+  window.__fon.hole = HOLE; window.__fon.meteors = meteors; // tools/hole-check.mjs reads the geometry and flies its own meteor
   function spawnMeteor(now, delay = 0) {
     const right = Math.random() < .5, ang = (14 + Math.random() * 18) * Math.PI / 180;
     const len = 160 + Math.random() * 140, speed = 700 + Math.random() * 400;
     const travel = 320 + Math.random() * 300;
     const x0 = W * (.06 + Math.random() * .88), y0 = H * (.02 + Math.random() * .14);
-    meteors.push({ x0, y0, dx: Math.cos(ang) * (right ? 1 : -1), dy: Math.sin(ang), len, speed, travel, t0: now + delay, dur: travel / speed * 1000 });
+    meteors.push({ x: x0, y: y0, vx: Math.cos(ang) * (right ? 1 : -1) * speed, vy: Math.sin(ang) * speed, len, travel, dist: 0, age: 0, last: 0, trail: [[x0, y0, 0]], t0: now + delay });
   }
   function drawMeteors(now, fade) {
     if (fade > .2 && now > nextMeteor) {
       spawnMeteor(now); if (Math.random() < .25) spawnMeteor(now, 250 + Math.random() * 300);
       nextMeteor = now + 3000 + Math.random() * 2000;
     }
+    const pull = HOLE.vis > .01 ? .5 * HOLE.R * 810000 * HOLE.vis : 0, soft = (HOLE.R * .45) ** 2;
+    sctx.lineCap = 'round'; sctx.lineJoin = 'round';
     for (let i = meteors.length - 1; i >= 0; i--) {
-      const m = meteors[i], p = (now - m.t0) / m.dur;
-      if (p < 0) continue;
-      if (p >= 1) { meteors.splice(i, 1); continue; }
-      const d = p * m.travel, hx = m.x0 + m.dx * d, hy = m.y0 + m.dy * d;
-      const tail = Math.min(m.len, d), tx = hx - m.dx * tail, ty = hy - m.dy * tail;
-      const env = Math.min(1, p * 5) * Math.min(1, (1 - p) * 2) * fade;
-      sctx.lineCap = 'round';
-      // soft glow under the streak
-      const gl = sctx.createLinearGradient(tx, ty, hx, hy);
-      gl.addColorStop(0, 'rgba(255,225,205,0)'); gl.addColorStop(1, `rgba(255,225,205,${(env * .35).toFixed(3)})`);
-      sctx.strokeStyle = gl; sctx.lineWidth = 6;
-      sctx.beginPath(); sctx.moveTo(tx, ty); sctx.lineTo(hx, hy); sctx.stroke();
-      // the streak itself
-      const g = sctx.createLinearGradient(tx, ty, hx, hy);
-      g.addColorStop(0, 'rgba(255,240,225,0)'); g.addColorStop(.6, `rgba(255,240,225,${(env * .5).toFixed(3)})`); g.addColorStop(1, `rgba(255,248,240,${env.toFixed(3)})`);
-      sctx.strokeStyle = g; sctx.lineWidth = 2;
-      sctx.beginPath(); sctx.moveTo(tx, ty); sctx.lineTo(hx, hy); sctx.stroke();
+      const m = meteors[i];
+      if (now < m.t0) continue;
+      let left = Math.min(.05, (now - (m.last || now)) / 1000), gone = false; m.last = now;
+      // 4ms sub-steps: a close pass is fast and tightly curved, and whole-frame steps turned it into corners
+      while (left > 1e-5 && !gone) {
+        const h = Math.min(left, .004); left -= h;
+        let near = false;
+        if (pull) {
+          const gx = HOLE.x - m.x, gy = HOLE.y - m.y, r2 = gx * gx + gy * gy, r = Math.sqrt(r2), a = pull / (r2 + soft) * h;
+          m.vx += gx / r * a; m.vy += gy / r * a;
+          near = r < HOLE.R * 2.2; gone = r < HOLE.R * .5;
+        }
+        const step = Math.hypot(m.vx, m.vy) * h;
+        m.x += m.vx * h; m.y += m.vy * h; m.dist += step;
+        if (!near) m.age += step; // caught by the hole it stops ageing, so it does not fade out mid-fall
+        if (m.dist - m.trail[m.trail.length - 1][2] > 8) m.trail.push([m.x, m.y, m.dist]);
+      }
+      while (m.trail.length > 2 && m.dist - m.trail[1][2] > m.len) m.trail.shift();
+      const p = (m.age || 0) / m.travel;
+      if (gone || p >= 1) { meteors.splice(i, 1); continue; }
+      const env = Math.min(1, p * 5) * Math.min(1, (1 - p) * 2) * fade, pts = m.trail, n = pts.length, hx = m.x, hy = m.y;
+      // soft glow under the streak, then the streak itself, in six strokes brightening toward the head
+      for (let g = 0; g < 6; g++) {
+        const a = Math.floor(g * n / 6), b = Math.floor((g + 1) * n / 6), f = (g + 1) / 6;
+        if (b <= a && g < 5) continue;
+        sctx.beginPath(); sctx.moveTo(pts[a][0], pts[a][1]);
+        for (let j = a + 1; j <= b && j < n; j++) sctx.lineTo(pts[j][0], pts[j][1]);
+        if (g === 5) sctx.lineTo(hx, hy);
+        sctx.globalAlpha = env * .35 * f; sctx.strokeStyle = 'rgb(255,225,205)'; sctx.lineWidth = 6; sctx.stroke();
+        sctx.globalAlpha = env * f * f; sctx.strokeStyle = 'rgb(255,244,232)'; sctx.lineWidth = 2; sctx.stroke();
+      }
+      sctx.globalAlpha = 1;
       // head: a bright core with a halo
       const hg = sctx.createRadialGradient(hx, hy, 0, hx, hy, 9);
       hg.addColorStop(0, `rgba(255,252,246,${env.toFixed(3)})`); hg.addColorStop(.3, `rgba(255,240,225,${(env * .6).toFixed(3)})`); hg.addColorStop(1, 'rgba(255,240,225,0)');
@@ -885,20 +999,62 @@
     }
   }
 
+  const STAR_STEPS = 24, starDots = Array.from({ length: STAR_STEPS }, () => []), starOdd = [];
   function drawStars(t) {
     sctx.clearRect(0, 0, W, H);
     const heroFade = Math.max(0, 1 - scrollY / (H * 1.1));
     drawBloom(t, heroFade);
+    placeHole(heroFade);
     const px = (ptrS.x - .5) * W, py = (ptrS.y - .5) * H;
+    // point-mass lens: a star at distance r from the hole is seen at (r + sqrt(r^2 + 4E^2)) / 2, never inside the
+    // Einstein radius E (set just outside the photon ring), and is stretched along the ring by the same ratio,
+    // so stars slide round the dome as the pointer or the scroll moves the sky, and the closest smear into arcs
+    const lensOn = HOLE.vis > .01, E = HOLE.R * 1.07 * HOLE.vis, E4 = 4 * E * E;
+    // 320 separate fills a frame was the hero's biggest drawing cost. Dots are sorted into 24 brightness steps (finer
+    // than the eye sees in a twinkle) and each step is filled as one path; only the few smeared stars are stroked singly.
+    for (let b = 0; b < STAR_STEPS; b++) starDots[b].length = 0;
+    starOdd.length = 0;
     for (const s of field) {
       const tw = RM ? 1 : .7 + .3 * Math.sin(t * .001 * s.tw + s.ph);
-      const x = s.x - px * s.z * .05;
+      let x = s.x - px * s.z * .05;
       let y = (s.y - py * s.z * .04 - scrollY * s.z * .18) % (H * 1.5); if (y < 0) y += H * 1.5;
-      sctx.beginPath();
-      sctx.fillStyle = s.red ? `rgba(232,57,47,${s.a * tw})` : `rgba(244,241,236,${s.a * tw})`;
-      sctx.arc(x, y - H * .25, s.r, 0, 6.283); sctx.fill();
+      y -= H * .25;
+      let k = 1, r2 = 0, a0 = 0;
+      if (lensOn) {
+        const dx = x - HOLE.x, dy = y - HOLE.y, r = Math.hypot(dx, dy) || .01;
+        r2 = (r + Math.sqrt(r * r + E4)) / 2; k = r2 / r; x = HOLE.x + dx * k; y = HOLE.y + dy * k;
+        if (k > 1.12) a0 = Math.atan2(dy, dx);
+      }
+      if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
+      // the more a star is magnified the faster it races round the ring when the sky shifts, which read as flicker:
+      // past k = 2.2 it fades, and by 3.7 it is gone
+      const al = Math.min(1, s.a * tw * (1 + .3 * (k - 1))) * (k > 2.2 ? Math.max(0, 1 - (k - 2.2) / 1.5) : 1);
+      if (al <= .01) continue;
+      // the smear is the length added to the dot, so it grows from nothing: no jump where a dot becomes an arc
+      const smear = k > 1.12 ? Math.min(22, 2 * s.r * (Math.pow(k, 1.6) - 1.2)) : 0;
+      if (smear > .5 || s.red) starOdd.push(x, y, smear > .5 ? s.r / Math.sqrt(k) : s.r, smear > .5 ? al * (.55 + .45 / k) : al, s.red ? 1 : 0, smear > .5 ? smear / (2 * r2) : 0, r2, a0);
+      else starDots[Math.min(STAR_STEPS - 1, (al * STAR_STEPS) | 0)].push(x, y, s.r);
     }
+    sctx.fillStyle = '#F4F1EC';
+    for (let b = 0; b < STAR_STEPS; b++) {
+      const d = starDots[b]; if (!d.length) continue;
+      sctx.globalAlpha = (b + .5) / STAR_STEPS; sctx.beginPath();
+      for (let j = 0; j < d.length; j += 3) { sctx.moveTo(d[j] + d[j + 2], d[j + 1]); sctx.arc(d[j], d[j + 1], d[j + 2], 0, 6.283); }
+      sctx.fill();
+    }
+    sctx.lineCap = 'round';
+    for (let j = 0; j < starOdd.length; j += 8) {
+      const ink = starOdd[j + 4] ? '#E8392F' : '#F4F1EC'; sctx.globalAlpha = starOdd[j + 3];
+      if (starOdd[j + 5]) { sctx.strokeStyle = ink; sctx.lineWidth = starOdd[j + 2] * 2; sctx.beginPath(); sctx.arc(HOLE.x, HOLE.y, starOdd[j + 6], starOdd[j + 7] - starOdd[j + 5], starOdd[j + 7] + starOdd[j + 5]); sctx.stroke(); }
+      else { sctx.fillStyle = ink; sctx.beginPath(); sctx.arc(starOdd[j], starOdd[j + 1], starOdd[j + 2], 0, 6.283); sctx.fill(); }
+    }
+    sctx.globalAlpha = 1;
     if (!RM) drawMeteors(t, heroFade);
+    if (lensOn) {
+      if (!RM) { stepMotes(t); drawMotes(false); }
+      drawHoleShadow();
+      if (!RM) { drawMotes(true); drawRingGlint(t); }
+    }
   }
 
   /* ---------- orbit ---------- */
@@ -1046,7 +1202,8 @@
     const tl = gsap.timeline();
     tl.to('#stars', { opacity: 1, duration: 1.4, ease: 'power2.out' }, 0)
       .to('#bloom', { '--reveal': 1, duration: 1.4, ease: 'power2.out' }, 0);
-    tl.add(holeStart, 0).to('#hole', { '--reveal': 1, duration: 1.6, ease: 'power2.out' }, .2);
+    // the hole arrives slower than the rest: it swells into place while the stars are pushed out round it
+    tl.add(holeStart, 0).to(HOLE, { reveal: 1, duration: 2.8, ease: 'power3.out', onUpdate: () => hole.style.setProperty('--reveal', HOLE.reveal.toFixed(3)) }, .2);
     tl.to(orbit, { scale: 1, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, .1)
       .to(['.brand', '.menu', '.chrome-end .sound-toggle', '.pill', '.hint'], { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: .12 }, .6);
     if (!intro) tl.progress(1);
