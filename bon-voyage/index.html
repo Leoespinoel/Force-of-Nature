@@ -157,11 +157,14 @@ body.on-clay .sound-toggle[aria-pressed="true"]{border-color:currentColor} /* re
 .intro .display span{display:block;white-space:nowrap;width:max-content;letter-spacing:-.04em}
 html.intro-done .intro{display:none}
 /* from the newsletter's supernova (owner, 20 Sep: the clip must end on this page's sky, not on black): the clip's last
-   frame is this page's remnant cloud under the veil below, so the decode plays over the cloud instead of over black and
-   the cloud comes up to full strength as the intro fades. The veil is what keeps the red string readable on a red cloud;
-   change it and the clip's last frame has to be rendered again. Until the script has hidden the hero and the chrome itself
-   (.is-booted), nothing may show through the see-through intro. A direct visit keeps the black intro */
-html.via-voyage .intro{background:rgba(10,9,8,.35)}
+   frame is this page's remnant cloud at full strength, so the decode plays over the cloud instead of over black. There is
+   no veil over it: a first build dimmed the cloud 35% under the decode, and the owner (21 Sep) read the cloud brightening
+   as that veil lifted as the clip and the page not matching. The red string reads on the bare cloud (checked at 1920x1080),
+   and the cloud holds still until the intro has gone (skyLoop()), so nothing changes between the clip's last frame and the
+   reveal. Change this background or the sky and the clip's last frame has to be rendered again. Until the script has hidden
+   the hero and the chrome itself (.is-booted), nothing may show through the see-through intro. A direct visit keeps the
+   black intro */
+html.via-voyage .intro{background:transparent}
 html.via-voyage:not(.is-booted) [data-reveal],html.via-voyage:not(.is-booted) .chrome{visibility:hidden}
 /* wormhole on a direct visit (owner asked 17 Sep): the same tunnel the newsletter's Bon Voyage button plays, over the
    intro's void, so reaching /bon-voyage/ by its address is the same trip as clicking the button. Skipped when the
