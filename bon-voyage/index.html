@@ -1220,12 +1220,22 @@ const boot = () => {
      glitchy). Measured in Chrome on a 3x display, where the masked sky is ~3800x1750px to composite: the 60fps file got
      an uneven 15-21 of its frames a second on screen, the 30fps file a steady 29-30, with the page itself faster too
      (26ms a frame against 30-38). Nothing downloads or decodes until a sky is nearly on screen, and it stops once it
-     has left, in the light theme, and during the black hole trip. */
+     has left, in the light theme, and during the black hole trip.
+     Arriving from the newsletter (owner, 21 Sep: "the last frame of the supernova is not the same as the first of the
+     bon voyage supernova"): the clip's last frame is a render of this cloud at rest, but the cloud used to start flying,
+     breathing and turning the moment it loaded, hidden under the decode; measured, it was 2s into its flight when the
+     intro lifted, so what was revealed was never what the clip ended on. It now holds its resting frame and pose
+     (buffering meanwhile, so nothing stalls) until the intro has gone. */
   const skyLoop = (box) => {
     const vid = $('video', box), live = $('.sky-live', box);
     let near = false;
     const dark = () => document.documentElement.getAttribute('data-theme') !== 'light';
-    const sync = () => { if (!near || !dark() || sinking) vid.pause(); else vid.play().catch(() => {}); };
+    const held = () => { const c = document.documentElement.classList; return c.contains('via-voyage') && !c.contains('intro-done'); };
+    const sync = () => {
+      if (near && dark() && !sinking && held()) vid.preload = 'auto';
+      if (!near || !dark() || sinking || held()) vid.pause(); else vid.play().catch(() => {});
+      sweeps.forEach((t) => t.paused(!near || held()));
+    };
     /* a breath and turn over the footage, on periods that never line up with the 14s clip. Owner, 20 Sep, on the first
        there-and-back build (12s each way, breath 19s, turn 13s): "move a bit faster, right now it looks like a picture".
        The flight is now 7s each way (pingpong.py, 420 frames a direction: a little faster than it was filmed) and the
@@ -1233,7 +1243,7 @@ const boot = () => {
     const wave = (vars, duration) => gsap.to(live, { ...vars, duration, ease: 'sine.inOut', yoyo: true, repeat: -1, paused: true });
     gsap.set(live, { scale: 1, rotation: -1.5 });
     const sweeps = [wave({ scale: 1.08 }, 11), wave({ rotation: 1.5 }, 8.5)];
-    new IntersectionObserver(([e]) => { near = e.isIntersecting; sync(); sweeps.forEach((t) => t.paused(!near)); }, { rootMargin: '40% 0px' }).observe(box);
+    new IntersectionObserver(([e]) => { near = e.isIntersecting; sync(); }, { rootMargin: '40% 0px' }).observe(box);
     new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
   };
   if (!reduce) $$('[data-sky]').forEach(skyLoop);
