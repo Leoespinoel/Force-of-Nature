@@ -162,9 +162,13 @@ html.intro-done .intro{display:none}
    as that veil lifted as the clip and the page not matching. The red string reads on the bare cloud (checked at 1920x1080),
    and the cloud holds still until the intro has gone (skyLoop()), so nothing changes between the clip's last frame and the
    reveal. Change this background or the sky and the clip's last frame has to be rendered again. Until the script has hidden
-   the hero and the chrome itself (.is-booted), nothing may show through the see-through intro. A direct visit keeps the
-   black intro */
-html.via-voyage .intro{background:transparent}
+   the hero and the chrome itself (.is-booted), nothing may show through the see-through intro.
+   Every other visit gets the same backdrop (owner, 21 Sep: the first frame of the sky has to be what stands behind NOT
+   JUST A TEE): a direct visit or a reload opens black, which is what the wormhole ends on, and once the script has the
+   hero hidden (html.sky-intro) that black clears to the held cloud over the intro's opening beat, so the tunnel's last
+   frame never cuts to the cloud */
+.intro{transition:background-color .6s ease}
+html.via-voyage .intro,html.sky-intro .intro{background:transparent}
 html.via-voyage:not(.is-booted) [data-reveal],html.via-voyage:not(.is-booted) .chrome{visibility:hidden}
 /* wormhole on a direct visit (owner asked 17 Sep): the same tunnel the newsletter's Bon Voyage button plays, over the
    intro's void, so reaching /bon-voyage/ by its address is the same trip as clicking the button. Skipped when the
@@ -1283,7 +1287,7 @@ const boot = () => {
       else phase = 3;
     });
     const dark = () => document.documentElement.getAttribute('data-theme') !== 'light';
-    const held = () => { const c = document.documentElement.classList; return c.contains('via-voyage') && !c.contains('intro-done'); };
+    const held = () => !document.documentElement.classList.contains('intro-done'); /* on every visit: the sky's first frame is the decode's backdrop */
     const sync = () => {
       if (near && dark() && !sinking && held()) vid.preload = 'auto';
       const stop = !near || !dark() || sinking || held();
@@ -1613,7 +1617,7 @@ const boot = () => {
     /* 0–0.45s void only; 0.45–2.5s decode in red (owner, 18 Sep: a little slower than the 1.9s cut); barely a hold; then the
        string lifts out fast and the hero reveals underneath */
     const tl = gsap.timeline({ paused: true, delay: 0.45, onComplete: () => { html.classList.add('intro-done'); } });
-    html.classList.add('is-booted'); /* the hero and the chrome are hidden by the lines above now: the see-through intro's own guard can go */
+    html.classList.add('is-booted', 'sky-intro'); /* the hero and the chrome are hidden by the lines above now: the see-through intro's own guard can go, and on a direct visit the intro's black can clear to the sky */
     /* direct visit: the wormhole has already run by now (script under #warp; this whole start-up waited for it). Its last
        frame is black and the intro's void beat follows it */
     document.fonts.ready.then(() => { sizeIntro(); tl.play(); });
