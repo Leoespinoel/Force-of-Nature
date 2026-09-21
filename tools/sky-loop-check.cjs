@@ -1,11 +1,18 @@
 // Does the supernova sky on Bon Voyage play smoothly, and can the loop's wrap (end -> beginning) be seen?
 // Usage: node tools/sky-loop-check.cjs [url]     url default http://localhost:3000/bon-voyage/
-// Reports, for a stretch in mid-flight and for the stretch across the wrap: painted frames, the longest gap between two
-// painted frames (requestVideoFrameCallback) and gaps over 34ms (two frames at 60fps). Whether the wrap shows in the
-// picture itself is a property of the file: last frame against first, measured when the loop was built.
+// The sky is two players over one file whose last TAIL seconds repeat its opening: the visible one plays into the tail,
+// the hidden one starts from 0, is brought onto the same frame and swapped in (skyLoop() in the page). So the check
+// follows the frames that are actually on screen, whichever player shows them (requestVideoFrameCallback on both,
+// keeping only callbacks from the player with opacity 1), and reports
+//   mid-flight, 4s   painted frames, longest gap between two, gaps over 50ms (a frame and a half at 30fps) and where
+//                    in the clip they fell
+//   across the wrap  the same, plus the swap itself: the gap it made, and whether the frame shown after it is the next
+//                    frame of the flight (new mediaTime against old mediaTime - loop; 0.033 = exactly one frame on)
+// Whether the file itself is one smooth forward flight is tools/sky-forward-verify.py's job.
 // PHONE=1: a 390x844 touch screen with the processor slowed 4x.
 const path = require('path');
 const puppeteer = require(path.join(__dirname, '..', 'node_modules', 'puppeteer'));
+const TAIL = 3;
 (async () => {
   const url = process.argv[2] || 'http://localhost:3000/bon-voyage/';
   const browser = await puppeteer.launch({ headless: 'new', channel: 'chrome', args: ['--autoplay-policy=no-user-gesture-required'] });
@@ -13,32 +20,39 @@ const puppeteer = require(path.join(__dirname, '..', 'node_modules', 'puppeteer'
   const phone = !!process.env.PHONE;
   await page.setViewport(phone ? { width: 390, height: 844, deviceScaleFactor: 3, isMobile: true, hasTouch: true } : { width: 1440, height: 900 });
   if (phone) { const cc = await page.createCDPSession(); await cc.send('Emulation.setCPUThrottlingRate', { rate: 4 }); }
-  await page.goto(url, { waitUntil: 'networkidle2' });
-  const setup = await page.evaluate(async () => {
-    const box = document.querySelector('.hero-sky'), vids = box.querySelectorAll('video'), v = vids[0];
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 90000 });
+  const setup = await page.evaluate(async (TAIL) => {
+    const box = document.querySelector('.hero-sky'), all = () => [...box.querySelectorAll('video')];
     const t0 = performance.now();
-    while ((v.paused || v.readyState < 3) && performance.now() - t0 < 15000) await new Promise(r => setTimeout(r, 100));
-    window.__v = v;
-    window.__watch = (ms) => new Promise((done) => {
-      const s = { frames: 0, maxGap: 0, over34: 0, wrapped: false, from: +v.currentTime.toFixed(2) }; let prev = 0, lastT = v.currentTime; const end = performance.now() + ms;
-      const tick = (now, meta) => {
-        if (prev) { const g = now - prev; s.maxGap = Math.max(s.maxGap, g); if (g > 34) s.over34++; }
-        if (meta.mediaTime < lastT - 1) { s.wrapped = true; s.wrapGap = prev ? +(now - prev).toFixed(1) : 0; }
-        lastT = meta.mediaTime; prev = now; s.frames++;
-        if (performance.now() < end) v.requestVideoFrameCallback(tick); else { s.maxGap = +s.maxGap.toFixed(1); s.to = +v.currentTime.toFixed(2); done(s); }
-      };
-      v.requestVideoFrameCallback(tick);
-    });
-    const q = v.getVideoPlaybackQuality ? v.getVideoPlaybackQuality() : {};
-    return { players: vids.length, loop: v.loop, src: v.currentSrc.split('/').pop(), duration: +v.duration.toFixed(2), playing: !v.paused, size: v.videoWidth + 'x' + v.videoHeight, dropped0: q.droppedVideoFrames || 0 };
-  });
+    const showing = () => all().find((v) => getComputedStyle(v).opacity === '1');
+    while ((all().length < 2 || !showing() || showing().paused || showing().readyState < 3) && performance.now() - t0 < 30000) await new Promise(r => setTimeout(r, 100));
+    const vids = all();
+    const log = (window.__log = []); /* frames on screen: [time, player, mediaTime] */
+    vids.forEach((v, i) => { const f = (now, m) => { if (getComputedStyle(v).opacity === '1') log.push([now, i, m.mediaTime]); v.requestVideoFrameCallback(f); }; v.requestVideoFrameCallback(f); });
+    window.__now = () => showing().currentTime;
+    const v = showing();
+    return { players: vids.length, nativeLoop: vids.some((x) => x.loop), src: v.currentSrc.split('/').pop(), duration: +v.duration.toFixed(3), loop: +(v.duration - TAIL).toFixed(3), playing: !v.paused, size: v.videoWidth + 'x' + v.videoHeight };
+  }, TAIL);
   console.log('sky:', setup);
-  // no seeking: the page never seeks, and the loop has a single keyframe, so a seek would mean decoding from the start
-  await page.evaluate(async () => { while (window.__v.currentTime < 8) await new Promise(r => setTimeout(r, 50)); }); /* past page start-up, at the flight's fastest */
-  console.log('mid-flight, 4s:', await page.evaluate(() => window.__watch(4000)));
-  // across the wrap: wait for the clip to come within 2s of its end, shoot either side of it
-  await page.evaluate(async (d) => { while (window.__v.currentTime < d - 2) await new Promise(r => setTimeout(r, 50)); }, setup.duration);
-  console.log('across the wrap, 3s:', await page.evaluate(() => window.__watch(3000)));
-  console.log('dropped frames in all:', await page.evaluate((d0) => (window.__v.getVideoPlaybackQuality().droppedVideoFrames || 0) - d0, setup.dropped0));
+  const stretch = (from, to) => page.evaluate((from, to, loop) => {
+    const f = window.__log.filter((e) => e[0] >= from && e[0] <= to), s = { frames: f.length, maxGap: 0, over50: 0, gaps: [] };
+    for (let i = 1; i < f.length; i++) {
+      const g = f[i][0] - f[i - 1][0]; s.maxGap = Math.max(s.maxGap, g); if (g > 50) { s.over50++; s.gaps.push(Math.round(g) + 'ms at ' + f[i][2].toFixed(2) + 's'); }
+      if (f[i][1] !== f[i - 1][1]) s.swap = { gapMs: +g.toFixed(1), frameStep: +(f[i][2] - (f[i - 1][2] - loop)).toFixed(3), atTail: +(f[i - 1][2] - loop).toFixed(2) };
+    }
+    s.maxGap = +s.maxGap.toFixed(1); return s;
+  }, from, to, setup.loop);
+  const now = () => page.evaluate(() => performance.now());
+  const wait = (fn, arg) => page.evaluate(async (src, arg) => { const f = eval(src); while (!f(arg)) await new Promise(r => setTimeout(r, 50)); }, '(' + fn.toString() + ')', arg);
+  await wait((t) => window.__now() > t, 8); /* past page start-up */
+  let a = await now(); await new Promise(r => setTimeout(r, 4000));
+  console.log('mid-flight, 4s:', await stretch(a, await now()));
+  // across the wrap: no seeking (the page never seeks the visible player), wait for the flight to get there
+  await wait((t) => window.__now() > t, setup.loop - 1.5);
+  a = await now();
+  await wait((t) => window.__now() < t && window.__now() > 1.5, 10); /* swapped, and 1.5s into the new round */
+  console.log('across the wrap:', await stretch(a, await now()));
+  const q = await page.evaluate(() => [...document.querySelectorAll('.hero-sky video')].map((v) => (v.getVideoPlaybackQuality ? v.getVideoPlaybackQuality().droppedVideoFrames : 0)));
+  console.log('dropped frames per player:', q);
   await browser.close();
 })();

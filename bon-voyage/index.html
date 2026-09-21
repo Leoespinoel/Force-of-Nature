@@ -215,8 +215,8 @@ section{position:relative}
 .hero{min-height:100svh;display:grid;grid-template-columns:1fr;align-items:end;padding:120px var(--gutter) var(--gap);overflow:hidden;isolation:isolate}
 /* Supernova remnant behind the hero and the exit panel (owner asked 20 Sep; it replaced the Milky Way astrophoto), so
    the newsletter's supernova trip lands inside what the explosion left behind. It moves, like the aurora and nebula on
-   leoespinoel.com (owner asked the same day): one Seedance take rebuilt as a 14s there-and-back loop (30fps, see skyLoop()) whose end
-   is its beginning (see skyLoop() in the script), with a slow breath and turn over the footage. The poster is a still of the cloud, which is
+   leoespinoel.com (owner asked the same day): a forward-only flight that keeps going deeper into the cloud (30fps) and whose end
+   is its beginning, handed from one player to a second, hidden one without a restart (see skyLoop() in the script), with a slow breath and turn over the footage. The poster is a still of the cloud, which is
    also all that shows under reduced motion. Dark theme only, held at half strength and masked so it dissolves into the
    void before the manifesto. z-index -1 inside the hero's own stacking context keeps it under the headline, copy and
    heart. The twinkling .starfield canvas sits behind it (page-level z-index -1) and shows through where the mask thins. */
@@ -655,7 +655,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
 <main id="top">
   <!-- HERO -->
   <section class="hero" aria-label="Intro">
-    <div class="hero-sky" data-sky aria-hidden="true"><div class="sky-live"><video src="assets/remnant-loop.mp4" poster="assets/remnant-cloud.jpg" muted loop playsinline preload="none" tabindex="-1"></video></div></div>
+    <div class="hero-sky" data-sky aria-hidden="true"><div class="sky-live"><video src="assets/remnant-loop.mp4" poster="assets/remnant-cloud.jpg" muted playsinline preload="none" tabindex="-1"></video></div></div>
     <div class="hero-copy">
       <div class="hero-object" id="hero-object" data-reveal>
         <a href="#heart" data-anchor="#heart" data-cursor="The heart" aria-label="What the heart means"><img src="assets/logo-480.png" alt="Force of Nature heart logo, illustrated in red with black drips" width="132" height="182" decoding="async"></a>
@@ -906,7 +906,7 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
       <p class="msg" id="join-msg" aria-live="polite"></p>
     </div>
     <div class="exit" id="exit">
-      <div class="exit-sky" data-sky aria-hidden="true"><div class="sky-live"><video src="assets/remnant-loop.mp4" poster="assets/remnant-cloud.jpg" muted loop playsinline preload="none" tabindex="-1"></video></div></div>
+      <div class="exit-sky" data-sky aria-hidden="true"><div class="sky-live"><video src="assets/remnant-loop.mp4" poster="assets/remnant-cloud.jpg" muted playsinline preload="none" tabindex="-1"></video></div></div>
       <p class="eyebrow mono" data-reveal>The store</p>
       <h2 class="display h-section" data-reveal>Five lines.<br><em>one</em> store</h2>
       <a class="cta pill exit-cta" href="https://forceofnature.org.in/store/" data-store data-cursor="Shop" target="_blank" rel="noopener" data-reveal><span class="txt" data-scramble>Enter the store</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
@@ -1214,9 +1214,18 @@ const boot = () => {
   /* ---------- supernova sky: the moving cloud behind the hero and the exit panel ----------
      The loop is in the file, not the script (owner, 20 Sep: smoother frames, no visible seam). The footage is a flight
      through the cloud, so its last frame looks nothing like its first and the old two-player crossfade showed as clouds
-     melting away every 8s. remnant-loop.mp4 is the same take interpolated to 60fps and rebuilt as an eased there-and-back
-     flight: it slows to a standstill at both ends and its last frame is its first, so the native loop wraps where nothing
-     is moving. The file itself is 30fps (every second frame of that 60fps build; owner, 20 Sep: the cloud looked
+     melting away every 8s. A first fix played the take there and back; owner, 21 Sep: it must keep "going deeper and
+     deeper" and never go backwards, "as smooth as possible, no glitches no jumps". remnant-loop.mp4 is now one forward
+     flight, a circle of four Seedance clips: the take, an extension of it that flies on to the blue core, a second
+     extension through the core into teal gas, and a backward extension of the take that comes out of the gas and runs
+     into the take's first frame (tools/sky-forward-join.py, built by tools/sky-forward-build.py, which also evens out
+     Seedance's frame pacing; the there-and-back file is kept as tools/masters/remnant-loop-pingpong.mp4).
+     The wrap is not the browser's: a native loop restart held a frame for 50ms on a desktop and froze for 500ms on a
+     throttled phone (measured), in mid-flight. The file carries on for SKY_TAIL seconds with its own opening again;
+     a second, hidden player is started from 0 a little before that tail, comes up slightly ahead, is held paused for
+     exactly its measured lead and only then swapped in, on a tick where both show the same frame. The visible player
+     is never restarted or seeked. If the second player cannot be ready in time the first seeks itself, the old hitch, rather
+     than stop. The file itself is 30fps (every second frame of that 60fps build; owner, 20 Sep: the cloud looked
      glitchy). Measured in Chrome on a 3x display, where the masked sky is ~3800x1750px to composite: the 60fps file got
      an uneven 15-21 of its frames a second on screen, the 30fps file a steady 29-30, with the page itself faster too
      (26ms a frame against 30-38). Nothing downloads or decodes until a sky is nearly on screen, and it stops once it
@@ -1226,20 +1235,65 @@ const boot = () => {
      breathing and turning the moment it loaded, hidden under the decode; measured, it was 2s into its flight when the
      intro lifted, so what was revealed was never what the clip ended on. It now holds its resting frame and pose
      (buffering meanwhile, so nothing stalls) until the intro has gone. */
+  const SKY_TAIL = 3; /* seconds of the opening repeated at the end of remnant-loop.mp4 (TAIL in tools/sky-forward-build.py) */
   const skyLoop = (box) => {
-    const vid = $('video', box), live = $('.sky-live', box);
-    let near = false;
+    const live = $('.sky-live', box);
+    let vid = $('video', box), next = vid.cloneNode(), near = false, handing = false, phase = 0, offs = [], until = 0, stale = -1, first = true;
+    const lag = { cold: 0.2, warm: 0.03 }, LEAD = 0.2; /* seconds from play() to a new frame on screen: from 0 after a reset, and resuming from a pause. Corrected at every hand-over */
+    next.removeAttribute('poster'); next.muted = true; live.appendChild(next);
+    /* the frame each player last put on screen, to the frame where the browser can tell (currentTime runs between frames) */
+    const seen = new WeakMap();
+    const at = (v) => seen.has(v) ? seen.get(v) : v.currentTime;
+    [vid, next].forEach((v) => { if (!v.requestVideoFrameCallback) return; const f = (now, m) => { seen.set(v, m.mediaTime); v.requestVideoFrameCallback(f); }; v.requestVideoFrameCallback(f); });
+    const swap = () => {
+      next.style.opacity = 1; vid.style.opacity = 0;
+      const old = vid; vid = next; next = old; handing = false; phase = 0;
+      old.pause();
+      /* back to the start for the next round, but not now: a seek right after the swap cost the new player frames (measured) */
+      setTimeout(() => { if (old === next && !handing) { seen.delete(old); old.currentTime = 0; } }, 5000);
+    };
+    /* The hand-over leaves the hidden player's rate and position alone. Traced, in Chrome: the visible player loses
+       frames for exactly as long as the hidden one runs at anything but 1x, however gently it is steered; and a seek
+       into this one-keyframe file plays out from the keyframe, not from where it was sent. Pausing and resuming costs
+       nothing and takes about 20ms. So: start the hidden player LEAD seconds early, so that it comes up ahead; measure
+       by how much over a few frames (phase 2); hold it paused for exactly that long (phase 1); measure again; swap on
+       a tick where both show the same frame (phase 3). Both start-up delays are learnt, so the pauses land. Only if it
+       comes up behind by more than a frame (a start slower than ever seen) is its rate raised, briefly. */
+    gsap.ticker.add(() => {
+      if (vid.paused || !vid.duration) return;
+      const loop = vid.duration - SKY_TAIL, t = at(vid), pos = t - loop, now = performance.now(); /* pos: where the visible player is in the opening, once it is in the tail */
+      if (t > loop - 8 && next.preload !== 'auto') next.preload = 'auto';
+      if (!handing) { if (pos > -(lag.cold + LEAD)) { handing = true; phase = 2; offs = []; first = true; stale = at(next); next.play().catch(() => {}); } return; }
+      if (t > vid.duration - 0.15) { /* out of tail: take the hidden player as it is, or, if it never got going, seek this one (the old hitch) rather than stop */
+        if (next.readyState >= 3 && at(next) > 0) { next.playbackRate = 1; next.play().catch(() => {}); return swap(); }
+        handing = false; phase = 0; next.pause(); vid.currentTime = Math.max(0, pos); return;
+      }
+      if (phase === 1) { if (now >= until) { phase = 2; offs = []; stale = at(next); next.play().catch(() => {}); } return; }
+      if (phase === 4) { if (now >= until) { next.playbackRate = 1; phase = 2; offs = []; stale = -1; } return; }
+      if (next.paused || next.readyState < 3 || at(next) === stale) return; /* no new frame up yet */
+      stale = -1;
+      const d = pos - at(next); /* over 0: the hidden player is behind */
+      if (phase === 3) { if (Math.abs(d) < 0.017) swap(); return; }
+      offs.push(d); if (offs.length < 8) return;
+      const m = offs.slice().sort((x, y) => x - y)[4];
+      if (first) lag.cold = Math.max(0.03, Math.min(2, lag.cold + m + LEAD)); else lag.warm = Math.max(0, Math.min(0.5, lag.warm + m));
+      first = false;
+      if (m < -0.02 && pos < SKY_TAIL - 0.6) { next.pause(); until = now + Math.max(0, -m - lag.warm) * 1000; phase = 1; }
+      else if (m > 0.04 && pos < SKY_TAIL - 1) { next.playbackRate = 1.25; until = now + m / 0.25 * 1000; phase = 4; }
+      else phase = 3;
+    });
     const dark = () => document.documentElement.getAttribute('data-theme') !== 'light';
     const held = () => { const c = document.documentElement.classList; return c.contains('via-voyage') && !c.contains('intro-done'); };
     const sync = () => {
       if (near && dark() && !sinking && held()) vid.preload = 'auto';
-      if (!near || !dark() || sinking || held()) vid.pause(); else vid.play().catch(() => {});
+      const stop = !near || !dark() || sinking || held();
+      [vid, handing ? next : null].forEach((v) => { if (!v) return; if (stop) v.pause(); else v.play().catch(() => {}); });
       sweeps.forEach((t) => t.paused(!near || held()));
     };
-    /* a breath and turn over the footage, on periods that never line up with the 14s clip. Owner, 20 Sep, on the first
+    /* a breath and turn over the footage, on periods that never line up with the clip. Owner, 20 Sep, on the first
        there-and-back build (12s each way, breath 19s, turn 13s): "move a bit faster, right now it looks like a picture".
-       The flight is now 7s each way (pingpong.py, 420 frames a direction: a little faster than it was filmed) and the
-       breath and turn keep the cloud alive while the flight stands still at its two ends */
+       The flight is now forward only, a little faster than it was filmed (see above). The breath's way back shrinks the
+       picture by under 1% a second while the flight grows it by about 10%, so it never reads as going backwards */
     const wave = (vars, duration) => gsap.to(live, { ...vars, duration, ease: 'sine.inOut', yoyo: true, repeat: -1, paused: true });
     gsap.set(live, { scale: 1, rotation: -1.5 });
     const sweeps = [wave({ scale: 1.08 }, 11), wave({ rotation: 1.5 }, 8.5)];
