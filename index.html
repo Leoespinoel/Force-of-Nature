@@ -162,8 +162,9 @@
   .hero-sub .cta{white-space:nowrap}
 
   /* ---------- follow ---------- */
-  .follow{padding:calc(var(--gap) * 2) var(--gutter) var(--gap);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(32px,6vw,96px);align-items:start}
+  .follow{padding:calc(var(--gap) * 2) var(--gutter) var(--gap);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(32px,6vw,96px);align-items:start;background:var(--red);color:var(--bone)}
   .follow .h-section{margin:0 0 24px}
+  .follow .eyebrow{color:var(--bone)}
   .field-form{display:grid;gap:26px;max-width:520px;width:100%;justify-self:end}
   .field{display:flex;flex-direction:column;gap:8px}
   .field label{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pebble)}
@@ -171,15 +172,22 @@
   .field input::placeholder{color:var(--pebble);opacity:.7}
   .field input:focus-visible{outline:none;border-bottom-color:var(--red-lift);box-shadow:0 1px 0 var(--red-lift)}
   .field input:-webkit-autofill{-webkit-text-fill-color:var(--bone);box-shadow:0 0 0 40px var(--void) inset;caret-color:var(--bone)}
+  .follow .field label{color:rgba(244,241,236,.75)}
+  .follow .field input{border-bottom-color:rgba(244,241,236,.32)}
+  .follow .field input::placeholder{color:rgba(244,241,236,.5);opacity:1}
+  .follow .field input:focus-visible{border-bottom-color:var(--bone);box-shadow:0 1px 0 var(--bone)}
+  .follow .field input:-webkit-autofill{box-shadow:0 0 0 40px var(--red) inset}
   .field-form .cta{justify-self:start;margin-top:4px}
   .field-form.is-sending .cta{opacity:.6;cursor:progress}
   .follow__note{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--bone);margin:0;min-height:1.4em;animation:noteRise .6s var(--ease-out) both}
   .follow__note.is-error{color:var(--red-lift)}
+  .follow .follow__note.is-error{color:var(--bone);text-decoration:underline}
   @keyframes noteRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
   /* ---------- perks ---------- */
-  .perks{padding:var(--gap) var(--gutter)}
-  .rule{height:1px;background:var(--hairline);transform-origin:left}
+  .perks{padding:var(--gap) var(--gutter);background:var(--smoke)}
+  .rule{height:2px;background:var(--red);transform-origin:left}
+  main > .rule{margin:0 var(--gutter)}
   .perks-grid{display:grid;grid-template-columns:repeat(3,1fr)}
   .perk{display:grid;grid-template-rows:auto auto 1fr;gap:18px;padding:28px clamp(16px,2.2vw,36px) 44px;border-left:1px solid var(--hairline);min-height:280px}
   .perk:first-child{border-left:0;padding-left:0}
@@ -370,6 +378,8 @@
     </div>
   </div>
 </section>
+
+<div class="rule" data-rule></div>
 
 <section class="voyage" id="voyage">
   <div class="sun-stage" aria-hidden="true">
