@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Force of Nature, the pitch</title>
-<meta name="description" content="Force of Nature, investor and partner pitch. A lifestyle brand where 10% of every sale, not profit, funds reef, forest and coastline conservation. Automatically.">
+<meta name="description" content="Force of Nature, an invitation to media partners, investors and co-founders. A high-end fashion brand where 10% of every sale, not profit, goes to the foundations protecting the ocean, the forests and the land. Automatically.">
 <meta name="theme-color" content="#0A0908">
 <link rel="icon" href="assets/logo-480.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@1&family=Geist+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Doto:wght@700;900&display=swap" rel="stylesheet">
 <style>
 /* Tokens are the same ones the newsletter, the Bon Voyage page and the Online Store use. */
 :root{
@@ -94,6 +94,8 @@ ul,ol{padding:0;list-style:none}
 .ph::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
 .fig{font-variant-numeric:tabular-nums;white-space:nowrap}
 .note{color:var(--c-mute);font-size:13px;line-height:1.45;max-width:46ch}
+.note a{text-decoration:underline;text-underline-offset:2px}
+.note strong{color:var(--c-soft);font-weight:600}
 .meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;margin-top:clamp(24px,3vw,40px)}
 .link{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--c-ink);padding:6px 0;position:relative}
 .link svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.5;fill:none;transition:transform .5s var(--ease-out)}
@@ -121,10 +123,10 @@ ul,ol{padding:0;list-style:none}
 .now .lab{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .now .hint{color:var(--pebble)}
 .steps{display:flex;gap:8px}
-.index{position:fixed;inset:0;z-index:60;background:var(--void);color:#F4F1EC;display:grid;grid-template-rows:auto 1fr;visibility:hidden;opacity:0;transition:opacity .45s var(--ease-out),visibility 0s .45s}
+.index{position:fixed;inset:0;z-index:60;background:var(--void);color:#F4F1EC;display:grid;grid-template-rows:auto minmax(0,1fr);visibility:hidden;opacity:0;transition:opacity .45s var(--ease-out),visibility 0s .45s}
 .index.is-open{visibility:visible;opacity:1;transition:opacity .45s var(--ease-out)}
 .index-head{display:flex;justify-content:space-between;align-items:center;padding:14px var(--gutter);border-bottom:1px solid var(--hairline)}
-.index-list{overflow:auto;padding:clamp(24px,4vw,56px) var(--gutter) 40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(24px,5vw,96px);align-content:start;max-width:1360px;width:100%;margin:0 auto}
+.index-list{overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:clamp(24px,4vw,56px) var(--gutter) 40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(24px,5vw,96px);align-content:start;max-width:1360px;width:100%;margin:0 auto}
 .index-list a{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:baseline;gap:8px;padding:13px 0;border-bottom:1px solid var(--hairline);transition:color .4s var(--ease-out),padding-left .6s var(--ease-out)}
 .index-list a .n{color:var(--pebble)}
 .index-list a .t{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 60;font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.3rem,2.6vw,2.2rem);line-height:1}
@@ -293,7 +295,7 @@ html.pre .takeover{opacity:1;visibility:visible}
 .browser-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid var(--c-line);color:var(--pebble)}
 .browser-bar b{width:9px;height:9px;border-radius:50%;background:var(--smoke);display:block}
 .browser-bar span{margin-left:10px;font-size:11px}
-.browser .frame{aspect-ratio:1440/1026}
+.browser .frame{aspect-ratio:2000/1137}
 .browser .frame img{object-position:top}
 
 /* ---------- 14 roadmap ---------- */
@@ -402,12 +404,80 @@ html.pre .takeover{opacity:1;visibility:visible}
   .hero-foot .cue i{animation:none}
   .frame img{transition:none}
 }
+
+/* ---------- three looks: each slide is drawn in its own reference theme. Every rule is scoped to .look so the rest of the pitch is untouched ---------- */
+.look .wrap{display:grid;gap:clamp(28px,4vw,56px)}
+.look-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,3.4vw,56px);align-items:start}
+.look-h{margin:0}
+.look-ref{font-size:12px;margin:0}
+.look-notes{display:grid;gap:16px}
+.look-notes h3{margin:0 0 10px}
+.look-notes ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+@media (max-width:900px){.look-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Look 01 · Light (reference: Bevel Health) */
+.look--light{--c-bg:#fff;--c-ink:#222326;--c-mute:#747679;--c-accent:#1f2025;font-family:-apple-system,BlinkMacSystemFont,Inter,"Segoe UI",sans-serif}
+.look--light .eyebrow{font-family:inherit;font-size:16px;font-weight:500;letter-spacing:0;text-transform:none;color:#747679}
+.look--light .look-h{font-weight:600;font-size:clamp(2.5rem,5.6vw,5rem);line-height:1;letter-spacing:-.03em;color:#222326}
+.look--light .look-ref{color:#747679}
+.look--light .look-mock{background:linear-gradient(#d2e5ff,#fff9ee);border-radius:32px;padding:clamp(12px,1.6vw,20px)}
+.look--light .look-notes>div{background:#ebf0f8;border-radius:32px;padding:32px}
+.look--light .look-notes h3{font-weight:600;font-size:24px;letter-spacing:-.01em;line-height:1}
+.look--light .look-notes li{color:#747679;font-size:clamp(1rem,1.3vw,1.2rem);line-height:1.3}
+
+/* Look 02 · Black stage (reference: Apple iPhone Pro) */
+.look--stage{--c-bg:#000;--c-ink:#f5f5f7;--c-mute:#86868b;--c-accent:#2997ff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,sans-serif}
+.look--stage .eyebrow{font-family:inherit;font-size:17px;font-weight:500;letter-spacing:-.022em;text-transform:none;color:#86868b}
+.look--stage .look-h{font-weight:600;font-size:clamp(2.6rem,6vw,6rem);line-height:1.04;letter-spacing:-.015em;color:#f5f5f7}
+.look--stage .look-ref{color:#86868b}
+.look--stage .look-mock{background:#1d1d1f;border-radius:28px;padding:clamp(12px,1.6vw,20px)}
+.look--stage .look-notes{background:#1d1d1f;border-radius:28px;padding:16px;gap:12px}
+.look--stage .look-notes>div{background:#000;border-radius:28px;padding:24px}
+.look--stage .look-notes h3{font-weight:600;font-size:19px;line-height:1.21;letter-spacing:.012em;color:#f5f5f7}
+.look--stage .look-notes li{color:#86868b;font-size:clamp(.95rem,1.2vw,1.06rem);line-height:1.47}
+
+/* Look 03 · Product first (reference: Nothing) */
+.look--grid{--c-bg:#fff;--c-ink:#000;--c-mute:#6b6b6b;--c-accent:#d71921;font-family:Inter,-apple-system,sans-serif}
+.look--grid .eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#6b6b6b}
+.look--grid .look-h{font-family:Doto,var(--font-mono);font-weight:900;font-size:clamp(2.4rem,5.6vw,5.2rem);line-height:.95;letter-spacing:-.01em;text-transform:uppercase;color:#000}
+.look--grid .look-ref{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:#6b6b6b}
+.look--grid .look-mock{border:1px solid #000;border-radius:12px;padding:8px}
+.look--grid .look-notes{gap:0;border-top:1px solid #000}
+.look--grid .look-notes>div{padding:20px 0;border-bottom:1px solid #000}
+.look--grid .look-notes h3{font-family:var(--font-mono);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#d71921}
+.look--grid .look-notes li{font-size:clamp(1rem,1.3vw,1.15rem);line-height:1.35;color:#000}
+
+/* the reference site itself: a screen recording (assets/looks/<name>.mp4) when one exists, its poster screenshot until then */
+.look-shot{position:relative;aspect-ratio:3402/1958;overflow:hidden;background:#111;display:grid;place-items:center}
+.look-shot video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.look-shot .wait{font-size:13px;color:#8a8a8a;text-align:center;padding:0 24px;line-height:1.4}
+.look--light .look-shot{border-radius:20px;background:#fff}
+.look--stage .look-shot{border-radius:20px;background:#000}
+.look--grid .look-shot{border-radius:6px;background:#f0f0f0}
+
+/* the question each slide leaves open; the next slide's headline answers it */
+.sec-q{grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;margin:clamp(28px,3.4vw,48px) 0 0;padding-top:16px;border-top:1px solid var(--c-line);color:var(--c-mute)}
+.sec-q b{font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:clamp(1.3rem,2vw,1.9rem);line-height:1.1;letter-spacing:0;text-transform:none;color:var(--c-ink)}
+.look .sec-q{margin-top:0}
+.look .sec-q b{font-family:inherit;font-style:normal;font-weight:600}
+.takeover .k.is-q{font-family:var(--font-serif);font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;font-size:clamp(1.4rem,2.6vw,2.4rem);line-height:1.1;color:var(--bone);right:var(--gutter)}
+
+/* Look 04 · the site as it stands today, in the pitch's own type and colours */
+.look--fon{--c-bg:var(--void);--c-ink:var(--bone);--c-mute:var(--pebble);--c-accent:var(--red-lift)}
+.look--fon .look-ref{color:var(--pebble)}
+.look--fon .look-mock{border:1px solid var(--hairline);padding:clamp(8px,1vw,12px);background:var(--plate)}
+.look--fon .look-shot{background:#000}
+.look--fon .look-notes{gap:0;border-top:1px solid var(--hairline)}
+.look--fon .look-notes>div{padding:22px 0;border-bottom:1px solid var(--hairline)}
+.look--fon .look-notes h3{font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--red-lift)}
+.look--fon .look-notes li{color:var(--ash);font-size:clamp(1rem,1.25vw,1.12rem);line-height:1.5}
+.look--fon .sec-q b{font-family:var(--font-serif);font-style:italic;font-weight:400}
 </style>
 <script>/* black before first paint when motion is allowed, so the page never flashes ahead of its opening takeover; the 8s timer is only a failsafe if the main script never runs */
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('pre');setTimeout(function(){document.documentElement.classList.remove('pre')},8000);}</script>
 </head>
 <body>
-<a class="skip mono" href="#origins">Skip to the pitch</a>
+<a class="skip mono" href="#invitation">Skip to the invitation</a>
 
 <!-- one sprite, hand-drawn line icons in the same idiom as the other three sites -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -457,7 +527,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     <img src="assets/logo-480.png" alt="" width="19" height="26">
     <span>Force of Nature</span>
   </a>
-  <span class="mid mono">Investor &amp; partner pitch</span>
+  <span class="mid mono">The pitch</span>
   <div class="right">
     <span class="counter mono" aria-live="polite"><b id="count">01</b> / <span id="count-total">18</span></span>
     <button class="chip-btn mono" id="index-open" aria-haspopup="dialog" aria-controls="index"><svg aria-hidden="true"><use href="#i-grid"/></svg>Index</button>
@@ -477,7 +547,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     <span class="mono">Index · <span id="index-total">18</span> sections</span>
     <button class="chip-btn mono" id="index-close"><svg aria-hidden="true"><use href="#i-x"/></svg>Close</button>
   </div>
-  <nav class="index-list" id="index-list" aria-label="Sections"></nav>
+  <nav class="index-list" id="index-list" aria-label="Sections" data-lenis-prevent></nav>
 </div>
 
 <!-- the takeover: full-screen headline decode before each section (see the script). Black from first paint via html.pre -->
@@ -489,56 +559,56 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
 <main id="main">
 
   <!-- 01 COVER -->
-  <section class="sec hero" id="cover" data-slide="01" data-label="Cover">
+  <section class="sec hero" id="cover" data-q="Why am I showing you this?" data-slide="01" data-label="Cover">
     <div class="wrap">
       <div class="hero-grid">
         <div>
-          <p class="eyebrow mono" data-hero><span class="num" data-scramble>Investor &amp; partner pitch · 2026</span></p>
+          <p class="eyebrow mono" data-hero><span class="num" data-scramble>For media partners, investors and co-founders · 2026</span></p>
           <h1 class="display h-hero" aria-label="Force of Nature"><span class="ln"><span>Force of</span></span><span class="ln"><span>Nature</span></span></h1>
-          <p class="hero-tag" data-hero>Where mission and lifestyle collide.</p>
-          <p class="body" data-hero><strong>10% of every sale, not profit,</strong> goes to reef, forest and coastline conservation. Automatically.</p>
+          <p class="hero-tag" data-hero>Not a clothing brand. A movement you can wear.</p>
+          <p class="body" data-hero>A high-end fashion brand. <strong>10% of every sale, not profit,</strong> goes to the foundations protecting the ocean, the forests and the land. Automatically.</p>
         </div>
         <div class="hero-mark" id="hero-mark"><img src="assets/logo-1200.png" alt="Force of Nature heart logo, illustrated in red with black drips" width="870" height="1200" fetchpriority="high"></div>
       </div>
-      <div class="hero-foot mono" data-hero><span>Force of Nature Operations</span><span class="cue"><i></i>Scroll, or press →</span></div>
+      <div class="hero-foot mono" data-hero><span>Working name · the name is ours to choose</span><span class="cue"><i></i>Scroll, or press →</span></div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Why am I showing you this?</b></p>
     </div>
   </section>
 
-  <!-- 02 ORIGINS -->
-  <section class="sec" id="origins" data-slide="02" data-label="The founder">
+  <!-- 02 INVITATION -->
+  <section class="sec sec--plate" id="invitation" data-q="What problem is worth our time?" data-slide="02" data-label="The invitation">
     <div class="wrap">
       <div class="sec-head sec-head--aside">
         <div>
-          <p class="eyebrow mono" data-reveal><span class="num">02</span> The founder</p>
-          <h2 class="display h-section" data-lines><span class="ln"><span>The origins</span></span><span class="ln"><span><em>of the</em> brand</span></span></h2>
-          <p class="byline" data-reveal><span>[Founder Name] · Founder, Force of Nature</span><span class="ph">Name to come</span></p>
+          <p class="eyebrow mono" data-reveal><span class="num">02</span> The invitation</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Not my plan.</span></span><span class="ln"><span><em>our</em> idea</span></span></h2>
         </div>
-        <blockquote class="quote" data-reveal>
-          <span class="mark" aria-hidden="true">“</span>
-          <p>I've been in a privileged position. That comes with a responsibility to pay it forward, not to keep it for myself.</p>
-        </blockquote>
+        <p class="closer" data-reveal>I bring the production. I'm looking for the people who complete it: media first, then investors and anyone who wants to co-found.</p>
       </div>
-      <ol class="journey" id="journey">
-        <li class="journey-line" aria-hidden="true"><i></i></li>
-        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-wave"/></svg></span><span class="yr mono">01</span><h3>Mauritius, before the boom</h3><p>Grew up watching a paradise before fibre optics, mass real estate and reef loss. Saw first-hand what a place gains and loses when it modernises.</p></li>
-        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><span class="yr mono">02</span><h3>Finance, the Netherlands</h3><p>Studied finance, chased status and money, and hit a wall of emptiness. Knew sustainability had to be part of the answer, but couldn't build it there.</p></li>
-        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><span class="yr mono">03</span><h3>The military</h3><p>Stepped away to reset. The structure and discipline created the space to think clearly about what came next.</p></li>
-        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><span class="yr mono">04</span><h3>Fashion, Amsterdam</h3><p>Worked at Mr Marvis, a sustainable B Corp start-up, while living inside the high end of fashion culture.</p></li>
-        <li class="step"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><span class="yr mono">05</span><h3>Force of Nature</h3><p>Everything combined: a brand for a generation that lost community to social media, giving a voice and a visible outcome to the people creating real impact.</p></li>
-      </ol>
+      <div class="grid-3" data-stagger>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-layers"/></svg></span><h3>Media, above all</h3><p>The story, the content and the reach, yours to lead. It is what the brand needs most, and what I am mainly looking for.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><h3>Investment</h3><p>Capital that helps the media and the first drop happen sooner and better. I am open to it.</p></div>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><h3>Co-founding</h3><p>A seat at the table, with as much creative input as I have. Open to anyone who wants to build this. Everything in this pitch is a starting point.</p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>Still open, on purpose</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-tag"/></svg></span><div><h3>The name</h3><p>Force of Nature is the working name. The real one gets brainstormed in the room, by all of us.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>The group</h3><p>It has to be wide. A small circle can't reach everyone, and the brand is the community, so the community has to be in it. How do we keep it wide without diluting everyone down to nothing?</p></div></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What problem is worth our time?</b></p>
     </div>
   </section>
 
   <!-- 03 PROBLEM -->
-  <section class="sec sec--plate" id="problem" data-slide="03" data-label="The problem">
+  <section class="sec" id="problem" data-q="So what do we do differently?" data-slide="03" data-label="The problem">
     <div class="wrap split">
       <div>
         <p class="eyebrow mono" data-reveal><span class="num">03</span> The problem</p>
-        <h2 class="display h-section" data-lines><span class="ln"><span>Apparel has an</span></span><span class="ln"><span>accountability <em>problem</em></span></span></h2>
+        <h2 class="display h-section" data-lines><span class="ln"><span>Nobody can show</span></span><span class="ln"><span><em>where the</em> money went</span></span></h2>
         <p class="lead" data-reveal style="margin-top:28px">Every brand talks about impact. Almost none can show you where a single dollar went.</p>
         <div class="statline">
-          <p class="display bigfig fig" data-fig>[XX]%</p>
-          <div data-reveal><p class="body">of conscious consumers say they don't trust brands' sustainability claims.</p><span class="ph">Illustrative · placeholder figure</span></div>
+          <p class="display bigfig fig">53%</p>
+          <div data-reveal><p class="body">of green claims in the EU give vague, misleading or unfounded information. 40% have no supporting evidence at all.</p><p class="note" style="margin-top:12px">Source: <a href="https://environment.ec.europa.eu/topics/circular-economy-topics/green-claims_en" target="_blank" rel="noopener">European Commission</a>.</p></div>
         </div>
       </div>
       <div class="rows" data-stagger>
@@ -546,80 +616,37 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
         <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><div><h3>Sustainability as a campaign</h3><p>A capsule, a hashtag, a percentage of profit that never materialises, because early-stage brands rarely have profit.</p></div></div>
         <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>A generation that wants proof</h3><p>Younger buyers want the impact built into the product itself, without guilt, extra steps or a lecture.</p></div></div>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>So what do we do differently?</b></p>
     </div>
   </section>
 
   <!-- 04 THE IDEA -->
-  <section class="sec" id="idea" data-slide="04" data-label="The idea">
+  <section class="sec sec--plate" id="idea" data-q="How does the money actually get there?" data-slide="04" data-label="The idea">
     <div class="wrap idea-grid">
       <div>
         <p class="eyebrow mono" data-reveal><span class="num">04</span> The idea</p>
         <p class="display ten-num" aria-label="10 percent"><span class="n" id="ten-num" aria-hidden="true">10</span><span class="pc" aria-hidden="true">%</span></p>
         <h2 class="display ten-cap" data-lines><span class="ln"><span>Of every sale, <em>not</em> profit.</span></span><span class="ln"><span>Automatically.</span></span></h2>
         <p class="closer" data-reveal style="margin-bottom:18px">No pledges. No opt-ins. No round-ups. The impact happens the moment you wear it.</p>
-        <p class="body" data-reveal>Ten percent of the price of every piece is set aside the moment it's bought and sent to conservation work on the ground.</p>
+        <p class="body" data-reveal>Ten percent of the price of every piece is set aside the moment it's bought and sent to the foundations doing the work on the ground. Not charity in general: the people protecting the ocean, the forests and the land.</p>
       </div>
       <div class="ten-cards" data-frames>
-        <figure class="ten-card"><div class="frame"><img src="assets/ten-reef.jpg" srcset="assets/ten-reef-sm.jpg 600w, assets/ten-reef.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Coral reef in low evening light" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">01</span><span>Reef</span></span><p>Coral restoration and marine protection, starting in the Indian Ocean.</p></figcaption></figure>
-        <figure class="ten-card"><div class="frame"><img src="assets/ten-forest.jpg" srcset="assets/ten-forest-sm.jpg 600w, assets/ten-forest.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Native forest with a shaft of light through the canopy" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">02</span><span>Forest</span></span><p>Native reforestation and habitat protection.</p></figcaption></figure>
-        <figure class="ten-card"><div class="frame"><img src="assets/ten-coast.jpg" srcset="assets/ten-coast-sm.jpg 600w, assets/ten-coast.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Volcanic coastline and lagoon at dusk" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">03</span><span>Coastline</span></span><p>Beach and mangrove clean-ups, erosion and plastic recovery.</p></figcaption></figure>
+        <figure class="ten-card"><div class="frame"><img src="assets/ten-reef.jpg" srcset="assets/ten-reef-sm.jpg 600w, assets/ten-reef.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Pocillopora coral on a reef in Mauritius" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">01</span><span>Reef</span></span><p>Coral restoration and marine protection.</p></figcaption></figure>
+        <figure class="ten-card"><div class="frame"><img src="assets/ten-forest.jpg" srcset="assets/ten-forest-sm.jpg 600w, assets/ten-forest.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Forest in the Black River Gorges, Mauritius" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">02</span><span>Forest</span></span><p>Native reforestation and habitat protection.</p></figcaption></figure>
+        <figure class="ten-card"><div class="frame"><img src="assets/ten-coast.jpg" srcset="assets/ten-coast-sm.jpg 600w, assets/ten-coast.jpg 1200w" sizes="(max-width:900px) 100vw, 18vw" alt="Le Morne Brabant and its lagoon on the southwest coast of Mauritius" loading="lazy" decoding="async"></div><figcaption><span class="cap mono"><span class="k">03</span><span>Coastline</span></span><p>Beach and mangrove clean-ups, erosion and plastic recovery.</p></figcaption></figure>
       </div>
-    </div>
-  </section>
-
-  <!-- 05 BRAND WORLD -->
-  <section class="sec sec--bone" id="world" data-slide="05" data-label="Brand world">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">05</span> Brand world</p>
-        <h2 class="display h-section" data-lines><span class="ln"><span>A lifestyle brand first.</span></span><span class="ln"><span><em>not</em> charity merch</span></span></h2>
-      </div>
-      <div class="world">
-        <div class="grid-2" data-stagger>
-          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><h3>Premium first</h3><p>Heavyweight fabrics, clean silhouettes, quiet branding. It has to be a piece you'd buy with no mission attached.</p></div>
-          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-seed"/></svg></span><h3>Mission built in</h3><p>The 10% is a mechanism, not a marketing line. It ships with every product, every time.</p></div>
-          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3>Community over followers</h3><p>Rebuilding the belonging social media hollowed out, around people doing real work.</p></div>
-          <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-flame"/></svg></span><h3>Raw, a little rebellious</h3><p>A dripping heart, not a green leaf. Honest and emotional, for a generation that can smell a pitch.</p></div>
-        </div>
-        <div class="world-mark" data-reveal>
-          <img src="assets/logo-1200.png" alt="The Force of Nature drip heart" width="870" height="1200" loading="lazy" decoding="async">
-          <p class="cap">The drip heart: love that bleeds into action.</p>
-          <span class="mono">Where mission and lifestyle collide</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 06 PRODUCT -->
-  <section class="sec" id="line" data-slide="06" data-label="The line">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">06</span> The line</p>
-        <h2 class="display h-section" data-lines><span class="ln"><span>Five chapters.</span></span><span class="ln"><span><em>one</em> line</span></span></h2>
-      </div>
-      <div class="pieces" data-frames>
-        <figure class="piece"><div class="frame"><img src="assets/pieces/classic-1.jpg" alt="Classic: an undyed linen shirt and trousers" loading="lazy" decoding="async"></div><figcaption><span class="name">Classic</span><span class="mono">Linen, unbranded</span></figcaption></figure>
-        <figure class="piece"><div class="frame"><img src="assets/pieces/originals-1.jpg" alt="Originals: a heavyweight black tee and pleated trousers" loading="lazy" decoding="async"></div><figcaption><span class="name">Originals</span><span class="mono">Streetwear</span></figcaption></figure>
-        <figure class="piece"><div class="frame"><img src="assets/pieces/collective-1.jpg" alt="Collective: a sculptural black coat on a runway" loading="lazy" decoding="async"></div><figcaption><span class="name">Collective</span><span class="mono">Runway</span></figcaption></figure>
-        <figure class="piece"><div class="frame"><img src="assets/pieces/mer-1.jpg" alt="Mer: black swim shorts" loading="lazy" decoding="async"></div><figcaption><span class="name">Mer</span><span class="mono">Swim</span></figcaption></figure>
-        <figure class="piece"><div class="frame"><img src="assets/pieces/terre-1.jpg" alt="Terre: a grey running shell and black shorts, mid-stride" loading="lazy" decoding="async"></div><figcaption><span class="name">Terre</span><span class="mono">Sport</span></figcaption></figure>
-      </div>
-      <div class="facts" data-stagger>
-        <div><p class="mono">Material</p><p>Heavyweight cotton and linen, muted earth palette, hits of red.</p></div>
-        <div><p class="mono">Cadence</p><p>Drops, not seasons. Small runs, no markdowns.</p></div>
-        <div><p class="mono">Price band</p><p><span class="fig">[€XX – €XXX]</span> per piece</p><span class="ph" style="margin-top:12px">Illustrative</span></div>
-      </div>
-      <div class="meta-row" data-reveal><a class="link" href="https://forceofnature.org.in/store/" target="_blank" rel="noopener">See the line in the store<svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-ne"/></svg></a></div>
+      <p class="note" style="grid-column:1 / -1;max-width:none;margin-top:14px">Photos: Diego Delso (CC BY-SA 4.0), Rod Waddington (CC BY-SA 2.0), dronepicr (CC BY 2.0). Via Wikimedia Commons, cropped.</p>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>How does the money actually get there?</b></p>
     </div>
   </section>
 
   <!-- 07 MECHANISM -->
-  <section class="sec sec--plate" id="mechanism" data-slide="07" data-label="The mechanism">
+  <section class="sec" id="mechanism" data-q="What does that add up to?" data-slide="05" data-label="The mechanism">
     <div class="wrap">
       <div class="sec-head sec-head--aside">
         <div>
-          <p class="eyebrow mono" data-reveal><span class="num">07</span> The mechanism</p>
-          <h2 class="display h-section" data-lines><span class="ln"><span>How 10% moves <em>from a</em></span></span><span class="ln"><span>checkout <em>to a</em> coastline</span></span></h2>
+          <p class="eyebrow mono" data-reveal><span class="num">05</span> The mechanism</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>From a checkout</span></span><span class="ln"><span><em>to a</em> coastline</span></span></h2>
         </div>
         <p class="closer" data-reveal>Transparency is the product feature. If we can't show it, we don't claim it.</p>
       </div>
@@ -628,22 +655,23 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
         <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-lock"/></svg></span><span class="n mono">02</span><h3>Held separately</h3><p>Mission funds sit in a dedicated account. Never working capital, never payroll.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
         <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-layers"/></svg></span><span class="n mono">03</span><h3>Pooled each quarter</h3><p>Funds are batched and allocated across reef, forest and coastline projects.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
         <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><span class="n mono">04</span><h3>Deployed to partners</h3><p>Vetted conservation partners receive it as flexible, recurring funding.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
-        <li class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><span class="n mono">05</span><h3>Published openly</h3><p>Every quarter: raised, deployed, outcomes. On the site, in the newsletter, on the label.</p></li>
+        <li class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><span class="n mono">05</span><h3>Published openly</h3><p>Every quarter: raised, deployed, outcomes. And the method itself, so any brand can copy it.</p></li>
       </ol>
-      <div class="sub-head mono" data-reveal><span>Conservation partners · to be confirmed</span><span class="ph">Partner names are placeholders</span></div>
+      <div class="sub-head mono" data-reveal><span>Conservation partners · to be confirmed</span><span class="ph">Who we want · nothing is agreed yet</span></div>
       <div class="grid-3" data-stagger>
-        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-wave"/></svg></span><div><span class="nm">[Conservation Partner A]</span><span class="mono">Reef · Indian Ocean</span></div></div>
-        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-tree"/></svg></span><div><span class="nm">[Conservation Partner B]</span><span class="mono">Forest · [Region]</span></div></div>
-        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-coast"/></svg></span><div><span class="nm">[Conservation Partner C]</span><span class="mono">Coastline · [Region]</span></div></div>
+        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-leaf"/></svg></span><div><span class="nm">Mauritian Wildlife Foundation</span><span class="mono">Wildlife &amp; forest · Mauritius</span></div></div>
+        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-tree"/></svg></span><div><span class="nm">Junglekeepers</span><span class="mono">Forest · Peruvian Amazon</span></div></div>
+        <div class="card partner"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-coast"/></svg></span><div><span class="nm">Global Mangrove Alliance</span><span class="mono">Coastline · Mangroves worldwide</span></div></div>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What does that add up to?</b></p>
     </div>
   </section>
 
   <!-- 08 IMPACT -->
-  <section class="sec" id="impact" data-slide="08" data-label="Impact">
+  <section class="sec sec--plate" id="impact" data-q="Is that all?" data-slide="06" data-label="Impact">
     <div class="wrap">
       <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">08</span> Impact</p>
+        <p class="eyebrow mono" data-reveal><span class="num">06</span> Impact</p>
         <h2 class="display h-section" data-lines><span class="ln"><span>What 10%</span></span><span class="ln"><span><em>turns</em> into</span></span></h2>
       </div>
       <div class="split">
@@ -669,22 +697,298 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
           <p class="note" data-reveal>Assumes <span class="fig">[X]</span> units / month at <span class="fig">€[XX]</span> average order value.</p>
         </div>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Is that all?</b></p>
+    </div>
+  </section>
+
+  <!-- THE IMPACT YOU CAN'T COUNT -->
+  <section class="sec" id="beyond" data-q="Why would anyone change for a clothing brand?" data-slide="07" data-label="Beyond the numbers">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">07</span> Beyond the numbers</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>No. The real impact</span></span><span class="ln"><span><em>can't be</em> counted</span></span></h2>
+          <p class="lead" data-reveal style="margin-top:28px;max-width:30ch">Trees planted and reef restored are the part we can count. They are the floor, not the point. Picture this instead.</p>
+        </div>
+        <blockquote class="quote" data-reveal>
+          <span class="mark" aria-hidden="true">“</span>
+          <p>Create out of love, and others will feel it too.</p>
+        </blockquote>
+      </div>
+      <ol class="grid-5 flow" data-stagger>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><span class="n mono">01</span><h3>A kid sees it</h3><p>A twelve-year-old sees the heart on someone they look up to: a DJ, a surfer, an older cousin.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><span class="n mono">02</span><h3>They look closer</h3><p>They follow us, and watch an episode about people restoring a reef, across the world or ten minutes from their house.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-seed"/></svg></span><span class="n mono">03</span><h3>A belief shifts</h3><p>Nature stops being scenery. Protecting it becomes what the people they admire do.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><span class="n mono">04</span><h3>They act</h3><p>They show up to a clean-up, bring two friends, and start asking their parents different questions.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><span class="n mono">05</span><h3>It compounds</h3><p>Ten years on, that kid is an artist, a diver, a founder, or the one in the boardroom deciding what gets protected.</p></li>
+      </ol>
+      <div class="sub-head mono" data-reveal><span>Why we can do this</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><div><h3>We're close to the work</h3><p>We work with the foundations directly and invest in them, so the stories we tell are real ones, from people we know.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><div><h3>Our money buys attention</h3><p>For conservation, and for art. Attention is what shifts beliefs, and beliefs are what change behaviour.</p></div></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>And it doesn't stop with us</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><div><h3>The wearer changes too</h3><p>People ask about the heart. Every time someone explains it, they mean it a little more.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Customers raise the bar</h3><p>Once people have bought from a brand that gives automatically, they start asking why the others don't.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><div><h3>The model is the proof</h3><p>If a brand can give 10% of every sale and still grow, the excuse is gone. Giving at the checkout stops being a risk and becomes a benchmark.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><h3>Talent follows</h3><p>Artists, athletes and makers choose to work with a brand like this, and they bring their own audiences.</p></div></div>
+        <div class="row"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-globe"/></svg></span><div><h3>Other companies follow</h3><p>We publish exactly how the 10% works. Every company that copies it funds work we will never touch. We want to be copied.</p></div></div>
+      </div>
+      <div class="meta-row" data-reveal><p class="closer" style="max-width:46ch">Multiply that kid by a generation, and this model by an industry. None of it will ever show up in our numbers. It is still the real impact.</p></div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Why would anyone change for a clothing brand?</b></p>
+    </div>
+  </section>
+
+  <!-- 05 BRAND WORLD -->
+  <section class="sec sec--bone" id="world" data-q="What makes it more than clothes?" data-slide="08" data-label="Brand world">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">08</span> Brand world</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Because status</span></span><span class="ln"><span><em>moves</em> people</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>It starts in one place and is built to open in the next. No single market owns it.</p>
+      </div>
+      <div class="world">
+        <div class="grid-2" data-stagger>
+          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><h3>High-end first</h3><p>Heavyweight fabrics, clean silhouettes, quiet branding. A piece you'd buy with no mission attached.</p></div>
+          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-seed"/></svg></span><h3>Mission built in</h3><p>The 10% is a mechanism, not a marketing line. It ships with every product, every time.</p></div>
+          <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3>Community over followers</h3><p>Rebuilding the belonging social media hollowed out, around people doing real work.</p></div>
+          <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-flame"/></svg></span><h3>Raw, a little rebellious</h3><p>A dripping heart, not a green leaf. Honest and emotional, for a generation that can smell a pitch.</p></div>
+        </div>
+        <div class="world-mark" data-reveal>
+          <img src="assets/logo-1200.png" alt="The Force of Nature drip heart" width="870" height="1200" loading="lazy" decoding="async">
+          <p class="cap">The drip heart: love that bleeds into action.</p>
+          <span class="mono">Where mission and lifestyle collide</span>
+        </div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>Why it has to be high fashion</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-leaf"/></svg></span><div><h3>Conservation is seen as cute</h3><p>Nice, harmless, not important. Nothing to do with status.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><div><h3>We are status-driven animals</h3><p>People move toward whatever signals status, and today that is money and profit.</p></div></div>
+        <div class="row"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><div><h3>So we flip the association</h3><p>Put nature, art and the unconventional at the highest end of fashion, and caring about them becomes the high-status thing to do.</p></div></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What makes it more than clothes?</b></p>
+    </div>
+  </section>
+
+  <!-- MORE THAN CLOTHES -->
+  <section class="sec sec--plate" id="more" data-q="Doesn't giving away 10% hurt us?" data-slide="09" data-label="More than clothes">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">09</span> More than clothes</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>A movement</span></span><span class="ln"><span><em>you can</em> wear</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>When you buy, you're not just supporting us. You're part of us.</p>
+      </div>
+      <div class="grid-5" data-stagger>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><h3>The episodes</h3><p>A series and a podcast that travel the world to show the people preserving it. It starts with the foundations we fund, so the community sees exactly where its 10% goes.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-flame"/></svg></span><h3>The art</h3><p>We showcase art, sponsor artists, and put their work on our pieces and our platforms.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><h3>The culture</h3><p>Collaborations with events and DJ sets. One idea is La Isla Social Club; nothing is agreed yet. The brand lives where its people live.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3>The people</h3><p>A young team from every race and culture. That is how we get into a place for real, and how a real community gets built.</p></div>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><h3>The membership</h3><p>A subscription with perks: member pricing, first access, a seat at the events. More on it further down.</p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>What the series is about</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-globe"/></svg></span><div><h3>It travels</h3><p>Episode by episode, the series and the podcast go around the world and show what people are doing to preserve it, wherever that work is happening.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-seed"/></svg></span><div><h3>Preserving, not saving</h3><p>Change is inevitable, and we are not trying to freeze the planet in place. The line we draw is between preserving and growing on one side, and consuming and extracting on the other.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><div><h3>The people, not the problem</h3><p>Each episode follows the people doing the work: who they are, what they are protecting, why it matters.</p></div></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Doesn't giving away 10% hurt us?</b></p>
+    </div>
+  </section>
+
+  <!-- THE 10% PAYS FOR ITSELF -->
+  <section class="sec" id="pays" data-q="So what do we actually sell?" data-slide="10" data-label="The 10% pays for itself">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">10</span> The 10% pays for itself</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>No. The 10%</span></span><span class="ln"><span><em>pays for</em> itself</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>It does not eat into our margin. It does the work a marketing budget would, and it hands us the stories to tell.</p>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-tag"/></svg></span><h3>It is priced in</h3><p>The 10% sits inside the price of every piece from day one, like the fabric. It is a cost we plan for, not money taken out of what is left.</p></div>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><h3>It is our marketing</h3><p>Other brands pay to be noticed. The 10% is the reason people talk about us, share us and come back, so it does the job that ad money would.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><h3>It is our content</h3><p>Every foundation we fund is a story we can film. The 10% fills the content calendar without us having to invent anything.</p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>The content it gives us</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><div><h3>An episode per place</h3><p>Who they are, what they are protecting, why it matters. One place, one episode, and a run of short clips cut from it, starting with our partners.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-wave"/></svg></span><div><h3>Days in the field</h3><p>The clean-up, the planting, the dive. We go, we film, and the community comes with us.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><div><h3>The numbers as posts</h3><p>Each quarter's report, what came in and where it went, becomes content in its own right.</p></div></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>So what do we actually sell?</b></p>
+    </div>
+  </section>
+
+  <!-- ONE PRODUCT FIRST -->
+  <section class="sec sec--bone" id="focus" data-q="Where could one product lead?" data-slide="11" data-label="One product first">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">11</span> One product first</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>One product</span></span><span class="ln"><span><em>at a</em> time</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>Slow is smooth, smooth is fast, as they say in the military. We specialise in one product before anything else, and branch out from there.</p>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card phase"><p class="display n">01</p><h3>Pick one</h3><p>One product, chosen together. A linen shirt, men's or women's. A women's office shirt. Swimwear. Which one is open.</p></div>
+        <div class="card phase"><p class="display n">02</p><h3>Get it right</h3><p>All our attention goes into that one piece until it holds its own next to the best premium brands.</p></div>
+        <div class="card phase"><p class="display n">03</p><h3>Then branch out</h3><p>Once we are known for one thing, we add the next product. One at a time, never five at once.</p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>Why one</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span><div><h3>It keeps the start small</h3><p>One product means one small first drop, so the investment from us stays close to nothing.</p></div></div>
+        <div class="row"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>It keeps the bar high</h3><p>A high fashion brand can't afford an average piece. One product is how we make sure the first one isn't.</p></div></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Where could one product lead?</b></p>
+    </div>
+  </section>
+
+  <!-- 06 PRODUCT -->
+  <section class="sec" id="line" data-q="What could it look like?" data-slide="12" data-label="The line">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">12</span> The line</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Five lines,</span></span><span class="ln"><span><em>as one</em> example</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>An example of where we might end up by focusing on one product at a time. What we actually make is for us to decide together.</p>
+      </div>
+      <div class="pieces" data-frames>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/classic-1.jpg" alt="Classic: an undyed linen shirt and trousers" loading="lazy" decoding="async"></div><figcaption><span class="name">Classic</span><span class="mono">Linen, unbranded</span></figcaption></figure>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/originals-1.jpg" alt="Originals: a heavyweight black tee and pleated trousers" loading="lazy" decoding="async"></div><figcaption><span class="name">Originals</span><span class="mono">Streetwear</span></figcaption></figure>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/collective-1.jpg" alt="Collective: a sculptural black coat on a runway" loading="lazy" decoding="async"></div><figcaption><span class="name">Collective</span><span class="mono">Runway</span></figcaption></figure>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/mer-1.jpg" alt="Mer: black swim shorts" loading="lazy" decoding="async"></div><figcaption><span class="name">Mer</span><span class="mono">Swim</span></figcaption></figure>
+        <figure class="piece"><div class="frame"><img src="assets/pieces/terre-1.jpg" alt="Terre: a grey running shell and black shorts, mid-stride" loading="lazy" decoding="async"></div><figcaption><span class="name">Terre</span><span class="mono">Sport</span></figcaption></figure>
+      </div>
+      <div class="facts" data-stagger>
+        <div><p class="mono">Material</p><p>Heavyweight cotton and linen, muted earth palette, hits of red.</p></div>
+        <div><p class="mono">Cadence</p><p>Drops, not seasons. Small runs, no markdowns.</p></div>
+        <div><p class="mono">Price band</p><p><span class="fig">[€XX – €XXX]</span> per piece</p><span class="ph" style="margin-top:12px">Illustrative</span></div>
+      </div>
+      <div class="meta-row" data-reveal><a class="link" href="https://forceofnature.org.in/store/" target="_blank" rel="noopener">See the line in the store<svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-ne"/></svg></a></div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What could it look like?</b></p>
+    </div>
+  </section>
+
+  <!-- LOOK: Look 01 · Light -->
+  <section class="sec look look--light" id="look-light" data-q="Or?" data-slide="13" data-label="Look 01 · Light">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow mono" data-reveal><span class="num">13</span> Look 01 · Light</p>
+        <h2 class="look-h" data-lines><span class="ln"><span>Light and</span></span><span class="ln"><span>open</span></span></h2>
+      </div>
+      <div class="look-grid">
+        <div class="look-mock" data-reveal>
+          <div class="look-shot">
+            <span class="wait"></span>
+            <video src="assets/looks/bevel.mp4" poster="assets/looks/bevel.jpg" muted loop playsinline preload="none" aria-label="The Bevel Health home page: a phone and watch floating in a soft sky under a large headline"></video>
+          </div>
+        </div>
+        <div class="look-notes" data-stagger>
+          <div><h3>What it does for the product</h3><ul><li>The app is shown on a real phone and watch, floating in a soft sky. You see the product before you read a word.</li><li>Colour appears only inside the product's own screens, so that is where the eye goes.</li></ul></div>
+          <div><h3>What it does for the brand</h3><ul><li>Calm, bright and friendly. Health feels like a pleasure, not a chore.</li><li>Large, tight headlines and a lot of white space signal confidence without shouting.</li></ul></div>
+          <div><h3>What it would mean for us</h3><ul><li>A light, welcoming brand, where the 10% could be shown as simply as a health score.</li><li>It is the friendliest of the three, and the least high fashion.</li></ul></div>
+        </div>
+      </div>
+      <p class="look-ref" data-reveal>The page shown is bevel.health, not ours. One of four directions the brand could take; the choice is ours to make together.</p>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Or?</b></p>
+    </div>
+  </section>
+
+  <!-- LOOK: Look 02 · Black stage -->
+  <section class="sec look look--stage" id="look-stage" data-q="Or?" data-slide="14" data-label="Look 02 · Black stage">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow mono" data-reveal><span class="num">14</span> Look 02 · Black stage</p>
+        <h2 class="look-h" data-lines><span class="ln"><span>One piece.</span></span><span class="ln"><span>One stage.</span></span></h2>
+      </div>
+      <div class="look-grid">
+        <div class="look-mock" data-reveal>
+          <div class="look-shot">
+            <span class="wait"></span>
+            <video src="assets/looks/apple.mp4" poster="assets/looks/apple.jpg" muted loop playsinline preload="none" aria-label="The Apple iPhone Pro page: a single beam of light on a black stage"></video>
+          </div>
+        </div>
+        <div class="look-notes" data-stagger>
+          <div><h3>What it does for the product</h3><ul><li>One product alone on black, lit like a museum piece. Everything else is taken away.</li><li>Each detail gets a tile of its own: one feature, one number, one image.</li></ul></div>
+          <div><h3>What it does for the brand</h3><ul><li>Authority and status. The page feels like an exhibition, not a shop.</li><li>One blue button is the only colour on the page, so buying is the only action.</li></ul></div>
+          <div><h3>What it would mean for us</h3><ul><li>One piece per page, treated as an object of desire. It carries the argument that caring about nature can be the highest status.</li><li>It gives up warmth, so the community would have to come through the media.</li></ul></div>
+        </div>
+      </div>
+      <p class="look-ref" data-reveal>The page shown is apple.com, not ours. One of four directions the brand could take; the choice is ours to make together.</p>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Or?</b></p>
+    </div>
+  </section>
+
+  <!-- LOOK: Look 03 · Product first -->
+  <section class="sec look look--grid" id="look-grid" data-q="Or?" data-slide="15" data-label="Look 03 · Product first">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow mono" data-reveal><span class="num">15</span> Look 03 · Product first</p>
+        <h2 class="look-h" data-lines><span class="ln"><span>The product</span></span><span class="ln"><span>is the page</span></span></h2>
+      </div>
+      <div class="look-grid">
+        <div class="look-mock" data-reveal>
+          <div class="look-shot">
+            <span class="wait"></span>
+            <video src="assets/looks/nothing.mp4" poster="assets/looks/nothing.jpg" muted loop playsinline preload="none" aria-label="A screen recording scrolling through the Nothing home page"></video>
+          </div>
+        </div>
+        <div class="look-notes" data-stagger>
+          <div><h3>What it does for the product</h3><ul><li>The product fills the screen, edge to edge. The page is the product.</li><li>Almost no words: a name, a number, one line, one button.</li></ul></div>
+          <div><h3>What it does for the brand</h3><ul><li>Confident and a little strange. Dot-matrix type and small labels make it recognisable at a glance.</li><li>It feels like culture and design, not a store.</li></ul></div>
+          <div><h3>What it would mean for us</h3><ul><li>Built for drops: every piece named and numbered, the photograph doing all the work.</li><li>It leaves little room for the mission, which would need pages of its own.</li></ul></div>
+        </div>
+      </div>
+      <p class="look-ref" data-reveal>The page shown is nothing.tech, not ours. One of four directions the brand could take; the choice is ours to make together.</p>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Or?</b></p>
+    </div>
+  </section>
+
+  <!-- LOOK: Look 04 · Force of Nature today -->
+  <section class="sec look look--fon" id="look-fon" data-q="Will people buy it?" data-slide="16" data-label="Look 04 · What we have today">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow mono" data-reveal><span class="num">16</span> Look 04 · What we have today</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>The one</span></span><span class="ln"><span><em>we already</em> have</span></span></h2>
+      </div>
+      <div class="look-grid">
+        <div class="look-mock" data-reveal>
+          <div class="look-shot">
+            <span class="wait"></span>
+            <video src="assets/looks/fon.mp4" poster="assets/looks/fon.jpg" muted loop playsinline preload="none" aria-label="A screen recording of the current Force of Nature store: five lines orbiting the drip heart in front of a black hole"></video>
+          </div>
+        </div>
+        <div class="look-notes" data-stagger>
+          <div><h3>What it does for the product</h3><ul><li>The pieces orbit the heart in front of a black hole. You enter a world before you see a product.</li><li>Each line is a card you turn towards you, so browsing feels like exploring, not shopping.</li></ul></div>
+          <div><h3>What it does for the brand</h3><ul><li>Raw and emotional: a dripping heart, not a green leaf.</li><li>It is unlike any other fashion site, which makes it memorable and makes it ours.</li></ul></div>
+          <div><h3>What it would mean for us</h3><ul><li>It exists. The site, the store and the bag are built and live, so this direction costs us nothing more to start.</li><li>It is the most personal of the four and the furthest from classic high fashion. The question is how much of it we keep.</li></ul></div>
+        </div>
+      </div>
+      <p class="look-ref mono" data-reveal>The page shown is forceofnature.org.in as it stands today. The fourth of four directions; the choice is ours to make together.</p>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Will people buy it?</b></p>
     </div>
   </section>
 
   <!-- 09 MARKET -->
-  <section class="sec sec--bone" id="market" data-slide="09" data-label="Market opportunity">
+  <section class="sec sec--bone" id="market" data-q="How does it make money?" data-slide="17" data-label="Market opportunity">
     <div class="wrap">
       <div class="sec-head sec-head--aside sec-head--top">
         <div>
-          <p class="eyebrow mono" data-reveal><span class="num">09</span> Market opportunity</p>
-          <h2 class="display h-section" data-lines><span class="ln"><span>Conscious consumption</span></span><span class="ln"><span>is <em>the</em> default now</span></span></h2>
+          <p class="eyebrow mono" data-reveal><span class="num">17</span> Market opportunity</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Yes. Conscious buying</span></span><span class="ln"><span>is <em>the</em> default now</span></span></h2>
         </div>
         <div class="statrows" data-stagger>
-          <div class="statrow"><p class="display v fig" data-fig>$[XXX]B</p><p>global streetwear market</p></div>
-          <div class="statrow"><p class="display v fig" data-fig>[XX]%</p><p>CAGR, sustainable apparel</p></div>
-          <div class="statrow"><p class="display v fig" data-fig>[X] in [X]</p><p>Gen Z and Millennials will pay more for proven impact</p></div>
-          <span class="ph">Illustrative · replace with sourced data</span>
+          <div class="statrow"><p class="display v fig">$371B</p><p>global streetwear market in 2025. Other research firms put it between $185B and $360B</p></div>
+          <div class="statrow"><p class="display v fig">22.9%</p><p>forecast yearly growth of sustainable fashion, 2023 to 2030</p></div>
+          <div class="statrow"><p class="display v fig">2 in 3</p><p>Gen Zs and millennials say they will pay more for sustainable products</p></div>
+          <p class="note" style="max-width:none;margin-top:14px">Sources: <a href="https://www.fortunebusinessinsights.com/streetwear-market-110565" target="_blank" rel="noopener">Fortune Business Insights</a> · <a href="https://www.globenewswire.com/news-release/2024/04/08/2859070/0/en/Global-Sustainable-Fashion-Market-to-Hit-33-05-billion-by-2030-at-a-CAGR-of-22-9-says-Coherent-Market-Insights.html" target="_blank" rel="noopener">Coherent Market Insights</a> · <a href="https://www.deloitte.com/global/en/about/press-room/deloitte-2024-gen-z-and-millennial-survey.html" target="_blank" rel="noopener">Deloitte 2024 survey, 44 countries</a>.</p>
         </div>
       </div>
       <div class="split">
@@ -697,27 +1001,29 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
           </div>
         </div>
         <figure class="chart linechart" data-reveal>
-          <figcaption class="chart-head mono"><span>Sustainable apparel, $B</span><span class="ph">Illustrative growth curve</span></figcaption>
-          <svg id="linechart" viewBox="0 0 600 250" role="img" aria-label="Line chart, illustrative: 8 billion dollars in 2024 rising to 15.5 billion in 2028"></svg>
+          <figcaption class="chart-head mono"><span>Sustainable fashion, $B</span><span class="ph">Forecast · Coherent Market Insights</span></figcaption>
+          <svg id="linechart" viewBox="0 0 600 250" role="img" aria-label="Line chart, forecast: sustainable fashion market of 7.8 billion dollars in 2023 rising to 33.05 billion in 2030"></svg>
+          <p class="note" style="max-width:none;margin-top:10px">2023 and 2030 are the published figures. The years between follow the forecast's 22.9% yearly growth.</p>
         </figure>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>How does it make money?</b></p>
     </div>
   </section>
 
   <!-- 10 BUSINESS MODEL -->
-  <section class="sec" id="model" data-slide="10" data-label="Business model">
+  <section class="sec" id="model" data-q="What keeps people coming back?" data-slide="18" data-label="Business model">
     <div class="wrap">
       <div class="sec-head sec-head--aside">
         <div>
-          <p class="eyebrow mono" data-reveal><span class="num">10</span> Business model</p>
-          <h2 class="display h-section" data-lines><span class="ln"><span>Three ways <em>the</em> line</span></span><span class="ln"><span>makes money</span></span></h2>
+          <p class="eyebrow mono" data-reveal><span class="num">18</span> Business model</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Three ways,</span></span><span class="ln"><span><em>online</em> first</span></span></h2>
         </div>
         <p class="closer" data-reveal>The 10% is a cost line planned in from day one, not a donation deducted from whatever is left. A membership adds recurring revenue on top.</p>
       </div>
       <div class="grid-3" data-stagger>
         <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cart"/></svg></span><h3>Direct e-commerce</h3><p>Core channel. Full price, full margin, first-party data. The store is already built.</p><p class="mix mono">Target mix: <span class="fig">[XX]%</span></p></div>
         <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span><h3>Limited drops</h3><p>Small dated runs with community-first access. Scarcity that's real because the runs are small, not manufactured.</p><p class="mix mono">Target mix: <span class="fig">[XX]%</span></p></div>
-        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-store"/></svg></span><h3>Wholesale &amp; collabs</h3><p>A few selected stockists and partner capsules. Reach and credibility, not volume.</p><p class="mix mono">Target mix: <span class="fig">[XX]%</span></p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-store"/></svg></span><h3>Wholesale &amp; collabs</h3><p>Later on: a few selected stockists and partner capsules. Reach and credibility, not volume.</p><p class="mix mono">Target mix: <span class="fig">[XX]%</span></p></div>
       </div>
       <div class="sub-head mono" data-reveal><span>Unit economics per piece</span><span class="ph">Illustrative</span></div>
       <div class="unit-scroll" data-reveal>
@@ -726,16 +1032,17 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
           <tbody><tr><td class="fig">€[XX]</td><td class="fig">€[XX]</td><td class="fig is-red">€[X.X]</td><td class="fig">€[XX]</td><td class="fig is-green">[XX]%</td></tr></tbody>
         </table>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What keeps people coming back?</b></p>
     </div>
   </section>
 
   <!-- 11 MEMBERSHIP -->
-  <section class="sec sec--bone" id="membership" data-slide="11" data-label="Membership">
+  <section class="sec sec--bone" id="membership" data-q="How do we find the first ones?" data-slide="19" data-label="Membership">
     <div class="wrap">
       <div class="sec-head sec-head--aside">
         <div>
-          <p class="eyebrow mono" data-reveal><span class="num">11</span> Membership</p>
-          <h2 class="display h-section" data-lines><span class="ln"><span>Subscribe</span></span><span class="ln"><span><em>to the</em> inside line</span></span></h2>
+          <p class="eyebrow mono" data-reveal><span class="num">19</span> Membership</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>A membership</span></span><span class="ln"><span><em>to the</em> inside line</span></span></h2>
         </div>
         <p class="closer" data-reveal>A paid tier above the free newsletter. Recurring revenue for the brand, real advantages for the people closest to it.</p>
       </div>
@@ -757,65 +1064,67 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
           <div class="row"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><div><h3>The 10% applies here too</h3><p>A tenth of every membership fee goes to the same reef, forest and coastline work as every sale.</p></div></div>
         </div>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>How do we find the first ones?</b></p>
     </div>
   </section>
 
-  <!-- 12 GO-TO-MARKET -->
-  <section class="sec sec--plate" id="gtm" data-slide="12" data-label="Go-to-market">
+  <!-- DOCUMENTING THE PROCESS -->
+  <section class="sec sec--bone" id="process" data-q="How does that turn into growth?" data-slide="20" data-label="Documenting the process">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">12</span> Go-to-market</p>
-        <h2 class="display h-section" data-lines><span class="ln"><span>Build the tribe</span></span><span class="ln"><span><em>before the</em> first drop</span></span></h2>
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">20</span> Documenting the process</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>We film</span></span><span class="ln"><span><em>the</em> build</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>Our main short-form content is the process itself. Nothing staged: the company being built, shown as it happens.</p>
       </div>
-      <div class="grid-3" data-stagger>
-        <div class="card phase"><p class="display n">01</p><h3>Build</h3><ul class="bullets"><li>Waitlist and behind-the-scenes newsletter, already live on the brand site</li><li>Founding-member pre-order for the first run</li><li>Seed 20 to 30 creators who already live the mission: divers, surfers, foresters</li></ul></div>
-        <div class="card phase"><p class="display n">02</p><h3>Launch</h3><ul class="bullets"><li>First drop: Originals and Classic chapters</li><li>Launch event or pop-up in [City]</li><li>First impact commitment announced with named partners</li></ul></div>
-        <div class="card phase"><p class="display n">03</p><h3>Compound</h3><ul class="bullets"><li>Monthly drop rhythm across the five chapters</li><li>Quarterly impact report published as content, not a PDF</li><li>Community rituals: clean-ups, dives, plantings</li></ul></div>
-      </div>
-      <div class="sub-head mono" data-reveal><span>Channels</span></div>
-      <div class="channels" data-stagger>
-        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><div><h3>Instagram &amp; TikTok</h3><p>Short-form, founder-led</p></div></div>
-        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-mail"/></svg></span><div><h3>Email on Kit</h3><p>Drops, reports, first access</p></div></div>
-        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Creators &amp; ambassadors</h3><p>Long-term, not one-off posts</p></div></div>
-        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><div><h3>Pop-ups &amp; events</h3><p>Where the community meets</p></div></div>
-      </div>
+      <ol class="grid-5 flow" data-stagger>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><span class="n mono">01</span><h3>Each of us films our part</h3><p>Each founder shows exactly what they're responsible for, in their own voice.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><span class="n mono">02</span><h3>The partners we meet</h3><p>The foundations, the factories, the artists. The meetings, as they happen.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><span class="n mono">03</span><h3>The clothes we design</h3><p>Sketch, fabric, sample, fitting. The piece takes shape in public.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><span class="n mono">04</span><h3>Everyone follows the story</h3><p>Short clips posted as we go, so people watch it being built week by week.</p><span class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-arrow"/></svg></span></li>
+        <li class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-bag"/></svg></span><span class="n mono">05</span><h3>The product in their hands</h3><p>The story ends with the piece they watched being made, delivered to them.</p></li>
+      </ol>
+      <div class="meta-row" data-reveal><p class="closer" style="max-width:46ch">By the time it drops, they already know who made it and why.</p></div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>How does that turn into growth?</b></p>
     </div>
   </section>
 
   <!-- 13 GROWTH -->
-  <section class="sec" id="growth" data-slide="13" data-label="Growth">
+  <section class="sec" id="growth" data-q="When do we pay for reach?" data-slide="21" data-label="Growth">
     <div class="wrap">
       <div class="sec-head sec-head--aside">
         <div>
-          <p class="eyebrow mono" data-reveal><span class="num">13</span> Growth</p>
+          <p class="eyebrow mono" data-reveal><span class="num">21</span> Growth</p>
           <h2 class="display h-section" data-lines><span class="ln"><span>Built to sell out,</span></span><span class="ln"><span><em>on</em> purpose</span></span></h2>
         </div>
-        <p class="closer" data-reveal>Five chapters, always in the line, but never all in stock at once. Small batches, a waitlist that means something, and three kinds of story told until the tribe grows on its own.</p>
+        <p class="closer" data-reveal>One product at a time, and never everything in stock at once. Small batches, a waitlist that means something, and three kinds of story told until the tribe grows on its own.</p>
       </div>
       <div class="grid-3" data-stagger>
-        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><h3>Behind the build</h3><p>Sourcing, sampling, the decisions inside every chapter. The process, not just the finished piece.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><h3>Behind the build</h3><p>Sourcing, sampling, the decisions inside every piece. The process, not just the finished piece.</p></div>
         <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><h3>Why it exists</h3><p>What it's made from, why it's cut that way, what it's for. The product argues its own case.</p></div>
-        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><h3>The founder's line</h3><p>One person's path into this, documented as it happens, not written up after the fact.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><h3>The founders' line</h3><p>The people building this, documented as it happens, not written up after the fact.</p></div>
       </div>
       <div class="sub-head mono" data-reveal><span>Scarcity, done honestly</span></div>
       <div class="rows" data-stagger>
-        <div class="row"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-layers"/></svg></span><div><h3>Small batches, on purpose</h3><p>Every chapter runs in limited quantities, sized to who's already waiting for it, not to a factory minimum. When a run sells out, the next one is what people are waiting for.</p></div></div>
+        <div class="row"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-layers"/></svg></span><div><h3>Small batches, on purpose</h3><p>Every piece runs in limited quantities, sized to who's already waiting for it, not to a factory minimum. When a run sells out, the next one is what people are waiting for.</p></div></div>
         <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-mail"/></svg></span><div><h3>Email &amp; SMS waitlist</h3><p>First access to every limited run, and the only way to know before it's live: a standing invitation, not a discount trap.</p></div></div>
       </div>
       <div class="sub-head mono" data-reveal><span>Community, not just an audience</span></div>
       <div class="rows" data-stagger>
-        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Styling &amp; design input</h3><p>The community votes on colourways, styles the pieces their own way, and helps shape what the next chapter looks like.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Styling &amp; design input</h3><p>The community votes on colourways, styles the pieces their own way, and helps shape what the next product looks like.</p></div></div>
         <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-tag"/></svg></span><div><h3>Giveaways &amp; contests</h3><p>A way to say thank you and pull people in deeper, not a follower-count trick.</p></div></div>
         <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><div><h3>Direct Q&amp;As</h3><p>Open questions about the brand, the mission, what's next, answered directly, not through a press release.</p></div></div>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>When do we pay for reach?</b></p>
     </div>
   </section>
 
   <!-- 14 PAID STRATEGY -->
-  <section class="sec sec--plate" id="paid" data-slide="14" data-label="Paid strategy">
+  <section class="sec sec--plate" id="paid" data-q="What does all this cost us?" data-slide="22" data-label="Paid strategy">
     <div class="wrap">
       <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">14</span> Paid strategy</p>
+        <p class="eyebrow mono" data-reveal><span class="num">22</span> Paid strategy</p>
         <h2 class="display h-section" data-lines><span class="ln"><span>Earned first,</span></span><span class="ln"><span><em>then</em> paid for</span></span></h2>
       </div>
       <div class="grid-3" data-stagger>
@@ -829,16 +1138,42 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
         <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-dollar"/></svg></span><div><h3>Cost per acquired customer</h3><p>Tracked per creative and per channel, so we know exactly what's working and what's just noise.</p></div></div>
         <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><div><h3>Organic-to-paid conversion</h3><p>Only creatives that already prove themselves for free get paid reach behind them.</p></div></div>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What does all this cost us?</b></p>
+    </div>
+  </section>
+
+  <!-- WHAT IT COSTS US -->
+  <section class="sec sec--bone" id="cost" data-q="What exists already?" data-slide="23" data-label="What it costs us">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">23</span> What it costs us</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Close to nothing</span></span><span class="ln"><span><em>to</em> start</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>Because of how the company works, the only real investment from us is the media and the first drop.</p>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card phase"><p class="display n">01</p><h3>Media first</h3><p>We build the story and the tribe before there is anything to sell. That costs time and talent, and both are already in this room.</p></div>
+        <div class="card phase"><p class="display n">02</p><h3>One limited drop</h3><p>A small first run, sized to the people already waiting. Or pre-orders: the tribe pays first, and we produce exactly what was ordered.</p></div>
+        <div class="card phase"><p class="display n">03</p><h3>Online only</h3><p>No shops yet, no rent, no stock sitting on shelves. Online is the fastest way we scale.</p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>How it pays for itself</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span><div><h3>Limited drops build traction</h3><p>Small runs sell out, the waitlist grows, and each drop funds the next one.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-cart"/></svg></span><div><h3>Pre-orders remove the risk</h3><p>If we would rather not fund the first run ourselves, the money comes in before production starts.</p></div></div>
+        <div class="row"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><div><h3>Get the media right</h3><p>Once it is rolling and the media is done properly, the rest takes care of itself.</p></div></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What exists already?</b></p>
     </div>
   </section>
 
   <!-- 15 TRACTION -->
-  <section class="sec" id="traction" data-slide="15" data-label="Traction">
+  <section class="sec" id="traction" data-q="Who is already helping?" data-slide="24" data-label="Traction">
     <div class="wrap">
       <div class="sec-head sec-head--aside">
         <div>
-          <p class="eyebrow mono" data-reveal><span class="num">15</span> Traction</p>
-          <h2 class="display h-section" data-lines><span class="ln"><span>What's</span></span><span class="ln"><span><em>already</em> built</span></span></h2>
+          <p class="eyebrow mono" data-reveal><span class="num">24</span> Traction</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>The brand, the site</span></span><span class="ln"><span><em>and the</em> store</span></span></h2>
         </div>
         <div class="meta-row live-links" data-reveal>
           <span class="mono" style="color:var(--c-mute);flex-basis:100%">Live today</span>
@@ -852,8 +1187,8 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
           <div class="checks" data-stagger>
             <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Brand identity</h3><p>Name, drip-heart mark, voice and tagline.</p></div></div>
             <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Brand site live at forceofnature.org.in</h3><p>Mission story, newsletter capture and follow-the-build updates.</p></div></div>
-            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Online store designed and built</h3><p>Immersive five-chapter product experience with bag and checkout flow.</p></div></div>
-            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Product direction and visuals</h3><p>Five chapters cast and shot; first samples in development.</p></div></div>
+            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Online store designed and built</h3><p>Built around five example lines, with bag and checkout flow, ready for whatever we choose to make.</p></div></div>
+            <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Product direction and visuals</h3><p>Five example lines cast and shot, to picture where one product at a time could lead.</p></div></div>
             <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Audience infrastructure</h3><p>Email list on Kit, content pipeline, <span class="fig">[XXX]</span> early subscribers.</p><span class="ph" style="margin-top:10px">Illustrative</span></div></div>
             <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Domain owned outright</h3><p>forceofnature.org.in, registered and held directly, not licensed or borrowed.</p></div></div>
             <div class="row"><span class="ic is-green"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Trademark filing underway</h3><p>Application in progress to protect the name and the mark.</p></div></div>
@@ -861,126 +1196,327 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
           </div>
         </div>
         <figure class="browser" data-frames>
-          <div class="browser-bar mono" aria-hidden="true"><b></b><b></b><b></b><span>forceofnature.org.in</span></div>
-          <div class="frame"><img src="assets/site-screenshot.jpg" alt="The Force of Nature brand site: the drip heart beside the headline Wear it like you mean it" width="1440" height="1026" loading="lazy" decoding="async"></div>
+          <div class="browser-bar mono" aria-hidden="true"><b></b><b></b><b></b><span>forceofnature.org.in/bon-voyage</span></div>
+          <div class="frame"><img src="assets/site-screenshot.jpg?v=2" alt="The Force of Nature site: the headline Wear it like you mean it beside the drip heart, against a nebula" width="2000" height="1137" loading="lazy" decoding="async"></div>
         </figure>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Who is already helping?</b></p>
     </div>
   </section>
 
-  <!-- 16 ROADMAP -->
-  <section class="sec sec--plate" id="roadmap" data-slide="16" data-label="Roadmap">
+  <!-- ALREADY BEHIND US -->
+  <section class="sec sec--bone" id="advisors" data-q="Who else do we bring in?" data-slide="25" data-label="Already behind us">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">16</span> Roadmap</p>
-        <h2 class="display h-section" data-lines><span class="ln"><span>From pre-launch</span></span><span class="ln"><span><em>to</em> scale</span></span></h2>
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">25</span> Already behind us</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>The people</span></span><span class="ln"><span><em>already</em> behind us</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>I didn't get this far alone. A group of advisors helped me to this point, and they are willing to keep helping us.</p>
       </div>
-      <ol class="road" id="road">
-        <li class="road-line" aria-hidden="true"><i></i></li>
-        <li class="stage"><span class="node is-now">Now</span><span class="when mono">Q[X] 2026</span><h3>Foundation</h3><ul class="bullets"><li>Brand, site and store built</li><li>Samples and supplier selection</li><li>Partner conversations opened</li></ul></li>
-        <li class="stage"><span class="node">02</span><span class="when mono">Q[X] 2026</span><h3>Pre-launch</h3><ul class="bullets"><li>Funding close</li><li>Founding-member pre-order</li><li>Partner MoUs signed</li><li>Creator seeding</li></ul></li>
-        <li class="stage"><span class="node">03</span><span class="when mono">Q[X] 2026</span><h3>Launch</h3><ul class="bullets"><li>First drop: Originals and Classic</li><li>Launch event in [City]</li><li>First impact report published</li></ul></li>
-        <li class="stage"><span class="node">04</span><span class="when mono">2027</span><h3>Scale</h3><ul class="bullets"><li>Monthly drops across five chapters</li><li>Wholesale and partner capsules</li><li>Second-region conservation partner</li><li>First hires: design, social and operations support</li></ul></li>
-      </ol>
-      <div class="meta-row" data-reveal><span class="ph">Quarters are placeholders pending funding close</span></div>
-      <div class="sub-head mono" data-reveal><span>How we vet a factory</span></div>
+      <div class="grid-2" data-stagger>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3>Boardroom connections</h3><p>Connections in some of the biggest companies in Mauritius, several of them in textile.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><h3>People in textile</h3><p>People who work in textile every day, one phone call away when we need a straight answer.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-store"/></svg></span><h3>Factories I've visited</h3><p>I've been inside the factories and seen how they run, so production starts from first-hand knowledge, not a search engine.</p></div>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><h3>Advisors, already in</h3><p>A good group of advisors who helped get the brand this far, and who are willing to help us take it further.</p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>What that means for us</span></div>
       <div class="rows" data-stagger>
-        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Verified suppliers only</h3><p>Trade-assured, verified manufacturers, checked against past work before a single sample is ordered.</p></div></div>
-        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><div><h3>A simple spec, not a novel</h3><p>One clear tech pack per piece: mockup, size chart, the details that matter. Less room for a factory to get it wrong.</p></div></div>
-        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>A relationship, not a transaction</h3><p>Regular contact with the people making the product, treated as a partner, not a vendor.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>We ask before we spend</h3><p>Fabric, cost and quality questions go to people who do this for a living, before a single sample is paid for.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><div><h3>Production is a conversation, not a cold call</h3><p>The factory introductions are already under way, through people who know us.</p></div></div>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Who else do we bring in?</b></p>
     </div>
   </section>
 
   <!-- 17 PARTNERSHIPS -->
-  <section class="sec" id="partnerships" data-slide="17" data-label="Partnerships">
+  <section class="sec" id="partnerships" data-q="When does it happen?" data-slide="26" data-label="Partnerships">
     <div class="wrap">
       <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">17</span> Partnerships</p>
-        <h2 class="display h-section" data-lines><span class="ln"><span>What we're asking for,</span></span><span class="ln"><span><em>and</em> what partners get</span></span></h2>
+        <p class="eyebrow mono" data-reveal><span class="num">26</span> Partnerships</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>Foundations, stockists</span></span><span class="ln"><span><em>and</em> creators</span></span></h2>
       </div>
       <div class="grid-3" data-stagger>
         <div class="card ask-col">
           <div class="top"><span class="ic is-green" style="margin:0"><svg aria-hidden="true"><use href="#i-leaf"/></svg></span><div><h3>Conservation partners</h3><span class="mono">[Partner A] · [Partner B]</span></div></div>
           <span class="lbl mono">We're looking for</span>
           <ul class="bullets"><li>Verified reef, forest and coastline projects</li><li>Simple outcome reporting</li><li>Willingness to be visible to our community</li></ul>
-          <span class="lbl mono">What you get</span>
-          <ul class="bullets"><li>Recurring, flexible funding that grows with sales</li><li>Storytelling to a young, engaged audience</li><li>A named place in every impact report</li></ul>
+          <span class="lbl mono">What they get</span>
+          <ul class="bullets"><li>Funding every quarter, so they can hire and plan years ahead</li><li>Visibility that brings them volunteers and other donors</li><li>A named place in every impact report</li></ul>
         </div>
         <div class="card ask-col">
           <div class="top"><span class="ic" style="margin:0"><svg aria-hidden="true"><use href="#i-store"/></svg></span><div><h3>Retail &amp; brand partners</h3><span class="mono">[Stockist A] · [Brand B]</span></div></div>
           <span class="lbl mono">We're looking for</span>
-          <ul class="bullets"><li>Three to five stockists aligned on premium and purpose</li><li>Partner capsules and co-branded drops</li><li>Pop-up spaces in key cities</li></ul>
-          <span class="lbl mono">What you get</span>
-          <ul class="bullets"><li>A story that sells itself on the floor</li><li>Limited exclusives for your customers</li><li>Shared impact credit</li></ul>
+          <ul class="bullets"><li>Later on: three to five stockists aligned on premium and purpose</li><li>Partner capsules and co-branded drops</li><li>Pop-up spaces in key cities</li></ul>
+          <span class="lbl mono">What they get</span>
+          <ul class="bullets"><li>A story that sells itself on the floor</li><li>Limited exclusives for their customers</li><li>Shared impact credit</li></ul>
         </div>
         <div class="card ask-col">
           <div class="top"><span class="ic is-red" style="margin:0"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Creators &amp; community</h3><span class="mono">[Ambassador A] · [Ambassador B]</span></div></div>
           <span class="lbl mono">We're looking for</span>
           <ul class="bullets"><li>People already doing the work: divers, surfers, foresters, athletes</li><li>Long-term ambassadors, not one-off posts</li></ul>
-          <span class="lbl mono">What you get</span>
+          <span class="lbl mono">What they get</span>
           <ul class="bullets"><li>Early product and first access</li><li>A platform and a share of the voice</li><li>A seat at the rituals: dives, plantings, clean-ups</li></ul>
         </div>
       </div>
       <div class="meta-row" data-reveal><span class="ph">Partner names are placeholders</span></div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>When does it happen?</b></p>
     </div>
   </section>
 
-  <!-- 18 TEAM -->
-  <section class="sec sec--plate" id="team" data-slide="18" data-label="Team">
+  <!-- 16 ROADMAP -->
+  <section class="sec sec--plate" id="roadmap" data-q="What could go wrong?" data-slide="27" data-label="Roadmap">
     <div class="wrap">
       <div class="sec-head">
-        <p class="eyebrow mono" data-reveal><span class="num">18</span> Team</p>
-        <h2 class="display h-section" data-lines><span class="ln"><span>Who's</span></span><span class="ln"><span><em>building</em> it</span></span></h2>
+        <p class="eyebrow mono" data-reveal><span class="num">27</span> Roadmap</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>From pre-launch</span></span><span class="ln"><span><em>to</em> scale</span></span></h2>
+      </div>
+      <ol class="road" id="road">
+        <li class="road-line" aria-hidden="true"><i></i></li>
+        <li class="stage"><span class="node is-now">Now</span><span class="when mono">Q[X] 2026</span><h3>Foundation</h3><ul class="bullets"><li>Brand, site and store built</li><li>Samples and supplier selection</li><li>Partner conversations opened</li></ul></li>
+        <li class="stage"><span class="node">02</span><span class="when mono">Q[X] 2026</span><h3>Pre-launch</h3><ul class="bullets"><li>Media and the tribe built first</li><li>Founding-member pre-order</li><li>Partner MoUs signed</li><li>Creator seeding</li></ul></li>
+        <li class="stage"><span class="node">03</span><span class="when mono">Q[X] 2026</span><h3>Launch</h3><ul class="bullets"><li>First drop: one product</li><li>Launch event</li><li>First impact report published</li></ul></li>
+        <li class="stage"><span class="node">04</span><span class="when mono">2027</span><h3>Scale</h3><ul class="bullets"><li>Regular drops, branching out product by product</li><li>Wholesale and partner capsules</li><li>Second market opened, with its own foundation partner</li><li>First hires: design, social and operations support</li></ul></li>
+      </ol>
+      <div class="meta-row" data-reveal><span class="ph">Quarters are placeholders, to be set together</span></div>
+      <div class="sub-head mono" data-reveal><span>How we vet a factory</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>Verified suppliers only</h3><p>Trade-assured, verified manufacturers, checked against past work before a single sample is ordered.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><div><h3>A simple spec, not a novel</h3><p>One clear tech pack per piece: mockup, size chart, the details that matter. Less room for a factory to get it wrong.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>A relationship, not a transaction</h3><p>Regular contact with the people making the product, treated as a partner, not a vendor.</p></div></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What could go wrong?</b></p>
+    </div>
+  </section>
+
+  <!-- RISKS -->
+  <section class="sec" id="risks" data-q="What do we do about them?" data-slide="28" data-label="Risks">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">28</span> Risks</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Six things,</span></span><span class="ln"><span><em>said</em> out loud</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>Better said now, in the room, than discovered six months in.</p>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-flame"/></svg></span><h3>Founders get discouraged</h3><p>The early months are slow. No sales yet, other work pulling at us, and the energy of the first meeting fades. People quietly drift.</p><p class="mix mono">Risk 01 · the biggest one</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><h3>Attention gets split</h3><p>Some of us already run other businesses. This one becomes the thing we get to when everything else is done.</p><p class="mix mono">Risk 02</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><h3>The product misses the bar</h3><p>We call ourselves high fashion and the first piece is only good. The whole claim falls with it.</p><p class="mix mono">Risk 03</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><h3>The media doesn't land</h3><p>Everything here depends on building the tribe first. If the content is ignored, there is no waitlist and no drop.</p><p class="mix mono">Risk 04</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-eyeoff"/></svg></span><h3>The 10% loses trust</h3><p>If we can't show exactly where the money went, we become the problem this pitch describes.</p><p class="mix mono">Risk 05</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3>Too wide, too early</h3><p>Too many people in the room, nobody owning anything, every decision made by committee.</p><p class="mix mono">Risk 06</p></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What do we do about them?</b></p>
+    </div>
+  </section>
+
+  <!-- MITIGATION -->
+  <section class="sec sec--plate" id="mitigation" data-q="So who does what?" data-slide="29" data-label="Mitigation">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">29</span> Mitigation</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>One answer</span></span><span class="ln"><span><em>for</em> each</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>One answer for each risk, in the same order as the slide before.</p>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-flame"/></svg></span><h3>Small wins, every week</h3><p>Media first means there is always something to show. We set one goal for the first 60 to 90 days, expect it to be slow, and say it out loud when someone is running low.</p><p class="mix mono">Answers risk 01</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><h3>Seats that match real time</h3><p>Founder seat or partner seat, chosen honestly. Shares are earned over time, and every founder owns an area that is theirs to run.</p><p class="mix mono">Answers risk 02</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><h3>One product, no shortcuts</h3><p>We specialise in one piece, lean on advisors who work in textile, and release nothing until the sample holds up.</p><p class="mix mono">Answers risk 03</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-megaphone"/></svg></span><h3>Test before we spend</h3><p>Everything goes out for free first, and only what works gets pushed. Pre-orders show the demand before we produce.</p><p class="mix mono">Answers risk 04</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-eyeoff"/></svg></span><h3>Proof built in</h3><p>The 10% is set aside at checkout, held in its own account, and published every quarter.</p><p class="mix mono">Answers risk 05</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3>A small core, a wide circle</h3><p>A few founders carry it and decide. Partners, artists and members surround it. Everyone picks their own seat.</p><p class="mix mono">Answers risk 06</p></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>So who does what?</b></p>
+    </div>
+  </section>
+
+  <!-- 03 WHAT I BRING -->
+  <section class="sec" id="origins" data-q="Who else is in?" data-slide="30" data-label="What I bring">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">30</span> What I bring</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>What I bring</span></span><span class="ln"><span><em>to the</em> table</span></span></h2>
+          <p class="byline" data-reveal><span>Léo Espitalier Noël · one of the founders</span></p>
+        </div>
+        <blockquote class="quote" data-reveal>
+          <span class="mark" aria-hidden="true">“</span>
+          <p>People see conservation as cute. I want caring about nature to be the highest status there is.</p>
+        </blockquote>
+      </div>
+      <ol class="journey" id="journey">
+        <li class="journey-line" aria-hidden="true"><i></i></li>
+        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><span class="yr mono">01</span><h3>A financial education</h3><p>Studied finance in the Netherlands. I can build the numbers, read them, and keep the 10% honest.</p></li>
+        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-globe"/></svg></span><span class="yr mono">02</span><h3>Experience abroad</h3><p>Years living and working in Europe, and time in the military. I know how a brand has to read beyond its first market.</p></li>
+        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-shirt"/></svg></span><span class="yr mono">03</span><h3>Fashion from the inside</h3><p>Worked at Mr Marvis in Amsterdam, a sustainable B Corp start-up, inside the high end of fashion culture.</p></li>
+        <li class="step"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><span class="yr mono">04</span><h3>The boardrooms</h3><p>At home in Mauritius I know people in the boardrooms of the biggest companies, and the people just below them.</p></li>
+        <li class="step"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><span class="yr mono">05</span><h3>Production</h3><p>The connections to make it. Factory conversations are already open, through people I know in the industry.</p></li>
+      </ol>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Who else is in?</b></p>
+    </div>
+  </section>
+
+  <!-- THE FOUNDERS -->
+  <section class="sec sec--plate" id="team" data-q="Who owns it?" data-slide="31" data-label="The founders">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow mono" data-reveal><span class="num">31</span> The founders</p>
+        <h2 class="display h-section" data-lines><span class="ln"><span>One seat taken,</span></span><span class="ln"><span><em>the rest</em> open</span></span></h2>
       </div>
       <div class="split">
         <div class="card founder" data-reveal>
-          <div class="top"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><p class="nm">[Founder Name]</p><span class="mono">Founder</span></div></div>
-          <p>Grew up in Mauritius before the boom. Studied finance in the Netherlands, reset in the military, then worked in fashion at Mr Marvis, a sustainable B Corp start-up, while living in Amsterdam.</p>
-          <p>Building Force of Nature to combine all of it, and to pay forward a privileged path rather than keep it.</p>
-          <div class="tags"><span class="tag">Mauritius</span><span class="tag">Finance · NL</span><span class="tag">Military</span><span class="tag">Mr Marvis · B Corp</span></div>
+          <div class="top"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><p class="nm">Léo Espitalier Noël</p><span class="mono">Founder · production</span></div></div>
+          <p>Studied finance in the Netherlands, reset in the military, then worked in fashion at Mr Marvis, a sustainable B Corp start-up, while living in Amsterdam. Grew up in Mauritius, and has the connections there to get it made.</p>
+          <p>One seat at the table, with one voice. The same as every other founder.</p>
+          <div class="tags"><span class="tag">Production</span><span class="tag">Finance · NL</span><span class="tag">Military</span><span class="tag">Mr Marvis · B Corp</span></div>
         </div>
         <div class="stack" data-stagger>
-          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><h3>[Name] · Creative Director</h3><p>Brand, product design, drop concepts.</p><span class="mono">Open role</span></div></div>
-          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><h3>[Name] · Operations &amp; Supply Chain</h3><p>Sourcing, production, fulfilment.</p><span class="mono">Open role</span></div></div>
-          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><div><h3>[Name] · Conservation Advisor</h3><p>Partner vetting and impact measurement.</p><span class="mono">Advisor · to be confirmed</span></div></div>
+          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-dollar"/></svg></span><div><h3>Investors · Capital</h3><p>Funding for the media and the first drop.</p><span class="mono">Open · terms to be agreed</span></div></div>
+          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-cam"/></svg></span><div><h3>Media · the seat I most want filled</h3><p>Story, content, campaigns, the episodes.</p><span class="mono">Founder or partner seats · open</span></div></div>
+          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><div><h3>The founders · Brand identity</h3><p>The name, the look and the voice, decided in the room.</p><span class="mono">Equal say</span></div></div>
+          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>The wider group · Art, events, community</h3><p>Artists, event partners and the young team around the brand.</p><span class="mono">Seats open</span></div></div>
+          <div class="card role"><span class="ic"><svg aria-hidden="true"><use href="#i-leaf"/></svg></span><div><h3>[Name] · Conservation Advisor</h3><p>Partner vetting and impact measurement.</p><span class="mono">Advisor · to be confirmed</span></div></div>
         </div>
       </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>Who owns it?</b></p>
+    </div>
+  </section>
+
+  <!-- OWNERSHIP -->
+  <section class="sec" id="ownership" data-q="What keeps that fair?" data-slide="32" data-label="Ownership">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">32</span> Ownership</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>Equal shares,</span></span><span class="ln"><span><em>equal</em> attention</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>I'm open to splitting the business equally among the founders, and to investors alongside us. Equal shares mean equal attention. The terms are ours to agree in the room.</p>
+      </div>
+      <div class="grid-3" data-stagger>
+        <div class="card ask-col">
+          <div class="top"><span class="ic is-red" style="margin:0"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><div><h3>The founder seat</h3><span class="mono">All in</span></div></div>
+          <span class="lbl mono">What it asks</span>
+          <ul class="bullets"><li>This gets your full attention, alongside the rest of us</li><li>You own an area and make the calls in it</li></ul>
+          <span class="lbl mono">What it gives</span>
+          <ul class="bullets"><li>An equal share with every other founder</li><li>Shares granted over four years, so what you hold matches what you put in</li><li>An equal say in the brand identity and the direction</li></ul>
+        </div>
+        <div class="card ask-col">
+          <div class="top"><span class="ic" style="margin:0"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><div><h3>The partner seat</h3><span class="mono">Part of your time</span></div></div>
+          <span class="lbl mono">What it asks</span>
+          <ul class="bullets"><li>The part of your time you can truly give, for those with other businesses to run</li><li>A clear contribution: a skill, a network, a platform</li></ul>
+          <span class="lbl mono">What it gives</span>
+          <ul class="bullets"><li>Profit units: a share of the profits, without shares or votes</li><li>A voice in the room and a place in the story</li></ul>
+        </div>
+        <div class="card ask-col">
+          <div class="top"><span class="ic" style="margin:0"><svg aria-hidden="true"><use href="#i-dollar"/></svg></span><div><h3>The investor seat</h3><span class="mono">Capital</span></div></div>
+          <span class="lbl mono">What it asks</span>
+          <ul class="bullets"><li>Capital for the media and the first drop</li><li>Acceptance that the 10% leaves every sale first, before anything else</li></ul>
+          <span class="lbl mono">What it gives</span>
+          <ul class="bullets"><li>A stake in the company, on terms we agree</li><li>The same quarterly report the public sees: raised, deployed, outcomes</li></ul>
+        </div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>How the group stays wide</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-check"/></svg></span><div><h3>You choose your seat</h3><p>Nobody is assigned one. Each of us says honestly what we can give, and takes the seat that matches it.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-users"/></svg></span><div><h3>Wide, without diluting</h3><p>A small group of founders carries it. A wide circle of partners, artists and members surrounds it. Everyone is in, and nobody's share is thinned to nothing.</p></div></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What keeps that fair?</b></p>
+    </div>
+  </section>
+
+  <!-- TERMS OF OWNERSHIP -->
+  <section class="sec sec--plate" id="terms" data-q="So what am I asking of you?" data-slide="33" data-label="Terms of ownership">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">33</span> Terms of ownership</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>The same rules</span></span><span class="ln"><span><em>for</em> everyone</span></span></h2>
+        </div>
+        <p class="closer" data-reveal>A starting proposal, so that equal ownership also means equal accountability. Every term here is ours to change.</p>
+      </div>
+      <div class="sub-head mono" data-reveal style="margin-top:0"><span>For the main owners</span></div>
+      <div class="grid-4" data-stagger>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-loop"/></svg></span><h3>Granted over four years</h3><p>Ownership is granted over time: four years, with a one-year cliff. Leave before a year and you get nothing. After that, your share builds month by month.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-check"/></svg></span><h3>Good leaver</h3><p>Illness, or leaving on agreed terms. You keep what has vested.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-x"/></svg></span><h3>Bad leaver</h3><p>Walking away, no longer contributing, or breaking the agreement. You sell your shares back at a low price.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><h3>It applies to me too</h3><p>The same clock and the same clauses for every founder, me included.</p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>Or: let the split follow the work</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-chart"/></svg></span><div><h3>A contribution-based split</h3><p>Instead of fixing percentages on day one, everyone earns points for what they put in: time, cash, contacts, content, production. The split follows the points, so whoever does the work owns more. Slicing Pie is the best-known model. It suits us, since nobody knows yet who will really show up.</p></div></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>For the wider crew</span></div>
+      <div class="grid-3" data-stagger>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-dollar"/></svg></span><h3>Profit units, not shares</h3><p>Units that pay a share of the profits, and a share of the value if the company is ever sold.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-hands"/></svg></span><h3>Partnership, not ownership</h3><p>No actual shares and no votes. The circle stays wide without legal ownership spread across twenty people.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span><h3>Live while you are active</h3><p>The units stay live while you contribute. Stop contributing and they lapse.</p></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>For investors</span><span class="ph">Amount and terms to be agreed</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-dollar"/></svg></span><div><h3>Open, with one fixed point</h3><p>The amount, the valuation and the form of the investment are all open. One thing is not: 10% of every sale goes to the foundations first, and no investment changes that.</p></div></div>
+      </div>
+      <div class="sub-head mono" data-reveal><span>How we stay accountable</span></div>
+      <div class="rows" data-stagger>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-layers"/></svg></span><div><h3>One area each, and named hours</h3><p>Each founder owns an area, has the final call in it, and says out loud the hours they can give.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-doc"/></svg></span><div><h3>A monthly check-in</h3><p>What each of us did, what comes next. Short, honest, written down.</p></div></div>
+        <div class="row"><span class="ic"><svg aria-hidden="true"><use href="#i-lock"/></svg></span><div><h3>Put in writing</h3><p>All of it goes into a shareholders' agreement, drawn up by a lawyer, before any shares are issued.</p></div></div>
+      </div>
+      <div class="meta-row" data-reveal><span class="ph">Proposed terms · to be agreed in the room</span></div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>So what am I asking of you?</b></p>
     </div>
   </section>
 
   <!-- 19 THE ASK -->
-  <section class="sec sec--red" id="ask" data-slide="19" data-label="The ask">
+  <section class="sec sec--red" id="ask" data-q="What holds us together when it gets hard?" data-slide="34" data-label="The ask">
     <div class="wrap split split--wide-left" style="align-items:center">
       <div>
-        <p class="eyebrow mono" data-reveal><span class="num">19</span> The ask</p>
-        <h2 class="display" data-lines style="font-size:clamp(1.6rem,3vw,2.8rem);margin-bottom:18px"><span class="ln"><span>What we're raising</span></span></h2>
-        <p class="display raise fig" data-fig>$[XXX]K</p>
-        <p class="lead" data-reveal style="max-width:28ch">Pre-seed. <span class="fig">[XX]</span> months of runway to two drops and the first published impact report.</p>
+        <p class="eyebrow mono" data-reveal><span class="num">34</span> The ask</p>
+        <h2 class="display" data-lines style="font-size:clamp(3.4rem,9vw,9rem);margin-bottom:clamp(16px,2vw,26px)"><span class="ln"><span>Media first.</span></span><span class="ln"><span><em>money</em> welcome</span></span></h2>
+        <p class="lead" data-reveal style="max-width:28ch">With media first and one limited drop, the brand can start on very little. Investment gets it there sooner.</p>
+      </div>
+      <div>
         <ul class="funds" data-stagger>
-          <li><span class="pc">40%</span><i class="sw" style="background:#F4F1EC"></i><span class="t">Product and first inventory</span></li>
-          <li><span class="pc">30%</span><i class="sw" style="background:#0A0908"></i><span class="t">Brand, content and launch</span></li>
-          <li><span class="pc">20%</span><i class="sw" style="background:#6A1410"></i><span class="t">Team and operations</span></li>
-          <li><span class="pc">10%</span><i class="sw" style="background:#E7A196"></i><span class="t">Mission infrastructure and reserve</span></li>
+          <li><span class="pc">01</span><i class="sw" style="background:#F4F1EC"></i><span class="t">Take a seat: founder, partner or investor</span></li>
+          <li><span class="pc">02</span><i class="sw" style="background:#0A0908"></i><span class="t">Bring your eye and your voice to the brand identity</span></li>
+          <li><span class="pc">03</span><i class="sw" style="background:#6A1410"></i><span class="t">Agree the terms with me</span></li>
+          <li><span class="pc">04</span><i class="sw" style="background:#E7A196"></i><span class="t">Build the media and the first drop together</span></li>
+          <li><span class="pc">05</span><i class="sw" style="background:#F4F1EC"></i><span class="t">Put the brand first</span></li>
         </ul>
-        <div class="meta-row" data-reveal><span class="ph">Illustrative · placeholder figures</span></div>
       </div>
-      <div class="donut-wrap" data-reveal>
-        <div class="donut" id="donut" role="img" aria-label="Doughnut chart, illustrative use of funds: 40 percent product and inventory, 30 percent brand and launch, 20 percent team and operations, 10 percent mission infrastructure">
-          <div class="mid"><span class="display v">Use of funds</span><span class="mono">Illustrative</span></div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>What holds us together when it gets hard?</b></p>
+    </div>
+  </section>
+
+  <!-- THE BRAND COMES FIRST -->
+  <section class="sec sec--plate" id="first" data-q="So?" data-slide="35" data-label="The brand comes first">
+    <div class="wrap">
+      <div class="sec-head sec-head--aside">
+        <div>
+          <p class="eyebrow mono" data-reveal><span class="num">35</span> The brand comes first</p>
+          <h2 class="display h-section" data-lines><span class="ln"><span>The brand</span></span><span class="ln"><span><em>comes</em> first</span></span></h2>
         </div>
+        <p class="closer" data-reveal>If you're in on this, it is the one thing I ask of every one of us, myself included.</p>
       </div>
+      <div class="grid-3" data-stagger>
+        <div class="card"><span class="ic is-red"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><h3>We remember why we're here</h3><p>We are here to have a positive impact. That comes before anything any one of us wants from it.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-user"/></svg></span><h3>We put personal needs aside</h3><p>When what one of us needs pulls against what the brand needs, the brand wins.</p></div>
+        <div class="card"><span class="ic"><svg aria-hidden="true"><use href="#i-seed"/></svg></span><h3>Because the brand outlasts us</h3><p>The brand's impact is long-term. Our personal needs are subjective, and they change with circumstance.</p></div>
+      </div>
+      <p class="sec-q mono" data-reveal><span>Next</span><b>So?</b></p>
     </div>
   </section>
 
   <!-- 20 CLOSING -->
-  <section class="sec close" id="close" data-slide="20" data-label="Let's build it">
+  <section class="sec close" id="close" data-slide="36" data-label="Let's build it">
     <div class="wrap">
       <div class="close-mark" data-reveal><img src="assets/logo-480.png" alt="" width="348" height="480" loading="lazy" decoding="async"></div>
-      <h2 class="display h-close" data-lines><span class="ln"><span>Where mission</span></span><span class="ln"><span><em>and</em> lifestyle collide</span></span></h2>
-      <p class="hero-tag" data-reveal>Let's build it together.</p>
+      <h2 class="display h-close" data-lines><span class="ln"><span>Let's build it</span></span><span class="ln"><span><em>together</em></span></span></h2>
+      <p class="hero-tag" data-reveal>Where mission and lifestyle collide.</p>
       <div class="contact mono" data-reveal>
-        <span>[Founder Name]</span><span class="sep">·</span><span>[email@forceofnature.org.in]</span><span class="sep">·</span>
+        <span>Léo Espitalier Noël</span><span class="sep">·</span><a class="link" href="mailto:leoespinoel@forceofnature.org.in">leoespinoel@forceofnature.org.in</a><span class="sep">·</span>
         <a class="link" href="https://forceofnature.org.in/" target="_blank" rel="noopener">forceofnature.org.in<svg viewBox="0 0 16 16" aria-hidden="true"><use href="#i-ne"/></svg></a>
       </div>
       <p class="close-foot mono">Force of Nature Operations · 2026</p>
@@ -1113,8 +1649,8 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
   /* ---------- line chart: built from the deck's own data ---------- */
   (() => {
     const svg = $('#linechart'); if (!svg) return;
-    const data = [['2024', 8], ['2025', 9.5], ['2026', 11.2], ['2027', 13.2], ['2028', 15.5]];
-    const W = 600, H = 250, L = 30, R = 30, T = 40, B = 44, lo = 6, hi = 16.5;
+    const data = [['2023', 7.8], ['2024', 9.6], ['2025', 11.8], ['2026', 14.5], ['2027', 17.8], ['2028', 21.9], ['2029', 26.9], ['2030', 33.05]];
+    const W = 600, H = 250, L = 30, R = 30, T = 40, B = 44, lo = 3, hi = 35;
     const x = (i) => L + (i * (W - L - R)) / (data.length - 1);
     const y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
     const NS = 'http://www.w3.org/2000/svg';
@@ -1307,7 +1843,10 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
   /* fill the takeover with section i's hand-set headline lines, size them to the width, then swap every word for noise */
   const dress = (i) => {
     const h = $('h1, h2', secs[i]);
-    tkKick.textContent = `${secs[i].dataset.slide} / ${String(secs.length).padStart(2, '0')}  ·  ${secs[i].dataset.label}`;
+    /* the slide before left a question open: show it, and let this headline decode beneath it as the answer */
+    const asked = i > 0 ? secs[i - 1].dataset.q : '';
+    tkKick.classList.toggle('is-q', !!asked);
+    tkKick.textContent = asked || `${secs[i].dataset.slide} / ${String(secs.length).padStart(2, '0')}  ·  ${secs[i].dataset.label}`;
     tkText.innerHTML = $$('.ln > span', h).map((l) => `<span class="tl">${l.innerHTML}</span>`).join('');
     const rows = $$('.tl', tkText);
     /* like the Bon Voyage intro the widest line fills the width; measured on the real words at 100px, capped by height */
@@ -1402,6 +1941,17 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentEle
     armed = true;
   });
   addEventListener('load', () => { ScrollTrigger.refresh(); onScroll(); });
+})();
+</script>
+<script>
+(() => {
+  const vids = [...document.querySelectorAll('.look-shot video')];
+  if (!vids.length || !('IntersectionObserver' in window)) return vids.forEach((v) => { v.controls = true; });
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) { const p = e.target.play(); if (p && p.catch) p.catch(() => { e.target.controls = true; }); }
+    else e.target.pause();
+  }), { threshold: 0.35 });
+  vids.forEach((v) => io.observe(v));
 })();
 </script>
 </body>
