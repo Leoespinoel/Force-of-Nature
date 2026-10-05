@@ -13,7 +13,7 @@
 <link rel="icon" href="assets/logo-480.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@1&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --void:#0A0908; --plate:#151311; --smoke:#24201C;
@@ -91,6 +91,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .chrome.bottom{bottom:0;padding-top:12px;padding-bottom:16px}
 .brand{display:flex;align-items:center;gap:12px}
 .brand img{height:26px;width:auto}
+.brand span{font-size:13px;font-weight:700;letter-spacing:.2em;position:relative;top:-5px}
+@media (max-width:560px){.brand span{display:none}}
 .nav{display:flex;gap:0}
 .nav a{position:relative;padding:14px 0;display:inline-block}
 .nav a + a::before{content:"·";margin:0 12px;color:var(--pebble)}
@@ -474,7 +476,6 @@ body.on-clay-bottom .chrome.bottom{color:#F4F1EC}
   .hero-object{position:static;width:84px;margin-bottom:40px;order:-1}
   .hero-object .mono{position:static;display:block;margin-top:12px}
   .hero-sub{grid-template-columns:1fr;gap:8px}
-  .brand .mono{display:none}
   .chrome.top{padding:14px 16px 0;flex-wrap:wrap;row-gap:0;background:var(--void);transition:color .6s var(--ease-out),background .6s var(--ease-out)}
   .chrome.bottom{display:none}
   .chrome.top .nav{order:3;width:100%;justify-content:flex-start;flex-wrap:wrap;row-gap:6px;padding-top:2px}
