@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vis Naturae, Not Just a Tee</title>
+<meta name="description" content="A t-shirt with a second job. Where consuming creates positive change, 10% of every sale, not profit, funds reef, forest, and coastline conservation.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#F3EEE2">
+<link rel="icon" href="../assets/logo-480.png" type="image/png">
+<!-- the intro hides the page until the script has set its starting positions; if the script never arrives (CDN down), the page shows itself after 4s -->
+<script>(function(){var d=document.documentElement;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.classList.add('is-loading');setTimeout(function(){if(!window.__fonBooted)d.classList.remove('is-loading');},4000);})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ---------- the earth theme: a cyanotype ----------
+     The dark newsletter is outer space on black. This page is its opposite: one sheet of cyanotype paper from a
+     naturalist's collection, the way the first botanists printed specimens with sunlight in the 1840s. Light turns
+     the sensitised paper Prussian blue; whatever lies on it stays white. Every plate here is real footage of a
+     silhouette graded into that print (Light theme/tools/cyano-grade.py), so the wave, the coral, the fern and the
+     kelp move as white shapes on blue. Scrolling is the sun: each plate starts as pale yellow-green sensitised
+     paper and develops as it comes into view (develop() in the script). The ink is the print's own deep blue; the
+     brand red appears exactly once, as the stamp on 10%. Type and eases are the dark page's, so the two read as one
+     brand. */
+  :root{
+    --paper:#F3EEE2; --paper-2:#EAE3D3; --sens:#D9D9A6;
+    --prussian:#123A6B; --deep:#0B2445; --pale:#89AACC;
+    --ink:#0B2445; --ink-soft:#34496A; --stone:#6E7A8C;
+    --red:#C11B15;
+    --hairline:rgba(11,36,69,.18);
+    --gutter:clamp(16px,2.5vw,36px);
+    --mat:clamp(10px,1.3vw,20px);
+    --edge:clamp(26px,3.2vw,48px);
+    --gap:clamp(48px,5vw,72px);
+    --font-display:'Bricolage Grotesque',sans-serif;
+    --font-serif:'Instrument Serif',serif;
+    --font-mono:'Geist Mono',ui-monospace,monospace;
+    --ease-out:cubic-bezier(.19,1,.22,1);
+    /* the sheet's fibre: tileable noise (stitchTiles), drawn once by the browser and cached like any image */
+    --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .30  0 0 0 0 .27  0 0 0 0 .20  0 0 0 .075 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  *{box-sizing:border-box}
+  html{background:var(--paper);color:var(--ink)}
+  html.lenis,html.lenis body{height:auto}
+  .lenis.lenis-smooth{scroll-behavior:auto!important}
+  .lenis.lenis-stopped{overflow:hidden}
+  body{margin:0;background:var(--grain),var(--paper);color:var(--ink);font-family:var(--font-display);font-variation-settings:"wdth" 100,"opsz" 16;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip}
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+  ::selection{background:var(--prussian);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--prussian);outline-offset:4px}
+  .skip{position:fixed;top:8px;left:-9999px;z-index:100;padding:12px 16px;background:var(--ink);color:var(--paper);font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .skip:focus{left:8px}
+
+  /* ---------- ink dot cursor (mouse devices only) ---------- */
+  .cursor-dot{position:fixed;top:0;left:0;width:14px;height:14px;border-radius:50%;background:var(--prussian);box-shadow:0 0 0 1.5px rgba(243,238,226,.7);pointer-events:none;z-index:9999;opacity:0;transform:translate(-50%,-50%) scale(1);transition:opacity 200ms ease,transform 220ms cubic-bezier(.2,.8,.2,1);will-change:transform,opacity}
+  @media (hover:hover) and (pointer:fine){
+    html.has-dot-cursor,html.has-dot-cursor *{cursor:none!important}
+    html.has-dot-cursor input,html.has-dot-cursor textarea{cursor:text!important}
+    html.has-dot-cursor .cursor-dot.is-visible{opacity:1}
+    html.has-dot-cursor .cursor-dot.is-hover{transform:translate(-50%,-50%) scale(2.2)}
+    html.has-dot-cursor .cursor-dot.is-down{transform:translate(-50%,-50%) scale(.75)}
+    html.has-dot-cursor .cursor-dot.is-text{transform:translate(-50%,-50%) scale(0)}
+  }
+
+  /* ---------- type ---------- */
+  .mono{font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+  .display{font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 96;font-weight:700;text-transform:uppercase;letter-spacing:-.03em;line-height:.88;margin:0}
+  .display em{font-family:var(--font-serif);font-style:italic;font-weight:400;text-transform:lowercase;letter-spacing:-.01em;font-size:.55em;position:relative;top:-.08em}
+  .h-hero{font-size:clamp(3.2rem,12.4vw,12.8rem)}
+  .h-section{font-size:clamp(2.6rem,7vw,6rem)}
+  .body{color:var(--ink-soft);max-width:56ch;margin:0}
+  .body strong{color:var(--ink);font-weight:500}
+  .eyebrow{display:inline-flex;align-items:center;gap:12px;color:var(--stone);margin:0 0 20px}
+  .eyebrow::before{content:"";width:22px;height:1px;background:currentColor;display:inline-block;opacity:.6}
+  /* the specimen label under every plate: "Pl. II · Acropora · Reef" */
+  .label{display:flex;flex-wrap:wrap;gap:4px 12px;color:var(--ink-soft);font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 0}
+  .label b{font-weight:500;color:var(--ink)}
+  .label i{font-family:var(--font-serif);font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink);line-height:1}
+
+  /* ---------- ghost CTA ---------- */
+  .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:currentColor;padding:16px 0;position:relative}
+  .cta svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;transition:transform .5s var(--ease-out)}
+  .cta:hover svg{transform:translate(3px,-3px)}
+  .cta.down:hover svg{transform:translate(0,4px)}
+  .cta.pill{padding:12px 18px;border:1px solid currentColor;min-height:44px}
+  .cta .txt{display:inline-block;min-width:1ch}
+
+  /* ---------- corner chrome ----------
+     Over the hero's blue sky the chrome is paper; once the page is on paper it is ink (html.on-paper, set by scroll). */
+  .chrome-end{display:flex;align-items:center;gap:10px}
+  .sound-toggle{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 18px;border-radius:999px;border:1px solid currentColor;background:none;color:inherit;cursor:pointer;transition:border-color 300ms ease}
+  .sound-toggle[aria-disabled="true"]{opacity:.5;cursor:default}
+  .sound-toggle__matrix{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;width:15px;height:15px;flex:none}
+  .sound-toggle__matrix i{display:block;border-radius:1px;background:currentColor;opacity:.22;transform:scale(.55);transition:opacity 120ms ease,transform 120ms ease}
+  .sound-toggle.is-loading .sound-toggle__matrix i{animation:sound-load 1.1s ease-in-out infinite}
+  .sound-toggle.is-loading .sound-toggle__matrix i:nth-child(2){animation-delay:-.9s}
+  .sound-toggle.is-loading .sound-toggle__matrix i:nth-child(3){animation-delay:-.7s}
+  .sound-toggle.is-loading .sound-toggle__matrix i:nth-child(4){animation-delay:-.5s}
+  .sound-toggle.is-loading .sound-toggle__matrix i:nth-child(5){animation-delay:-.3s}
+  .sound-toggle.is-loading .sound-toggle__matrix i:nth-child(6){animation-delay:-.1s}
+  .sound-toggle.is-loading .sound-toggle__matrix i:nth-child(7){animation-delay:-.8s}
+  .sound-toggle.is-loading .sound-toggle__matrix i:nth-child(8){animation-delay:-.6s}
+  .sound-toggle.is-loading .sound-toggle__matrix i:nth-child(9){animation-delay:-.4s}
+  @keyframes sound-load{0%,100%{opacity:.22;transform:scale(.55)}50%{opacity:1;transform:scale(1)}}
+  @media (prefers-reduced-motion:reduce){.sound-toggle.is-loading .sound-toggle__matrix i{animation:none}}
+  .sound-toggle__label{font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;line-height:1;min-width:calc(3ch + .24em);text-align:left;opacity:.6;transition:opacity 300ms ease}
+  .sound-toggle[aria-pressed="true"] .sound-toggle__label{opacity:1}
+  @media (max-width:720px){.sound-toggle{padding:0 14px;gap:8px}.sound-toggle__label{display:none}}
+  /* theme switch: space (index.html) and earth (light/) each carry a button to the other */
+  .theme-toggle{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:999px;border:1px solid currentColor;color:inherit;font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;line-height:1}
+  .theme-toggle svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;flex:none}
+  @media (max-width:720px){.theme-toggle{padding:0 14px}.theme-toggle .txt{display:none}}
+  .chrome{position:fixed;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:20px calc(var(--gutter) + var(--mat));pointer-events:none;color:var(--paper);transition:color 600ms ease}
+  html.on-paper .chrome.top{color:var(--ink)}
+  .chrome > *{pointer-events:auto}
+  .chrome.top{top:var(--mat)}
+  /* the bottom strip always sits on paper (the hero's foot is paper), so it is always ink */
+  .chrome.bottom{bottom:0;padding-top:12px;padding-bottom:14px;color:var(--ink)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{height:26px;width:auto}
+  .strip{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;width:100%;opacity:.8}
+  .strip > :nth-child(2){text-align:center}
+  .strip > :nth-child(3){text-align:right}
+
+  /* ---------- a plate: one print on the sheet ----------
+     .shot holds the footage (two players of one clip with a dissolve at its seam, or one player of a clip that
+     plays forward then back and loops natively). .develop is a small canvas of sensitised paper laid over it that
+     washes away as the plate develops. .edge is the brushed coating edge, a canvas drawn once per plate at its
+     real size (edge() in the script), so every print has its own hand-coated edge and there are no tile seams (a
+     nine-slice PNG left hairlines where its tiles met). It is plain alpha compositing over the video, never a mask
+     or a filter (those cost the dark sky its frames on the owner's 4K display). */
+  /* the footage stops 3px inside the plate's box: the coated edge always covers the outer margin, and a video layer
+     reaching the box's fractional edge was anti-aliased separately from the canvas over it, leaving a blue hairline */
+  .plate{position:relative;overflow:hidden;isolation:isolate}
+  .shot{position:absolute;inset:3px;overflow:hidden;background:var(--prussian);pointer-events:none}
+  .shot video,.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .shot video{opacity:0;transition:opacity 1.3s linear;will-change:opacity}
+  .shot video.is-front{opacity:1}
+  .develop{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+  .develop.is-done{visibility:hidden}
+  /* 3px past the plate on every side: a canvas scaled to a fractional box leaves its last pixel column soft, and the footage showed through it as a hairline */
+  .edge{position:absolute;left:-3px;top:-3px;width:calc(100% + 6px);height:calc(100% + 6px);z-index:3;pointer-events:none}
+
+  /* ---------- hero: Plate I, a wave breaking ----------
+     The print is mounted on the sheet with a margin of paper. The headline stands in the blue sky in paper white,
+     like letters laid on the sheet before it went into the sun; the sun itself is an unexposed disc. Under the
+     print, on the paper, the rest of the hero in ink. */
+  section{position:relative}
+  .hero{position:relative;min-height:100svh;display:grid;grid-template-rows:minmax(0,1fr) auto;padding:var(--mat) var(--mat) 0}
+  .plate--hero{min-height:0;height:100%}
+  .plate--hero .shot{will-change:transform}
+  .plate--hero .shot video,.plate--hero .shot img{object-position:66% 0%}
+  .sun{position:absolute;z-index:1;left:74%;top:17%;width:clamp(84px,12vw,196px);aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle,var(--paper) 0 61%,rgba(214,222,226,.9) 64%,rgba(137,170,204,.55) 67.5%,rgba(137,170,204,0) 71%);will-change:transform}
+  .hero-copy{position:absolute;z-index:4;left:0;right:0;top:0;padding:clamp(96px,13vh,140px) calc(var(--gutter) + var(--edge) * .4) 0;color:var(--paper)}
+  .hero .eyebrow{color:rgba(243,238,226,.8)}
+  /* the letters are unexposed paper like the sun, and like it they carry the pale rim a real print leaves where
+     an object did not lie quite flat: it keeps them legible when the breaking wave's white foam rises behind them */
+  .hero .h-hero{margin:0;text-shadow:0 0 1px rgba(137,170,204,.95),0 0 3px rgba(137,170,204,.6),0 0 22px rgba(18,58,107,.55),0 0 48px rgba(18,58,107,.4)}
+  .lm{display:block;overflow:hidden;padding:.07em 0 .11em;margin:-.07em 0 -.11em}
+  .l{display:block;will-change:transform}
+  .plate-tag{position:absolute;z-index:4;right:calc(var(--gutter) + var(--edge) * .4);bottom:calc(var(--edge) + 8px);margin:0;color:var(--ink)}
+  .hero-foot{display:grid;grid-template-columns:minmax(0,58ch) auto;align-items:end;justify-content:space-between;gap:24px 40px;padding:26px var(--gutter) 64px}
+  .hero-foot .body{font-weight:500;font-size:clamp(.98rem,1.2vw,1.1rem)}
+  .hero-foot .cta{white-space:nowrap}
+
+  /* ---------- follow: a specimen label ---------- */
+  .follow{padding:calc(var(--gap) * 1.6) var(--gutter) calc(var(--gap) * 1.4);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.95fr);gap:clamp(32px,6vw,96px);align-items:center;border-top:1px solid var(--hairline)}
+  .follow .h-section{margin:0 0 24px}
+  .card{position:relative;max-width:540px;width:100%;justify-self:end;padding:28px clamp(20px,2.6vw,36px) 30px;border:1.5px solid var(--ink);box-shadow:inset 0 0 0 5px var(--paper),inset 0 0 0 6px var(--ink);background:rgba(243,238,226,.55)}
+  .card__head{display:flex;justify-content:space-between;gap:16px;padding-bottom:14px;margin-bottom:22px;border-bottom:1px solid var(--ink);color:var(--ink)}
+  .card__head span:last-child{color:var(--ink-soft)}
+  .field-form{display:grid;gap:22px}
+  .field{display:grid;grid-template-columns:5.5em 1fr;align-items:end;gap:12px}
+  .field label{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);padding-bottom:10px}
+  .field input{font-family:var(--font-serif);font-style:italic;font-size:clamp(1.3rem,1.8vw,1.6rem);color:var(--ink);background:transparent;border:0;border-bottom:1px dashed rgba(11,36,69,.5);padding:6px 0 6px;border-radius:0;width:100%;transition:border-color .5s var(--ease-out)}
+  .field input::placeholder{color:rgba(52,73,106,.45);opacity:1}
+  .field input:focus-visible{outline:none;border-bottom:1px solid var(--ink)}
+  .field input:-webkit-autofill{-webkit-text-fill-color:var(--ink);box-shadow:0 0 0 40px var(--paper) inset;caret-color:var(--ink)}
+  /* the button is a blue stamp: Prussian, set slightly off square, pressed on click */
+  .stamp{display:inline-flex;align-items:center;gap:12px;justify-self:start;margin-top:6px;padding:15px 22px;background:var(--prussian);color:var(--paper);font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;transform:rotate(-1.2deg);box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--prussian);transition:transform 180ms cubic-bezier(.2,.8,.2,1),background 200ms ease}
+  .stamp svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none}
+  .stamp:hover{background:var(--deep);transform:rotate(-1.2deg) translateY(-2px)}
+  .stamp:active{transform:rotate(-1.2deg) scale(.96)}
+  .field-form.is-sending .stamp{opacity:.6;cursor:progress}
+  .follow__note{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);margin:0;min-height:1.4em;animation:noteRise .6s var(--ease-out) both}
+  .follow__note.is-error{text-decoration:underline}
+  @keyframes noteRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* ---------- perks: three small plates of pressed specimens ---------- */
+  .perks{padding:var(--gap) var(--gutter) calc(var(--gap) * 1.2)}
+  .rule{height:1px;background:var(--ink);transform-origin:left;opacity:.5}
+  .perks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,48px);padding-top:clamp(28px,3vw,44px)}
+  .perk{display:grid;align-content:start;gap:14px}
+  .perk .plate{aspect-ratio:1}
+  .perk .label{margin:2px 0 6px}
+  .perk .name{font-size:clamp(1.9rem,3.1vw,2.8rem);line-height:.92;color:var(--ink);display:inline-block;transition:transform .6s var(--ease-out)}
+  .perk:hover .name{transform:translateX(10px)}
+  .perk .body{font-size:.98rem}
+
+  /* ---------- where the 10% goes: one pinned screen ---------- */
+  .ten-track{height:320vh}
+  .ten-pin{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:clamp(24px,4vw,72px);padding:96px var(--gutter) 64px;overflow:clip}
+  /* the one red on the page: a rubber stamp. Its ink is speckled by a still noise mask (text, never video) */
+  .ten-stamp{display:inline-flex;align-items:flex-start;margin:6px 0 34px;padding:.05em .14em .02em .1em;border:.045em solid var(--red);border-radius:.04em;color:var(--red);font-size:clamp(7rem,19vw,19.5rem);line-height:.8;letter-spacing:-.05em;transform:rotate(-4deg);transform-origin:30% 60%;
+    -webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3.2 0 0 0 2.75'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>");
+    mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3.2 0 0 0 2.75'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>");
+    -webkit-mask-size:300px;mask-size:300px}
+  .ten-stamp .n{display:inline-block;min-width:.9em;text-align:right;font-variant-numeric:tabular-nums}
+  .ten-stamp .pc{font-size:.46em;margin:.1em 0 0 .04em}
+  .ten-cap{font-size:clamp(1.5rem,2.7vw,2.7rem);line-height:.98;max-width:16ch}
+  .ten-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.4vw,22px);align-items:start}
+  .ten-card{margin:0}
+  .ten-card:nth-child(2){margin-top:12%}
+  .ten-card:nth-child(3){margin-top:24%}
+  .ten-card .plate{aspect-ratio:3/4}
+
+  /* ---------- bon voyage finale: leave it in the sun ---------- */
+  .voyage{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:96px var(--gutter);text-align:center;overflow:hidden}
+  .voyage__inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+  .voyage .h-section{margin:0 0 18px}
+  .voyage .body{margin:0 auto 42px;max-width:44ch}
+  .voyage__btn{
+    display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-display);font-variation-settings:"wdth" 75,"opsz" 96;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;
+    font-size:clamp(1.6rem,3vw,2.4rem);line-height:1;padding:clamp(20px,2.6vw,30px) clamp(40px,6vw,76px);background:var(--prussian);color:var(--paper);cursor:pointer;
+    box-shadow:0 0 0 4px var(--paper),0 0 0 5.5px var(--prussian),0 22px 50px -18px rgba(11,36,69,.55);transform:rotate(-1.5deg);transition:transform 160ms cubic-bezier(.2,.8,.2,1),background 160ms ease}
+  .voyage__btn:hover{background:var(--deep)}
+  .voyage__btn:active{transform:rotate(-1.5deg) scale(.97)}
+  .voyage__spot{position:relative;display:inline-flex;will-change:transform}
+  /* hovering the button lets a little sun onto the sheet: a warm glow from the top right, fading in */
+  .voyage .sunlight{position:absolute;inset:0;z-index:0;background:radial-gradient(70% 70% at 84% 8%,rgba(255,236,196,.55) 0%,rgba(255,236,196,0) 70%);opacity:0;transition:opacity 1.1s var(--ease-out);pointer-events:none}
+  .voyage.is-hot .sunlight{opacity:1}
+
+  /* ---------- departure: the sheet left in the sun ----------
+     Click: a glare of sun across the sheet, then the whole page exposes from the top right, pale blue at the front
+     of the exposure and Prussian behind it (drawn on a small canvas, scaled up so the front is a soft wash). Tiny
+     pinholes stay unexposed and white as the blue passes them. Over-exposure then deepens the blue to the void of
+     the dark site, the pinholes are its stars, and the browser goes to bon-voyage, which opens on its night sky.
+     Reduced motion and modifier clicks keep the plain link. */
+  .expose{position:fixed;inset:0;z-index:60;pointer-events:none;visibility:hidden}
+  .expose.is-on{visibility:visible;pointer-events:auto}
+  .expose canvas{position:absolute;inset:0;width:100%;height:100%}
+  .expose .glare{position:absolute;inset:0;background:radial-gradient(90% 90% at 86% 4%,rgba(255,250,236,.96) 0%,rgba(255,240,210,.7) 38%,rgba(255,236,200,0) 78%);opacity:0}
+  body.is-departing{overflow:hidden}
+  body.is-departing .voyage__btn{pointer-events:none}
+  /* !important: the intro left inline opacity and transform on the chrome, and those would win otherwise */
+  body.is-lifted .chrome,body.is-lifted .voyage__inner{transition:transform 900ms cubic-bezier(.2,.6,.2,1),opacity 600ms ease-in;will-change:transform,opacity;pointer-events:none;opacity:0!important;transform:translateY(-40px)!important}
+  html.has-dot-cursor body.is-departing .cursor-dot.is-visible{opacity:0;transform:translate(-50%,-50%) scale(0)}
+
+  /* ---------- intro: hidden until the script has placed everything ---------- */
+  html.is-loading .chrome,html.is-loading [data-reveal],html.is-loading .l{visibility:hidden}
+
+  @media (max-width:900px){
+    .hero{grid-template-rows:minmax(62svh,1fr) auto}
+    .hero-foot{grid-template-columns:1fr;gap:16px;padding-bottom:72px}
+    .sun{left:auto;right:7%;top:38%;width:clamp(56px,17vw,84px)}
+    .follow{grid-template-columns:1fr;padding-top:var(--gap)}
+    .card{justify-self:start}
+    .perks-grid{grid-template-columns:1fr;gap:44px}
+    .perk .plate{aspect-ratio:4/3}
+    .ten-track{height:auto}
+    .ten-pin{position:static;height:auto;grid-template-columns:1fr;padding:var(--gap) var(--gutter)}
+    .ten-cards{grid-template-columns:1fr;gap:32px}
+    .ten-card:nth-child(n){margin-top:0}
+    .ten-card .plate{aspect-ratio:4/5}
+    .strip{grid-template-columns:auto 1fr}
+    .strip > :nth-child(1){display:none}
+    .strip > :nth-child(2){text-align:left}
+  }
+  @media (max-width:720px){
+    /* on a phone the chrome runs across the content: once on paper it gets the sheet behind it, and the bottom
+       strip (Mauritius, clock, scroll) steps away rather than print over the plates */
+    .chrome.top{transition:color 600ms ease,background-color 600ms ease}
+    html.on-paper .chrome.top{background:var(--paper);top:0;padding-top:calc(20px + var(--mat));border-bottom:1px solid var(--hairline)}
+    html.on-paper .chrome.bottom{opacity:0;pointer-events:none}
+    .chrome.bottom{transition:opacity 400ms ease}
+  }
+  @media (max-width:520px){
+    .plate-tag{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .ten-track{height:auto}
+    .ten-pin{position:static;height:auto;min-height:100svh}
+    .follow__note{animation:none}
+    .develop{display:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#follow">Skip to the signup</a>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<div class="chrome top" id="chromeTop">
+  <a class="brand mono" href="#top" data-anchor="#top" aria-label="Vis Naturae, back to the top"><img src="../assets/logo-480.png" alt=""><span>Vis Naturae</span></a>
+  <div class="chrome-end">
+    <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn sound on" data-cursor="Sound on">
+      <span class="sound-toggle__matrix" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="sound-toggle__label" id="sound-toggle-label">Off</span>
+    </button>
+    <a class="theme-toggle" id="themeToggle" href="../" aria-label="Switch to the dark theme, space" data-cursor="Dark"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A6 6 0 0 1 6.4 2.5a6 6 0 1 0 7.1 7.1z"/></svg><span class="txt" data-scramble>Dark</span></a>
+    <a class="cta pill" href="#follow" data-anchor="#follow"><span class="txt" data-scramble>Join</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
+  </div>
+</div>
+<div class="chrome bottom" id="chromeBottom">
+  <div class="strip mono"><span>Mauritius · 20.2°S 57.5°E</span><span id="clock">--:-- MUT</span><span><span id="scroll-pct">00</span>% · Scroll</span></div>
+</div>
+
+<main>
+<header class="hero" id="top">
+  <div class="plate plate--hero" id="heroPlate" data-origin="0.8,0.22">
+    <div class="shot" id="heroShot" data-shot="cy-wave" data-loop-at="7.8" aria-hidden="true">
+      <img src="assets/cy-wave.jpg" alt="">
+    </div>
+    <div class="sun" id="heroSun" aria-hidden="true"></div>
+    <canvas class="edge" aria-hidden="true"></canvas>
+    <div class="hero-copy">
+      <p class="eyebrow mono" data-reveal><span data-scramble id="heroTag">Where mission and lifestyle collide</span></p>
+      <h1 class="display h-hero" aria-label="Wear it like you mean it.">
+        <span class="lm" aria-hidden="true"><span class="l">Wear it <em>like</em> you</span></span>
+        <span class="lm" aria-hidden="true"><span class="l">Mean it.</span></span>
+      </h1>
+    </div>
+    <p class="label plate-tag" data-reveal><b>Pl. I</b><i>Unda</i><span>A wave breaking · Indian Ocean</span></p>
+  </div>
+  <div class="hero-foot">
+    <p class="body" data-reveal>Vis Naturae is a movement built around a simple idea, <strong>10% of every sale, not profit,</strong> goes toward reef, forest, and coastline conservation. No pledges, no opt-ins, the impact happens automatically the moment you wear it.</p>
+    <a class="cta down" href="#follow" data-anchor="#follow" data-reveal><span class="txt" data-scramble>Follow the journey</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v11M3.5 8.5 8 13l4.500-4.500"/></svg></a>
+  </div>
+</header>
+
+<section class="follow" id="follow">
+  <div>
+    <p class="eyebrow mono" data-reveal><span data-scramble>Follow the journey</span></p>
+    <h2 class="display h-section" data-reveal>Welcome <em>on</em> board.</h2>
+    <p class="body" data-reveal>From first idea to first shirt, get the behind-the-scenes updates as we build Vis Naturae from the ground up. No spam, ever.</p>
+  </div>
+  <!-- Kit (ConvertKit) signup form 9926668 ("Pine form"), set as a specimen label -->
+  <div class="card" data-reveal>
+    <div class="card__head mono"><span>Vis Naturae · Collection</span><span>No. 0001</span></div>
+    <form class="field-form" id="followForm" action="https://app.kit.com/forms/9926668/subscriptions" method="post" novalidate>
+      <div class="field">
+        <label for="fName">Name</label>
+        <input id="fName" type="text" name="fields[first_name]" placeholder="Your name" autocomplete="given-name" required>
+      </div>
+      <div class="field">
+        <label for="fEmail">Email</label>
+        <input id="fEmail" type="email" name="email_address" placeholder="you@example.com" autocomplete="email" required>
+      </div>
+      <button type="submit" class="stamp" id="followBtn"><span class="txt btn__label" data-scramble>Join the story</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></button>
+      <p class="follow__note" id="followNote" role="status" aria-live="polite" hidden></p>
+    </form>
+  </div>
+</section>
+
+<section class="perks">
+  <div class="rule" data-rule></div>
+  <div class="perks-grid">
+    <div class="perk" data-reveal>
+      <div class="plate" data-develop data-origin="0.2,0"><div class="shot" data-shot="cy-shell" data-loop="native" aria-hidden="true"><img src="assets/cy-shell.jpg" alt="" loading="lazy"></div><canvas class="edge" aria-hidden="true"></canvas></div>
+      <p class="label"><b>Fig. 1</b><i>Murex</i><span>A shell</span></p>
+      <h3 class="display name">First access</h3>
+      <p class="body">New drops and limited colourways before they hit the shop, plus early access to restocks.</p>
+    </div>
+    <div class="perk" data-reveal>
+      <div class="plate" data-develop data-origin="0.5,0"><div class="shot" data-shot="cy-leaf" data-loop="native" aria-hidden="true"><img src="assets/cy-leaf.jpg" alt="" loading="lazy"></div><canvas class="edge" aria-hidden="true"></canvas></div>
+      <p class="label"><b>Fig. 2</b><i>Filix</i><span>A fern leaf</span></p>
+      <h3 class="display name">Impact reports</h3>
+      <p class="body">Where the 10% actually goes, which reef, which forest, which coastline, and what changed because of it.</p>
+    </div>
+    <div class="perk" data-reveal>
+      <div class="plate" data-develop data-origin="0.8,0"><div class="shot" data-shot="cy-feather" data-loop="native" aria-hidden="true"><img src="assets/cy-feather.jpg" alt="" loading="lazy"></div><canvas class="edge" aria-hidden="true"></canvas></div>
+      <p class="label"><b>Fig. 3</b><i>Penna</i><span>A feather</span></p>
+      <h3 class="display name">The story behind it</h3>
+      <p class="body">Founder notes from Mauritius, the people and places behind every shirt, not just marketing copy.</p>
+    </div>
+  </div>
+  <div class="rule" data-rule></div>
+</section>
+
+<section class="ten" id="ten" aria-labelledby="tenTitle">
+  <div class="ten-track">
+    <div class="ten-pin">
+      <div>
+        <p class="eyebrow mono" id="tenTitle" data-ten-fade><span data-scramble>Where the 10% goes</span></p>
+        <p class="display ten-stamp" id="tenStamp" aria-label="10 percent"><span class="n" id="tenNum" aria-hidden="true">10</span><span class="pc" aria-hidden="true">%</span></p>
+        <p class="display ten-cap" data-ten-fade>Of every sale, <em>not</em> profit.</p>
+      </div>
+      <div class="ten-cards">
+        <figure class="ten-card"><div class="plate" data-develop data-origin="0.5,0"><div class="shot" data-shot="cy-reef" aria-hidden="true"><img src="assets/cy-reef.jpg" alt="" loading="lazy"></div><canvas class="edge" aria-hidden="true"></canvas></div><figcaption class="label"><b>Pl. II</b><i>Acropora</i><span>Reef</span></figcaption></figure>
+        <figure class="ten-card"><div class="plate" data-develop data-origin="0.1,0"><div class="shot" data-shot="cy-forest" data-loop="native" aria-hidden="true"><img src="assets/cy-forest.jpg" alt="" loading="lazy"></div><canvas class="edge" aria-hidden="true"></canvas></div><figcaption class="label"><b>Pl. III</b><i>Cyathea</i><span>Forest</span></figcaption></figure>
+        <figure class="ten-card"><div class="plate" data-develop data-origin="0.6,1"><div class="shot" data-shot="cy-coast" data-loop="native" aria-hidden="true"><img src="assets/cy-coast.jpg" alt="" loading="lazy"></div><canvas class="edge" aria-hidden="true"></canvas></div><figcaption class="label"><b>Pl. IV</b><i>Laminaria</i><span>Coastline</span></figcaption></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule" data-rule></div>
+
+<section class="voyage" id="voyage">
+  <div class="sunlight" aria-hidden="true"></div>
+  <div class="voyage__inner">
+    <p class="eyebrow mono" data-reveal><span data-scramble>All aboard</span></p>
+    <h2 class="display h-section" data-reveal>Leave it <em>in the</em> sun.</h2>
+    <p class="body" data-reveal>A cyanotype is finished by light. Hold the sheet up to it and see where it takes you.</p>
+    <div class="voyage__spot" id="voyageSpot">
+      <a class="voyage__btn" id="voyageBtn" href="../bon-voyage/">Bon Voyage</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="expose" id="expose" aria-hidden="true">
+  <canvas id="exposeWash"></canvas>
+  <canvas id="exposeStars"></canvas>
+  <div class="glare" id="exposeGlare"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+<script>
+(function(){
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const html = document.documentElement;
+  const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* the signup, the departure and the footage never depend on GSAP: if the CDN is down the page is still whole */
+  const HAS_GSAP = !!(window.gsap && window.ScrollTrigger);
+  let lenis = null;
+
+  /* ---------- footage ----------
+     shot(host) fills a .shot with muted players of data-shot. Two kinds:
+     - data-loop="native": the file already plays forward then back (cyano-grade.py --pingpong), so one player with
+       the browser's own loop never jumps.
+     - otherwise two players: LOOP_FADE seconds before data-loop-at the back one starts from 0 and fades up over the
+       front one, then they swap (for motion that must not run backwards: the wave, the fish).
+     Players only run while the shot is on or near the screen. Reduced motion keeps the poster. */
+  const LOOP_FADE = 1.3;
+  /* phones (short side up to 600px) get the 30fps files: half the frames to decode, and nothing on a phone screen shows the difference */
+  const PHONE = Math.min(window.innerWidth, window.innerHeight) <= 600;
+  const clip = (name) => 'assets/' + name + (PHONE ? '-30' : '-60') + '.mp4';
+  const play = (v) => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+  function shot(host){
+    const name = host.dataset.shot, native = host.dataset.loop === 'native', loopAt = parseFloat(host.dataset.loopAt) || 0;
+    const api = { host: host, front: null, ready: false };
+    if (RM) return api;
+    let live = false;
+    /* a smoothed file that is missing falls back to the 24fps graded original, once, rather than leaving the poster still */
+    const make = () => { const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = native ? 'metadata' : 'auto'; v.setAttribute('tabindex', '-1'); v.src = clip(name);
+      v.addEventListener('error', () => { if (!v.dataset.fell) { v.dataset.fell = '1'; v.src = 'assets/' + name + '-720.mp4'; v.load(); if (live) play(v); } });
+      host.append(v); return v; };
+    let front = make(), back = native ? null : make(), swapping = false, raf = null, swapT = null;
+    if (native) front.loop = true;
+    front.classList.add('is-front');
+    api.front = front;
+    front.addEventListener('canplaythrough', () => { api.ready = true; }, { once: true });
+    function settle(){ clearTimeout(swapT); swapT = null; front.classList.remove('is-front'); front.pause(); front.currentTime = 0; const t = front; front = back; back = t; api.front = front; swapping = false; }
+    function tick(){
+      if (!live) return;
+      raf = requestAnimationFrame(tick);
+      if (document.hidden) return;
+      const end = loopAt || (front.duration - 0.15);
+      if (!swapping && front.duration && front.currentTime >= end - LOOP_FADE){
+        swapping = true;
+        back.currentTime = 0; play(back); back.classList.add('is-front');
+        swapT = setTimeout(settle, LOOP_FADE * 1000 + 40);
+      }
+    }
+    const wake = (on) => {
+      if (on === live) return;
+      live = on;
+      if (on) { if (native) front.preload = 'auto'; play(front); if (swapping) play(back); if (!native) raf = requestAnimationFrame(tick); }
+      else { front.pause(); if (back) back.pause(); if (raf) cancelAnimationFrame(raf); raf = null; }
+    };
+    if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => wake(e.isIntersecting), { rootMargin: '40% 0px' }).observe(host);
+    else wake(true);
+    api.wake = wake;
+    return api;
+  }
+  $$('.shot').forEach(shot);
+
+  /* ---------- develop: sensitised paper washing off a plate ----------
+     A real cyanotype goes pale yellow-green (the coated paper) -> bronze-grey where the light has struck -> and,
+     washed, Prussian blue. develop(plate) lays a small canvas of that yellow-green over the plate and returns
+     set(p), 0..1. The front of the development is a field: distance from data-origin (where the light comes from),
+     broken up by three octaves of value noise so it arrives unevenly, as a wash does. Just ahead of the front the
+     paper turns bronze, just behind it the bronze thins away and the print shows. The canvas is about 120px wide
+     and scaled up, which is what makes the front soft and watery; at p = 1 it is hidden entirely. */
+  const SENS = [217, 217, 166], BRONZE = [146, 128, 90];
+  function seeded(seed){ let s = seed % 2147483647 || 1; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+  function valueNoise(w, h, cells, rnd){
+    const gx = cells + 2, gy = Math.ceil(cells * h / w) + 2, g = new Float32Array(gx * gy);
+    for (let i = 0; i < g.length; i++) g[i] = rnd();
+    return (x, y) => { const fx = x / w * cells, fy = y / w * cells, ix = Math.floor(fx), iy = Math.floor(fy), tx = fx - ix, ty = fy - iy;
+      const sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty), a = g[iy * gx + ix], b = g[iy * gx + ix + 1], c = g[(iy + 1) * gx + ix], d = g[(iy + 1) * gx + ix + 1];
+      return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy; };
+  }
+  function field(w, h, ox, oy, seed, distWeight){
+    const rnd = seeded(seed), n1 = valueNoise(w, h, 3, rnd), n2 = valueNoise(w, h, 7, rnd), n3 = valueNoise(w, h, 17, rnd);
+    const v = new Float32Array(w * h), grain = new Float32Array(w * h);
+    const cx = ox * w, cy = oy * h, far = Math.max(Math.hypot(cx, cy), Math.hypot(w - cx, cy), Math.hypot(cx, h - cy), Math.hypot(w - cx, h - cy));
+    let lo = Infinity, hi = -Infinity;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y * w + x, n = 0.55 * n1(x, y) + 0.3 * n2(x, y) + 0.15 * n3(x, y);
+      v[i] = distWeight * Math.hypot(x - cx, y - cy) / far + (1 - distWeight) * n;
+      grain[i] = n3(x, y) - 0.5;
+      if (v[i] < lo) lo = v[i]; if (v[i] > hi) hi = v[i];
+    }
+    for (let i = 0; i < v.length; i++) v[i] = (v[i] - lo) / (hi - lo || 1);
+    return { v: v, grain: grain };
+  }
+  function develop(plate, seed){
+    const c = document.createElement('canvas'); c.className = 'develop'; c.setAttribute('aria-hidden', 'true');
+    const edge = $('.edge', plate); plate.insertBefore(c, edge);
+    const r = plate.getBoundingClientRect(), w = 120, h = Math.max(24, Math.round(w * (r.height && r.width ? r.height / r.width : 0.75)));
+    c.width = w; c.height = h;
+    const o = (plate.dataset.origin || '0.5,0').split(',').map(Number);
+    const f = field(w, h, o[0], o[1], seed, 0.58), ctx = c.getContext('2d'), img = ctx.createImageData(w, h), d = img.data;
+    const BAND = 0.13;
+    let last = -1;
+    function set(p){
+      p = Math.max(0, Math.min(1, p));
+      if (p === last) return; last = p;
+      c.classList.toggle('is-done', p >= 1);
+      if (p >= 1) return;
+      const q = p * (1 + 2 * BAND) - BAND;
+      for (let i = 0, j = 0; i < f.v.length; i++, j += 4) {
+        const k = (f.v[i] - q) / BAND, gr = f.grain[i] * 7; /* a whisper of unevenness in the coating: stronger showed the noise's cells as squares */
+        let r0, g0, b0, a;
+        if (k >= 1) { r0 = SENS[0] + gr; g0 = SENS[1] + gr; b0 = SENS[2] + gr * .6; a = 255; }
+        else if (k >= 0) { const t = k; r0 = BRONZE[0] + (SENS[0] - BRONZE[0]) * t + gr; g0 = BRONZE[1] + (SENS[1] - BRONZE[1]) * t + gr; b0 = BRONZE[2] + (SENS[2] - BRONZE[2]) * t; a = 255; }
+        else if (k >= -1) { r0 = BRONZE[0]; g0 = BRONZE[1]; b0 = BRONZE[2] + 20 * -k; a = 255 * (1 + k) * (1 + k); }
+        else { a = 0; r0 = g0 = b0 = 0; }
+        d[j] = r0; d[j + 1] = g0; d[j + 2] = b0; d[j + 3] = a;
+      }
+      ctx.putImageData(img, 0, 0);
+    }
+    set(0);
+    return { set: set, canvas: c };
+  }
+  /* ---------- edge: the brushed coating edge of a print ----------
+     A cyanotype is coated by hand with a wide brush drawn side to side, so the blue never meets the sheet's edge in
+     a straight line. edge(plate) paints paper over the plate's canvas.edge, then cuts out the coated area: a line
+     that wanders gently (two scales of 1D noise), with, at the left and right where the strokes end, thin blue
+     bristle marks reaching out into the paper, and along the top and bottom dry-brush streaks of paper showing
+     through the blue, parallel to the edge. Drawn once at the plate's real size and again when it resizes. */
+  function noise1(rnd, spacing, len){
+    const n = Math.ceil(len / spacing) + 3, v = []; for (let i = 0; i < n; i++) v.push(rnd() * 2 - 1);
+    return (x) => { const f = x / spacing, i = Math.max(0, Math.floor(f)), t = f - i, s = t * t * (3 - 2 * t); return v[i] + (v[i + 1] - v[i]) * s; };
+  }
+  /* the page's grain (the --grain SVG) as a canvas pattern; plates drawn before it loads are drawn again once it has */
+  let grainImg = null, grainReady = false; const grainWaiters = [];
+  function grainPattern(ctx){
+    if (!grainImg) {
+      grainImg = new Image();
+      const m = getComputedStyle(document.documentElement).getPropertyValue('--grain').match(/url\(["']?(.*?)["']?\)$/s);
+      grainImg.onload = () => { grainReady = true; grainWaiters.splice(0).forEach((f) => f()); };
+      if (m) grainImg.src = m[1];
+    }
+    return grainReady ? ctx.createPattern(grainImg, 'repeat') : null;
+  }
+  function edge(plate, seed){
+    const c = $('canvas.edge', plate); if (!c) return;
+    const draw = () => {
+      const r = plate.getBoundingClientRect(), W = r.width + 6, H = r.height + 6;
+      if (W < 4 || H < 4) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2), ctx = c.getContext('2d');
+      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const rnd = seeded(seed), E = Math.max(12, Math.min(30, Math.min(W, H) * 0.045));
+      const L = Math.max(W, H) + 40;
+      const side = () => { const a = noise1(rnd, 110, L), b = noise1(rnd, 21, L); return (u) => E * (1 + 0.32 * a(u) + 0.1 * b(u)); };
+      const top = side(), right = side(), bottom = side(), left = side();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = '#F3EEE2'; ctx.fillRect(0, 0, W, H);
+      /* the sheet's own grain over the paper, so the margin round a print is the same paper as the page */
+      if (grainPattern(ctx)) { ctx.fillStyle = grainPattern(ctx); ctx.fillRect(0, 0, W, H); }
+      /* cut the coated area. Each side runs between the two neighbouring sides' lines, so the corners close inside
+         the sheet (running every side from 0 to the full width cut triangles into the corners) */
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = '#000'; /* opaque: destination-out erases by the fill's alpha, and the grain pattern is nearly transparent */
+      ctx.beginPath();
+      const STEP = 4, x0 = left(E), x1 = W - right(E), y0 = top(W - E), y1 = H - bottom(W - E);
+      for (let x = x0; x <= x1; x += STEP) ctx.lineTo(x, top(x));
+      for (let y = top(x1); y <= y1; y += STEP) ctx.lineTo(W - right(y), y);
+      for (let x = x1; x >= x0; x -= STEP) ctx.lineTo(x, H - bottom(x));
+      for (let y = H - bottom(x0); y >= y0; y -= STEP) ctx.lineTo(left(y), y);
+      ctx.closePath(); ctx.fill();
+      /* dry brush: a few streaks of paper through the blue just inside the top and bottom edges */
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = '#F3EEE2';
+      const streaks = Math.round(W / 40);
+      for (const isTop of [true, false]) for (let i = 0; i < streaks; i++) {
+        const x = x0 + rnd() * (x1 - x0 - 60), depth = 2 + Math.pow(rnd(), 1.6) * E * 0.7, len = 10 + rnd() * Math.min(90, W * 0.12);
+        const yy = isTop ? top(x) + depth : H - bottom(x) - depth;
+        ctx.globalAlpha = (0.2 + rnd() * 0.4) * (1 - depth / E); ctx.lineWidth = 0.6 + rnd() * 1.0;
+        ctx.beginPath(); ctx.moveTo(x, yy); ctx.lineTo(x + len, yy + (rnd() - .5) * 0.8); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    };
+    draw();
+    if (!grainReady) grainWaiters.push(draw);
+    if ('ResizeObserver' in window) { let raf = 0, w0 = 0, h0 = 0; new ResizeObserver(([e]) => { const w = Math.round(e.contentRect.width), h = Math.round(e.contentRect.height); if (w === w0 && h === h0) return; w0 = w; h0 = h; cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }).observe(plate); }
+  }
+  $$('.plate').forEach((p, i) => edge(p, 900 + i * 53));
+
+  const heroDev = RM ? null : develop($('#heroPlate'), 7);
+  const plateDevs = RM ? [] : $$('[data-develop]').map((p, i) => ({ plate: p, dev: develop(p, 31 + i * 17) }));
+
+  /* ---------- signup: Kit form 9926668, posted in place ---------- */
+  (function(){
+    const form = $('#followForm'), note = $('#followNote'), btn = $('#followBtn');
+    const label = $('.btn__label', btn), idle = label.textContent;
+    function say(msg, isError){
+      note.textContent = msg;
+      note.classList.toggle('is-error', !!isError);
+      note.hidden = true; void note.offsetWidth; note.hidden = false;
+    }
+    function busy(on){
+      btn.disabled = on;
+      form.classList.toggle('is-sending', on);
+      label.textContent = on ? 'Joining…' : idle;
+    }
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(!form.checkValidity()){
+        say('Add your name and a valid email to join.', true);
+        form.reportValidity();
+        return;
+      }
+      busy(true);
+      note.hidden = true;
+      fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) }).then(function(res){
+        return res.json().catch(function(){ return {}; }).then(function(data){
+          if(res.ok && data.status !== 'failed'){ say('You’re in. Check your inbox to confirm.'); form.reset(); }
+          else say((data.errors && data.errors.messages && data.errors.messages[0]) || 'That didn’t go through. Try again in a moment.', true);
+        });
+      }).catch(function(){ say('Couldn’t reach the signup service. Check your connection and try again.', true); }).then(function(){ busy(false); });
+    });
+  })();
+
+  /* ---------- departure: the sheet left in the sun ---------- */
+  (function(){
+    const btn = $('#voyageBtn'), stage = $('#voyage'), expose = $('#expose'), glare = $('#exposeGlare');
+    const washC = $('#exposeWash'), starC = $('#exposeStars');
+    let departing = false;
+    const GLARE_UP_MS = 650;     /* the sun strikes the sheet */
+    const GLARE_DOWN_MS = 1500;  /* and eases off while the blue comes */
+    const EXPOSE_AT_MS = 220;    /* the exposure starts under the glare */
+    const EXPOSE_MS = 2300;      /* front travels from the top right across the whole sheet */
+    const DEEPEN_MS = 1300;      /* over-exposure: Prussian -> deep -> the dark site's void */
+    const HOLD_MS = 350;         /* the stars alone, a breath, then bon-voyage */
+    const LIFT_AT_MS = 280;      /* after the click, the button and the chrome are lifted away, so the click is seen to land */
+    const TRIP_CAP_MS = 7000;    /* whatever happens, the visitor is on bon-voyage by then */
+    const PRUSSIAN = [18, 58, 107], DEEP = [11, 36, 69], VOID = [10, 9, 8], PALE = [137, 170, 204];
+
+    const hot = (on) => stage.classList.toggle('is-hot', on);
+    btn.addEventListener('pointerenter', () => hot(true));
+    btn.addEventListener('pointerleave', () => hot(false));
+    btn.addEventListener('focus', () => hot(true));
+    btn.addEventListener('blur', () => hot(false));
+
+    function destination(){ const url = new URL(btn.href); url.searchParams.set('voyage', '1'); return url.href; }
+    /* clamped: past 1 the quadratic turns back on itself (the glare came back at full strength after it had gone) */
+    const ease = (t) => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
+    const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+
+    btn.addEventListener('click', function(e){
+      if(departing) { e.preventDefault(); return; }
+      if(RM || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      departing = true;
+      document.body.classList.add('is-departing');
+      if (lenis) lenis.stop();
+      const target = destination();
+      let gone = false;
+      const go = () => { if(gone) return; gone = true; window.location.href = target; };
+      setTimeout(go, TRIP_CAP_MS / (window.__fonTimeScale || 1));
+      setTimeout(() => document.body.classList.add('is-lifted'), LIFT_AT_MS);
+
+      /* the wash: a small canvas, scaled up to the screen */
+      const W = window.innerWidth, H = window.innerHeight, w = 160, h = Math.max(40, Math.round(160 * H / W));
+      washC.width = w; washC.height = h;
+      const f = field(w, h, 0.9, 0.02, 101, 0.7), wctx = washC.getContext('2d'), img = wctx.createImageData(w, h), d = img.data, BAND = 0.16;
+      /* the pinholes: where the sheet was pricked, so the light never reached the coating under them */
+      const dpr = Math.min(window.devicePixelRatio || 1, 2), sctx = starC.getContext('2d');
+      starC.width = W * dpr; starC.height = H * dpr; sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const rnd = seeded(4242), stars = [];
+      const count = Math.round(Math.min(260, W * H / 5200));
+      for (let i = 0; i < count; i++) {
+        const x = rnd() * W, y = rnd() * H, big = rnd() > .93;
+        stars.push({ x: x, y: y, r: big ? 1.3 + rnd() * 1.1 : 0.5 + rnd() * 0.8, v: f.v[Math.min(h - 1, Math.floor(y / H * h)) * w + Math.min(w - 1, Math.floor(x / W * w))], tw: rnd() * 6.28, big: big });
+      }
+      expose.classList.add('is-on');
+      const t0 = performance.now();
+      function frame(now){
+        if (gone) return;
+        const t = (now - t0) * (window.__fonTimeScale || 1); /* __fonTimeScale: tools/light-check.cjs slows the trip to photograph the front */
+        /* glare */
+        const g = t < GLARE_UP_MS ? ease(t / GLARE_UP_MS) : Math.max(0, 1 - ease((t - GLARE_UP_MS) / GLARE_DOWN_MS));
+        glare.style.opacity = (0.92 * g).toFixed(3);
+        /* exposure front, then over-exposure */
+        const p = Math.max(0, Math.min(1, (t - EXPOSE_AT_MS) / EXPOSE_MS));
+        const deep = Math.max(0, Math.min(1, (t - EXPOSE_AT_MS - EXPOSE_MS) / DEEPEN_MS));
+        const base = deep < .5 ? mix(PRUSSIAN, DEEP, ease(deep * 2)) : mix(DEEP, VOID, ease(deep * 2 - 1));
+        const q = p * (1 + 2 * BAND) - BAND; /* linear: an eased start left the glare shining on an empty sheet for most of a second */
+        for (let i = 0, j = 0; i < f.v.length; i++, j += 4) {
+          const k = (f.v[i] - q) / BAND;
+          if (k >= 1) { d[j + 3] = 0; continue; }
+          let c;
+          if (k >= 0) { c = PALE; d[j + 3] = 255 * (1 - k) * (1 - k); }
+          else if (k >= -1) { c = mix(PALE, base, -k); d[j + 3] = 255; }
+          else { c = base; d[j + 3] = 255; }
+          d[j] = c[0]; d[j + 1] = c[1]; d[j + 2] = c[2];
+        }
+        wctx.putImageData(img, 0, 0);
+        /* stars: each appears once the blue has passed it, and twinkles a little as the sky deepens */
+        sctx.clearRect(0, 0, W, H);
+        for (const s of stars) {
+          const a = Math.max(0, Math.min(1, (q - s.v) / BAND - 0.4));
+          if (a <= 0) continue;
+          const tw = 0.78 + 0.22 * Math.sin(t / 380 + s.tw) * deep;
+          sctx.globalAlpha = a * tw;
+          if (s.big) { const gr = sctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 4); gr.addColorStop(0, 'rgba(243,238,226,.55)'); gr.addColorStop(1, 'rgba(243,238,226,0)'); sctx.fillStyle = gr; sctx.beginPath(); sctx.arc(s.x, s.y, s.r * 4, 0, 6.283); sctx.fill(); }
+          sctx.fillStyle = '#F3EEE2'; sctx.beginPath(); sctx.arc(s.x, s.y, s.r, 0, 6.283); sctx.fill();
+        }
+        sctx.globalAlpha = 1;
+        if (t >= EXPOSE_AT_MS + EXPOSE_MS + DEEPEN_MS + HOLD_MS) return go();
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    });
+    window.addEventListener('pageshow', function(e){ if (e.persisted && departing) location.reload(); });
+  })();
+
+  /* ---------- ink dot cursor ---------- */
+  (function(){
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if(!finePointer.matches) return;
+    const dot = $('#cursorDot');
+    let targetX = -100, targetY = -100, x = -100, y = -100, shown = false;
+    const ease = RM ? 1 : 0.28;
+    const interactive = 'a, button, [role="button"], label, summary, select';
+    const textual = 'input:not([type="radio"]):not([type="checkbox"]), textarea, [contenteditable="true"]';
+    html.classList.add('has-dot-cursor');
+    function render(){ x += (targetX - x) * ease; y += (targetY - y) * ease; dot.style.left = x + 'px'; dot.style.top = y + 'px'; requestAnimationFrame(render); }
+    document.addEventListener('mousemove', function(e){
+      targetX = e.clientX; targetY = e.clientY;
+      if(!shown){ shown = true; x = targetX; y = targetY; dot.classList.add('is-visible'); }
+      const el = e.target;
+      dot.classList.toggle('is-hover', !!(el.closest && el.closest(interactive)));
+      dot.classList.toggle('is-text', !!(el.closest && el.closest(textual)));
+    }, { passive: true });
+    document.addEventListener('mousedown', function(){ dot.classList.add('is-down'); });
+    document.addEventListener('mouseup', function(){ dot.classList.remove('is-down'); });
+    document.addEventListener('mouseleave', function(){ dot.classList.remove('is-visible'); });
+    document.addEventListener('mouseenter', function(){ if(shown) dot.classList.add('is-visible'); });
+    window.addEventListener('blur', function(){ dot.classList.remove('is-visible'); });
+    finePointer.addEventListener && finePointer.addEventListener('change', function(ev){
+      html.classList.toggle('has-dot-cursor', ev.matches);
+      if(!ev.matches) dot.classList.remove('is-visible');
+    });
+    requestAnimationFrame(render);
+  })();
+
+  /* ---------- theme switch: a short veil in the other theme's colour, then the other page ---------- */
+  (function(){
+    const t = $('#themeToggle'); if (!t) return;
+    t.addEventListener('click', function(e){
+      if (RM || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      const veil = document.createElement('div');
+      veil.style.cssText = 'position:fixed;inset:0;z-index:9998;background:#0A0908;opacity:0;transition:opacity 420ms ease-in;pointer-events:none';
+      document.body.append(veil);
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ veil.style.opacity = '1'; }); });
+      setTimeout(function(){ window.location.href = t.href; }, 440);
+    });
+  })();
+
+  /* ---------- chrome: Mauritius clock ---------- */
+  (function(){
+    const clock = $('#clock');
+    const tick = () => { clock.textContent = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Indian/Mauritius' }).format(new Date()) + ' MUT'; };
+    tick(); setInterval(tick, 15000);
+  })();
+
+  /* ---------- sound: the same button as the dark pages ---------- */
+  const soundBtn = $('#sound-toggle');
+  if (soundBtn) {
+    const soundLabel = $('#sound-toggle-label'), dots = $$('.sound-toggle__matrix i', soundBtn);
+    const music = new Audio();
+    music.loop = true; music.preload = 'none';
+    const srcs = ['../bon-voyage/assets/music.mp3'];
+    const LEVEL = 0.6;
+    let ctx = null, analyser = null, gain = null, bins = null, groups = null, on = false, raf = null, missing = false, pauseT = null, startedAt = 0, healed = false;
+    const graph = () => {
+      if (ctx) return;
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      ctx = new AC();
+      analyser = ctx.createAnalyser(); analyser.fftSize = 128; analyser.smoothingTimeConstant = 0.82;
+      bins = new Uint8Array(analyser.frequencyBinCount);
+      gain = ctx.createGain(); gain.gain.value = 0;
+      ctx.createMediaElementSource(music).connect(analyser); analyser.connect(gain); gain.connect(ctx.destination);
+      const usable = Math.floor(bins.length * 0.6);
+      groups = dots.map((_, i) => { const from = Math.floor(usable * Math.pow(i / dots.length, 1.6)); return [from, Math.max(from + 1, Math.floor(usable * Math.pow((i + 1) / dots.length, 1.6)))]; });
+    };
+    const ramp = (to, secs) => { const t = ctx.currentTime; gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(to, t + Math.max(secs, 0.01)); };
+    const idle = () => dots.forEach((d) => { d.style.opacity = ''; d.style.transform = ''; });
+    const tick = () => {
+      analyser.getByteFrequencyData(bins);
+      dots.forEach((d, i) => { const [from, to] = groups[i]; let sum = 0; for (let b = from; b < to; b++) sum += bins[b]; const level = Math.min(1, (sum / (to - from) / 255) * 1.6); d.style.opacity = 0.22 + level * 0.78; if (!RM) d.style.transform = `scale(${0.55 + level * 0.55})`; });
+      raf = requestAnimationFrame(tick);
+    };
+    const setUi = () => {
+      soundBtn.setAttribute('aria-pressed', String(on));
+      soundBtn.setAttribute('aria-label', missing ? 'Song to come' : on ? 'Turn sound off' : 'Turn sound on');
+      soundBtn.dataset.cursor = missing ? 'Song to come' : on ? 'Sound off' : 'Sound on';
+      if (!soundBtn.classList.contains('is-loading')) soundLabel.textContent = missing ? 'Soon' : on ? 'On' : 'Off';
+    };
+    const setLoading = (l) => { soundBtn.classList.toggle('is-loading', l); if (l) { idle(); soundLabel.textContent = 'Loading…'; } else setUi(); };
+    const playMusic = () => { const p = music.play(); if (p && p.catch) p.catch((err) => { if (on && err && err.name === 'NotAllowedError') stop(); }); };
+    const start = () => {
+      if (missing) return;
+      graph();
+      if (!ctx) { missing = true; soundBtn.setAttribute('aria-disabled', 'true'); setUi(); return; }
+      clearTimeout(pauseT);
+      ctx.resume();
+      on = true; startedAt = performance.now(); healed = false; setLoading(true); setUi();
+      playMusic(); ramp(LEVEL, RM ? 0 : 1);
+      try { sessionStorage.setItem('fon-sound', '1'); } catch (e) {}
+    };
+    const stop = () => {
+      on = false;
+      if (ctx) ramp(0, RM ? 0 : 0.6);
+      clearTimeout(pauseT); pauseT = setTimeout(() => music.pause(), RM ? 0 : 620);
+      if (raf) cancelAnimationFrame(raf); raf = null;
+      setLoading(false); idle();
+      try { sessionStorage.removeItem('fon-sound'); } catch (e) {}
+    };
+    const tryNext = () => {
+      if (!srcs.length) { const was = on; missing = true; if (was) stop(); soundBtn.setAttribute('aria-disabled', 'true'); setUi(); return; }
+      music.src = srcs.shift();
+      if (on) playMusic();
+    };
+    music.addEventListener('error', tryNext);
+    music.addEventListener('waiting', () => on && setLoading(true));
+    music.addEventListener('pause', () => { if (!on || document.hidden) return; if (!healed && performance.now() - startedAt < 4000) { healed = true; playMusic(); } else stop(); });
+    music.addEventListener('playing', () => { setLoading(false); if (on && !raf) raf = requestAnimationFrame(tick); });
+    tryNext();
+    soundBtn.addEventListener('click', () => { on ? stop() : start(); });
+    document.addEventListener('visibilitychange', () => { if (!on) return; if (document.hidden) music.pause(); else playMusic(); });
+    let remembered = false;
+    try { remembered = sessionStorage.getItem('fon-sound') === '1'; } catch (e) {}
+    if (remembered) {
+      const arm = (e) => { if (e.type === 'keydown' && e.key === 'Tab') return; document.removeEventListener('pointerdown', arm); document.removeEventListener('keydown', arm); if (!on && !(e.target.closest && e.target.closest('#sound-toggle'))) start(); };
+      document.addEventListener('pointerdown', arm); document.addEventListener('keydown', arm);
+    }
+    setUi();
+  }
+
+  /* ================= motion (GSAP). Under reduced motion none of it runs and the page stands in its final state ================= */
+  window.__fonBooted = true;
+  if (!HAS_GSAP || RM) {
+    html.classList.remove('is-loading');
+    if (heroDev) heroDev.set(1);
+    plateDevs.forEach((p) => p.dev.set(1));
+    $$('[data-anchor]').forEach(a => a.addEventListener('click', (e) => { const el = $(a.dataset.anchor); if (el) { e.preventDefault(); el.scrollIntoView(); } }));
+    if (!RM) { /* no GSAP but motion allowed: plates still develop as they arrive */
+      const io = 'IntersectionObserver' in window && new IntersectionObserver((es) => es.forEach((en) => { if (!en.isIntersecting) return; const pd = plateDevs.find((p) => p.plate === en.target); if (pd) pd.dev.set(1); }), { rootMargin: '0px 0px -15% 0px' });
+      if (io) plateDevs.forEach((p) => { p.dev.set(0); io.observe(p.plate); });
+    }
+    return;
+  }
+  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, CustomEase);
+  CustomEase.create('main', '0.65, 0.01, 0.05, 0.99');
+  gsap.defaults({ ease: 'main', duration: 0.9 });
+
+  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9 });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((t) => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  $$('[data-anchor]').forEach(a => a.addEventListener('click', (e) => {
+    const el = $(a.dataset.anchor); if (!el) return;
+    e.preventDefault();
+    lenis.scrollTo(el, { duration: 1.4, easing: (t) => 1 - Math.pow(2, -10 * t), offset: a.dataset.anchor === '#top' ? 0 : -8 });
+  }));
+
+  const pct = $('#scroll-pct');
+  ScrollTrigger.create({ start: 0, end: 'max', onUpdate: (self) => { pct.textContent = String(Math.round(self.progress * 100)).padStart(2, '0'); } });
+
+  $$('[data-scramble]').forEach(el => {
+    const original = el.textContent, host = el.closest('a,button') || el;
+    host.addEventListener('mouseenter', () => {
+      if (host.disabled || el.textContent !== original) return;
+      gsap.to(el, { duration: 0.35, scrambleText: { text: original, chars: 'upperCase', speed: 0.5 } });
+    });
+  });
+
+  /* ---------- intro: the hero plate develops from the sun outward, then the headline rises (about 3s) ---------- */
+  const heroShotEl = $('#heroShot'), heroSun = $('#heroSun');
+  const lines = $$('.hero .l'), heroReveals = $$('.hero [data-reveal]');
+  const reveals = $$('[data-reveal]');
+  gsap.set(reveals, { autoAlpha: 0, y: 30 });
+  gsap.set(lines, { yPercent: 115 });
+  gsap.set('#chromeTop', { autoAlpha: 0, y: -12 });
+  gsap.set('#chromeBottom', { autoAlpha: 0, y: 12 });
+  gsap.set(heroSun, { scale: 0.86, autoAlpha: 0 });
+  gsap.set($$('[data-rule]'), { scaleX: 0 });
+  html.classList.remove('is-loading');
+
+  const heroP = { p: 0 };
+  const intro = gsap.timeline({ paused: true, delay: 0.2 });
+  intro
+    .to(heroSun, { autoAlpha: 1, scale: 1, duration: 1.2, ease: 'expo.out' }, 0)
+    .to(heroP, { p: 1, duration: 2.8, ease: 'power1.inOut', onUpdate: () => heroDev.set(heroP.p) }, 0.15)
+    .to(lines, { yPercent: 0, duration: 1.15, ease: 'expo.out', stagger: 0.11 }, 1.05)
+    .to(heroReveals, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08 }, 1.4)
+    .add(() => { const tag = $('#heroTag'); gsap.to(tag, { duration: 1.1, scrambleText: { text: tag.textContent, chars: 'upperCase', speed: 0.4, revealDelay: 0.2 } }); }, 1.4)
+    .to('#chromeTop', { autoAlpha: 1, y: 0, duration: 1 }, 1.6)
+    .to('#chromeBottom', { autoAlpha: 1, y: 0, duration: 1 }, 1.7);
+  const poster = new Image(); poster.src = 'assets/cy-wave.jpg';
+  let introPlayed = false;
+  const playIntro = () => { if (introPlayed) return; introPlayed = true; intro.play(); };
+  document.fonts.ready.then(() => { if (poster.complete) playIntro(); else { poster.onload = poster.onerror = playIntro; setTimeout(playIntro, 900); } });
+
+  /* ---------- hero: the print drifts a little as the page leaves it ---------- */
+  const setScrub = { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true };
+  gsap.to(heroShotEl, { yPercent: 10, ease: 'none', scrollTrigger: setScrub });
+  gsap.to(heroSun, { yPercent: 60, ease: 'none', scrollTrigger: setScrub });
+  gsap.to(lines[0], { xPercent: -3, ease: 'none', scrollTrigger: setScrub });
+  gsap.to(lines[1], { xPercent: 5, ease: 'none', scrollTrigger: setScrub });
+  /* the chrome is paper over the print's sky and ink once the print has gone past */
+  ScrollTrigger.create({ trigger: '#heroPlate', start: 'bottom 70px', onEnter: () => html.classList.add('on-paper'), onLeaveBack: () => html.classList.remove('on-paper') });
+  /* the headline shuffles whenever you scroll away from it or back to it */
+  const shufSegs = [], shuf = { p: 1 }; let shufLen = 0, shufStep = -1;
+  lines.forEach(l => { const w = document.createTreeWalker(l, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) if (/\S/.test(n.nodeValue)) { shufSegs.push({ n, text: n.nodeValue, at: shufLen }); shufLen += n.nodeValue.length; } });
+  const drawShuffle = function () {
+    const step = Math.floor(this.time() / 0.055);
+    if (step === shufStep && shuf.p < 1) return;
+    shufStep = step;
+    const solved = shuf.p * shufLen;
+    shufSegs.forEach(s => {
+      const out = s.text.split(''), idx = [];
+      out.forEach((c, i) => { if (s.at + i >= solved && /[a-z]/i.test(c)) idx.push(i); });
+      const pool = idx.map(i => out[i]);
+      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+      idx.forEach((i, k) => { out[i] = pool[k]; });
+      s.n.nodeValue = out.join('');
+    });
+  };
+  const shuffleHead = () => { if (intro.progress() < 1) return; shufStep = -1; gsap.fromTo(shuf, { p: 0 }, { p: 1, duration: 0.95, ease: 'power1.in', overwrite: true, onUpdate: drawShuffle }); };
+  ScrollTrigger.create({ trigger: '.hero', start: 'top+=80 top', onEnter: shuffleHead, onLeaveBack: shuffleHead });
+  ScrollTrigger.create({ trigger: '.h-hero', start: 'center top', onLeaveBack: shuffleHead });
+  if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    /* the disc on the print leans with the pointer, very slightly, as an object lying on the sheet would */
+    const sx = gsap.quickTo(heroSun, 'x', { duration: 1.8, ease: 'power3' }), sy = gsap.quickTo(heroSun, 'y', { duration: 1.8, ease: 'power3' });
+    window.addEventListener('mousemove', (e) => {
+      if (window.scrollY > window.innerHeight) return;
+      const nx = e.clientX / window.innerWidth - .5, ny = e.clientY / window.innerHeight - .5;
+      sx(nx * 16); sy(ny * 10);
+    }, { passive: true });
+  }
+
+  /* ---------- reveals below the hero ---------- */
+  ScrollTrigger.batch(reveals.filter(el => !el.closest('.hero')), {
+    start: 'top 88%', once: true,
+    onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.09 })
+  });
+  $$('[data-rule]').forEach(r => gsap.to(r, { scaleX: 1, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: r, start: 'top 92%', once: true } }));
+
+  /* ---------- plates develop as they arrive; scrolled back above, they go gently back to sensitised paper ---------- */
+  const tenPlates = $$('.ten-card .plate');
+  const devOf = (plate) => plateDevs.find((p) => p.plate === plate).dev;
+  const developOnArrival = (plate, delay) => {
+    const dev = devOf(plate), o = { p: 0 };
+    ScrollTrigger.create({ trigger: plate, start: 'top 82%',
+      onEnter: () => gsap.to(o, { p: 1, duration: 2.4, delay: delay || 0, ease: 'power1.inOut', overwrite: true, onUpdate: () => dev.set(o.p) }),
+      onLeaveBack: () => gsap.to(o, { p: 0, duration: 1.2, ease: 'power2.inOut', overwrite: true, onUpdate: () => dev.set(o.p) }) });
+  };
+  $$('.perk .plate').forEach((p, i) => developOnArrival(p, i * 0.18));
+
+  /* ---------- where the 10% goes ---------- */
+  const tenNum = $('#tenNum'), count = { v: 0 };
+  const writeTen = () => { tenNum.textContent = String(Math.round(count.v)); };
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 901px)', () => {
+    count.v = 0; writeTen();
+    const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: '.ten-track', start: 'top top', end: 'bottom bottom', scrub: 0.6 } });
+    /* the stamp comes down on the sheet: from above and a little large, landing with a short settle */
+    tl.fromTo('[data-ten-fade]', { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.12, stagger: 0.04 }, 0)
+      .fromTo('#tenStamp', { autoAlpha: 0, scale: 1.5, rotation: -9 }, { autoAlpha: 1, scale: 1, rotation: -4, duration: 0.1, ease: 'power3.in' }, 0.03)
+      .to(count, { v: 10, duration: 0.28, ease: 'power1.out', onUpdate: writeTen }, 0.04);
+    tenPlates.forEach((plate, i) => {
+      const at = 0.2 + i * 0.2, o = { p: 0 }, dev = devOf(plate);
+      tl.fromTo(plate.parentElement, { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: 0.14, ease: 'power2.out' }, at)
+        .fromTo(o, { p: 0 }, { p: 1, duration: 0.3, ease: 'power1.inOut', onUpdate: () => dev.set(o.p) }, at + 0.06);
+    });
+    tl.to({}, { duration: 0.1 });
+  });
+  mm.add('(max-width: 900px)', () => {
+    count.v = 0; writeTen();
+    gsap.set('[data-ten-fade]', { autoAlpha: 0, y: 30 });
+    gsap.set('#tenStamp', { autoAlpha: 0, scale: 1.4, rotation: -9 });
+    ScrollTrigger.create({ trigger: '#tenStamp', start: 'top 80%', once: true, onEnter: () => {
+      gsap.to('#tenStamp', { autoAlpha: 1, scale: 1, rotation: -4, duration: 0.45, ease: 'power3.in' });
+      gsap.to(count, { v: 10, duration: 1.6, ease: 'power2.out', onUpdate: writeTen });
+      gsap.to('[data-ten-fade]', { autoAlpha: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.12 });
+    } });
+    tenPlates.forEach((p) => developOnArrival(p, 0));
+  });
+
+  /* ---------- finale: the button leans toward the pointer ---------- */
+  if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    const spot = $('#voyageSpot'), vbtn = $('#voyageBtn');
+    const sx = gsap.quickTo(spot, 'x', { duration: 0.8, ease: 'power3' }), sy = gsap.quickTo(spot, 'y', { duration: 0.8, ease: 'power3' });
+    $('#voyage').addEventListener('mousemove', (e) => {
+      if (document.body.classList.contains('is-departing')) return;
+      const b = vbtn.getBoundingClientRect(), dx = e.clientX - (b.left + b.width / 2), dy = e.clientY - (b.top + b.height / 2);
+      const near = Math.hypot(dx, dy) < 320;
+      sx(near ? dx * 0.16 : 0); sy(near ? dy * 0.16 : 0);
+    }, { passive: true });
+    $('#voyage').addEventListener('mouseleave', () => { sx(0); sy(0); });
+  }
+
+  document.fonts.ready.then(() => ScrollTrigger.refresh());
+})();
+</script>
+
+</body>
+</html>

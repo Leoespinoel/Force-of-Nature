@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Force of Nature, Not Just a Tee</title>
+<title>Vis Naturae, Not Just a Tee</title>
 <meta name="description" content="A t-shirt with a second job. Where consuming creates positive change, 10% of every sale, not profit, funds reef, forest, and coastline conservation.">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0A0908">
@@ -102,6 +102,11 @@
   .sound-toggle__label{font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;line-height:1;min-width:calc(3ch + .24em);text-align:left;opacity:.6;transition:opacity 300ms ease} /* min-width: "On" takes the room of "Off", so the header never shifts */
   .sound-toggle[aria-pressed="true"] .sound-toggle__label{opacity:1}
   @media (max-width:720px){.sound-toggle{padding:0 14px;gap:8px}.sound-toggle__label{display:none}}
+  /* theme switch: the other side of the same hour. Space (index.html) and earth (light/) each carry a button to the other */
+  .theme-toggle{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:999px;border:1px solid currentColor;color:inherit;font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;line-height:1;transition:border-color 300ms ease}
+  .theme-toggle svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;flex:none}
+  .theme-toggle:hover{border-color:var(--red-lift)}
+  @media (max-width:720px){.theme-toggle{padding:0 14px}.theme-toggle .txt{display:none}}
   .chrome{position:fixed;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:20px var(--gutter);pointer-events:none;color:var(--bone)}
   .chrome > *{pointer-events:auto}
   .chrome.top{top:0}
@@ -279,12 +284,13 @@
 <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
 <div class="chrome top" id="chromeTop">
-  <a class="brand mono" href="#top" data-anchor="#top" aria-label="Force of Nature, back to the top"><img src="assets/logo-480.png" alt=""><span>Force of Nature</span></a>
+  <a class="brand mono" href="#top" data-anchor="#top" aria-label="Vis Naturae, back to the top"><img src="assets/logo-480.png" alt=""><span>Vis Naturae</span></a>
   <div class="chrome-end">
     <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn sound on" data-cursor="Sound on">
       <span class="sound-toggle__matrix" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
       <span class="sound-toggle__label" id="sound-toggle-label">Off</span>
     </button>
+    <a class="theme-toggle" id="themeToggle" href="light/" aria-label="Switch to the light theme, earth" data-cursor="Light"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"/></svg><span class="txt" data-scramble>Light</span></a>
     <a class="cta pill" href="#follow" data-anchor="#follow"><span class="txt" data-scramble>Join</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
   </div>
 </div>
@@ -305,7 +311,7 @@
     </div>
     <canvas class="embers" id="embers"></canvas>
   </div>
-  <div class="hero-heart" id="heroHeart"><img src="assets/logo-1200.png" alt="Force of Nature heart logo, illustrated in red with black drips"></div>
+  <div class="hero-heart" id="heroHeart"><img src="assets/logo-1200.png" alt="Vis Naturae heart logo, illustrated in red with black drips"></div>
   <div class="hero-copy">
     <p class="eyebrow mono is-red" data-reveal><span data-scramble id="heroTag">Where mission and lifestyle collide</span></p>
     <h1 class="display h-hero" aria-label="Wear it like you mean it.">
@@ -313,7 +319,7 @@
       <span class="lm" aria-hidden="true"><span class="l"><span class="red">Mean it.</span></span></span>
     </h1>
     <div class="hero-sub">
-      <p class="body" data-reveal>Force of Nature is a movement built around a simple idea, <strong>10% of every sale, not profit,</strong> goes toward reef, forest, and coastline conservation. No pledges, no opt-ins, the impact happens automatically the moment you wear it.</p>
+      <p class="body" data-reveal>Vis Naturae is a movement built around a simple idea, <strong>10% of every sale, not profit,</strong> goes toward reef, forest, and coastline conservation. No pledges, no opt-ins, the impact happens automatically the moment you wear it.</p>
       <a class="cta down" href="#follow" data-anchor="#follow" data-reveal><span class="txt" data-scramble>Follow the journey</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v11M3.5 8.5 8 13l4.500-4.500"/></svg></a>
     </div>
   </div>
@@ -323,7 +329,7 @@
   <div>
     <p class="eyebrow mono" data-reveal><span data-scramble>Follow the journey</span></p>
     <h2 class="display h-section" data-reveal>Welcome <em>on</em> board.</h2>
-    <p class="body" data-reveal>From first idea to first shirt, get the behind-the-scenes updates as we build Force of Nature from the ground up. No spam, ever.</p>
+    <p class="body" data-reveal>From first idea to first shirt, get the behind-the-scenes updates as we build Vis Naturae from the ground up. No spam, ever.</p>
   </div>
   <!-- Kit (ConvertKit) signup form 9926668 ("Pine form"). -->
   <form class="field-form" id="followForm" action="https://app.kit.com/forms/9926668/subscriptions" method="post" novalidate data-reveal>
@@ -767,6 +773,20 @@
       if(!ev.matches) dot.classList.remove('is-visible');
     });
     requestAnimationFrame(render);
+  })();
+
+  /* ---------- theme switch: a short veil in the other theme's colour, then the other page ---------- */
+  (function(){
+    const t = $('#themeToggle'); if (!t) return;
+    t.addEventListener('click', function(e){
+      if (RM || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      const veil = document.createElement('div');
+      veil.style.cssText = 'position:fixed;inset:0;z-index:9998;background:#F3EDE3;opacity:0;transition:opacity 420ms ease-in;pointer-events:none';
+      document.body.append(veil);
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ veil.style.opacity = '1'; }); });
+      setTimeout(function(){ window.location.href = t.href; }, 440);
+    });
   })();
 
   /* ---------- chrome: Mauritius clock ---------- */
